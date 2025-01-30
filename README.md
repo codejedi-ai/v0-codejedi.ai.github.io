@@ -113,3 +113,48 @@ Then there is a rich text array with the following text in it
     href: null
 }
 ```
+
+
+# PAge Type
+
+
+```json
+ {
+    object: 'page',
+    id: '9f2411e5-5c4c-48df-9119-4e865f82e346',
+    created_time: '2024-06-04T19:51:00.000Z',
+    last_edited_time: '2025-01-30T03:36:00.000Z',
+    created_by: { object: 'user', id: '2bd9406f-ec19-4724-9f9c-11bf4a06c369' },    
+    last_edited_by: { object: 'user', id: '2bd9406f-ec19-4724-9f9c-11bf4a06c369' },
+    cover: null,
+    icon: { type: 'emoji', emoji: '💎' },
+    parent: {
+      type: 'database_id',
+      database_id: 'ce4d8010-744e-4fc7-90d5-f1ca4e481955'
+    },
+    archived: false,
+    in_trash: false,
+    properties: {
+      Tenure: [Object],
+      'Company Name': [Object],
+      'Job Title': [Object]
+    },
+    url: 'https://www.notion.so/Software-Engeneer-9f2411e55c4c48df91194e865f82e346',
+    public_url: null
+  }
+```
+
+# Properties 
+
+```json
+{
+  Tenure: {
+    id: 'IYzK',
+    type: 'date',
+    date: { start: '2024-09-03', end: '2024-12-20', time_zone: null }
+  },
+  'Company Name': { id: 'U%60E~', type: 'rich_text', rich_text: [ [Object] ] },    
+  'Job Title': { id: 'title', type: 'title', title: [ [Object] ] }
+}
+
+```
