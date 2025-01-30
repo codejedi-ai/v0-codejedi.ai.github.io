@@ -1,5 +1,5 @@
 import {DATABASE_ID, DateResponse, notion} from './notion-uuid';
-// import { NotionJob } from './types';
+import { YearGroup } from './components/types';
 import WorkExperience from './components/WorkExperience';
 import * as NotionAPI from '@notionhq/client/build/src/api-endpoints';
 import * as fs from 'fs/promises';
@@ -144,8 +144,69 @@ export function renderNotionPage(page: NotionAPI.PageObjectResponse) {
   );
 }
 
-
-
+// need notion page to createPosition
+export const experiences: YearGroup[] = [
+  {
+    year: '2024',
+    positions: [
+      {
+        title: 'Software Developer Intern - DevOps (Hybrid)',
+        company: 'Open Text Corporation',
+        location: 'Ottawa, ON, Canada',
+        date: 'Sep.3 ~ Dec.20, 2024 (4 months)',
+        link: 'https://www.opentext.com/',
+        isLeft: false
+      },
+      {
+        title: 'Cloud Engineer Intern (Remote)',
+        company: 'Sun Life Financial',
+        location: 'Toronto, ON, Canada',
+        date: 'May.6 ~ Aug.30, 2024 (4 months)',
+        link: 'https://www.sunlife.ca/en/',
+        isLeft: false
+      }
+    ]
+  },
+  {
+    year: '2023',
+    positions: [
+      {
+        title: 'Site Reliability Engineer Intern (Remote)',
+        company: 'OANDA (Canada) Corporation',
+        location: 'Toronto, ON, Canada',
+        date: 'Jan.9 ~ Apr.21, 2023 (4 Months)',
+        link: 'https://oanda.com/ca-en/',
+        isLeft: true
+      }
+    ]
+  },
+  {
+    year: '2022',
+    positions: [
+      {
+        title: 'Site Reliability Engineer Intern (Hybrid)',
+        company: 'Carta Maple Technologies Inc.',
+        location: 'Waterloo, ON, Canada',
+        date: 'May.2 ~ Aug.26, 2022 (4 Months)',
+        link: 'https://carta.com/',
+        isLeft: false
+      }
+    ]
+  },
+  {
+    year: '2021',
+    positions: [
+      {
+        title: 'Software Development Co-op Student (Remote)',
+        company: 'VirtaMove Corp.',
+        location: 'Ottawa, ON, Canada',
+        date: 'May.6 ~ Aug.27, 2021 (4 Months)',
+        link: 'https://www.virtamove.com/about-us',
+        isLeft: true
+      }
+    ]
+  }
+];
 
 
 export default async function Home() {
@@ -156,7 +217,7 @@ export default async function Home() {
 
 
 
-    <WorkExperience />
+      <WorkExperience experiences={experiences} />
       <h1 className="text-3xl font-bold mb-6">Jobs Database</h1>
       <div className="grid gap-4">
         {jobs && jobs.map((job) => (

@@ -1,4 +1,17 @@
+export interface YearGroup {
+  year: string;
+  positions: Position[];
+}
 
+
+export interface Position {
+  title: string,
+  company: string,
+  location: string,
+  date: string,
+  link: string,
+  isLeft: boolean
+}
 export interface NotionJob {
     jobTitle: string;
     // startdate and end date
