@@ -5,7 +5,7 @@
       "object": "page",
       "id": "18ba9ae1-b608-8010-8d9e-ebe99cf3f97d",
       "created_time": "2025-01-30T03:25:00.000Z",
-      "last_edited_time": "2025-01-30T03:37:00.000Z",
+      "last_edited_time": "2025-01-30T06:51:00.000Z",
       "created_by": {
         "object": "user",
         "id": "2bd9406f-ec19-4724-9f9c-11bf4a06c369"
@@ -26,6 +26,11 @@
       "archived": false,
       "in_trash": false,
       "properties": {
+        "URL": {
+          "id": "%3DABF",
+          "type": "url",
+          "url": "https://www.opentext.com/"
+        },
         "Tenure": {
           "id": "IYzK",
           "type": "date",
@@ -35,14 +40,83 @@
             "time_zone": null
           }
         },
-        "Company Name": {
+        "Province / State": {
+          "id": "LgQj",
+          "type": "rich_text",
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "ON",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "ON",
+              "href": null
+            }
+          ]
+        },
+        "City": {
+          "id": "NMnU",
+          "type": "rich_text",
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Ottawa",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Ottawa",
+              "href": null
+            }
+          ]
+        },
+        "Country": {
+          "id": "NU~A",
+          "type": "rich_text",
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Canada",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Canada",
+              "href": null
+            }
+          ]
+        },
+        "company": {
           "id": "U%60E~",
           "type": "rich_text",
           "rich_text": [
             {
               "type": "text",
               "text": {
-                "content": "Opentext",
+                "content": "Open Text Corporation",
                 "link": null
               },
               "annotations": {
@@ -53,19 +127,36 @@
                 "code": false,
                 "color": "default"
               },
-              "plain_text": "Opentext",
+              "plain_text": "Open Text Corporation",
               "href": null
             }
           ]
         },
-        "Job Title": {
+        "Tenure Length (Days))": {
+          "id": "iRzg",
+          "type": "formula",
+          "formula": {
+            "type": "number",
+            "number": 108
+          }
+        },
+        "Select": {
+          "id": "u%3B%5CR",
+          "type": "select",
+          "select": {
+            "id": "0cf8911c-e00c-4ac9-9d4f-71536efa0a9c",
+            "name": "Hybrid",
+            "color": "blue"
+          }
+        },
+        "title": {
           "id": "title",
           "type": "title",
           "title": [
             {
               "type": "text",
               "text": {
-                "content": "Software Engeneer",
+                "content": "Software Developer Intern - DevOps (Hybrid)",
                 "link": null
               },
               "annotations": {
@@ -76,20 +167,20 @@
                 "code": false,
                 "color": "default"
               },
-              "plain_text": "Software Engeneer",
+              "plain_text": "Software Developer Intern - DevOps (Hybrid)",
               "href": null
             }
           ]
         }
       },
-      "url": "https://www.notion.so/Software-Engeneer-18ba9ae1b60880108d9eebe99cf3f97d",
+      "url": "https://www.notion.so/Software-Developer-Intern-DevOps-Hybrid-18ba9ae1b60880108d9eebe99cf3f97d",
       "public_url": null
     },
     {
       "object": "page",
       "id": "18ba9ae1-b608-8048-867e-e736ed6a483b",
       "created_time": "2025-01-30T03:21:00.000Z",
-      "last_edited_time": "2025-01-30T03:49:00.000Z",
+      "last_edited_time": "2025-01-30T06:51:00.000Z",
       "created_by": {
         "object": "user",
         "id": "2bd9406f-ec19-4724-9f9c-11bf4a06c369"
@@ -110,6 +201,11 @@
       "archived": false,
       "in_trash": false,
       "properties": {
+        "URL": {
+          "id": "%3DABF",
+          "type": "url",
+          "url": "https://www.sunlife.ca"
+        },
         "Tenure": {
           "id": "IYzK",
           "type": "date",
@@ -119,14 +215,14 @@
             "time_zone": null
           }
         },
-        "Company Name": {
-          "id": "U%60E~",
+        "Province / State": {
+          "id": "LgQj",
           "type": "rich_text",
           "rich_text": [
             {
               "type": "text",
               "text": {
-                "content": "Sunlife",
+                "content": "ON",
                 "link": null
               },
               "annotations": {
@@ -137,12 +233,98 @@
                 "code": false,
                 "color": "default"
               },
-              "plain_text": "Sunlife",
+              "plain_text": "ON",
               "href": null
             }
           ]
         },
-        "Job Title": {
+        "City": {
+          "id": "NMnU",
+          "type": "rich_text",
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Toronto",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Toronto",
+              "href": null
+            }
+          ]
+        },
+        "Country": {
+          "id": "NU~A",
+          "type": "rich_text",
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Canada",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Canada",
+              "href": null
+            }
+          ]
+        },
+        "company": {
+          "id": "U%60E~",
+          "type": "rich_text",
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Sun Life Financial",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Sun Life Financial",
+              "href": null
+            }
+          ]
+        },
+        "Tenure Length (Days))": {
+          "id": "iRzg",
+          "type": "formula",
+          "formula": {
+            "type": "number",
+            "number": 116
+          }
+        },
+        "Select": {
+          "id": "u%3B%5CR",
+          "type": "select",
+          "select": {
+            "id": "9d62f2c4-82a4-43cc-8a8f-39d362cd2aaf",
+            "name": "Remote",
+            "color": "orange"
+          }
+        },
+        "title": {
           "id": "title",
           "type": "title",
           "title": [
@@ -173,7 +355,7 @@
       "object": "page",
       "id": "18ba9ae1-b608-804b-9536-ce63b24ba324",
       "created_time": "2025-01-30T03:19:00.000Z",
-      "last_edited_time": "2025-01-30T03:36:00.000Z",
+      "last_edited_time": "2025-01-30T06:51:00.000Z",
       "created_by": {
         "object": "user",
         "id": "2bd9406f-ec19-4724-9f9c-11bf4a06c369"
@@ -194,6 +376,11 @@
       "archived": false,
       "in_trash": false,
       "properties": {
+        "URL": {
+          "id": "%3DABF",
+          "type": "url",
+          "url": "https://oanda.com"
+        },
         "Tenure": {
           "id": "IYzK",
           "type": "date",
@@ -203,14 +390,14 @@
             "time_zone": null
           }
         },
-        "Company Name": {
-          "id": "U%60E~",
+        "Province / State": {
+          "id": "LgQj",
           "type": "rich_text",
           "rich_text": [
             {
               "type": "text",
               "text": {
-                "content": "OANDA",
+                "content": "ON",
                 "link": null
               },
               "annotations": {
@@ -221,12 +408,98 @@
                 "code": false,
                 "color": "default"
               },
-              "plain_text": "OANDA",
+              "plain_text": "ON",
               "href": null
             }
           ]
         },
-        "Job Title": {
+        "City": {
+          "id": "NMnU",
+          "type": "rich_text",
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Toronto",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Toronto",
+              "href": null
+            }
+          ]
+        },
+        "Country": {
+          "id": "NU~A",
+          "type": "rich_text",
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Canada",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Canada",
+              "href": null
+            }
+          ]
+        },
+        "company": {
+          "id": "U%60E~",
+          "type": "rich_text",
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "OANDA (Canada) Corporation",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "OANDA (Canada) Corporation",
+              "href": null
+            }
+          ]
+        },
+        "Tenure Length (Days))": {
+          "id": "iRzg",
+          "type": "formula",
+          "formula": {
+            "type": "number",
+            "number": 102
+          }
+        },
+        "Select": {
+          "id": "u%3B%5CR",
+          "type": "select",
+          "select": {
+            "id": "9d62f2c4-82a4-43cc-8a8f-39d362cd2aaf",
+            "name": "Remote",
+            "color": "orange"
+          }
+        },
+        "title": {
           "id": "title",
           "type": "title",
           "title": [
@@ -257,7 +530,7 @@
       "object": "page",
       "id": "16ca9ae1-b608-81a9-a0c4-d7a9a06c195b",
       "created_time": "2024-12-30T18:27:00.000Z",
-      "last_edited_time": "2025-01-30T03:36:00.000Z",
+      "last_edited_time": "2025-01-30T06:51:00.000Z",
       "created_by": {
         "object": "user",
         "id": "4c1a8067-9462-4daa-b365-d376d97d4e5f"
@@ -278,6 +551,11 @@
       "archived": false,
       "in_trash": false,
       "properties": {
+        "URL": {
+          "id": "%3DABF",
+          "type": "url",
+          "url": "https://carta.com"
+        },
         "Tenure": {
           "id": "IYzK",
           "type": "date",
@@ -287,14 +565,14 @@
             "time_zone": null
           }
         },
-        "Company Name": {
-          "id": "U%60E~",
+        "Province / State": {
+          "id": "LgQj",
           "type": "rich_text",
           "rich_text": [
             {
               "type": "text",
               "text": {
-                "content": "Carta",
+                "content": "ON",
                 "link": null
               },
               "annotations": {
@@ -305,12 +583,98 @@
                 "code": false,
                 "color": "default"
               },
-              "plain_text": "Carta",
+              "plain_text": "ON",
               "href": null
             }
           ]
         },
-        "Job Title": {
+        "City": {
+          "id": "NMnU",
+          "type": "rich_text",
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Waterloo",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Waterloo",
+              "href": null
+            }
+          ]
+        },
+        "Country": {
+          "id": "NU~A",
+          "type": "rich_text",
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Canada",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Canada",
+              "href": null
+            }
+          ]
+        },
+        "company": {
+          "id": "U%60E~",
+          "type": "rich_text",
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Carta Maple Technologies Inc",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Carta Maple Technologies Inc",
+              "href": null
+            }
+          ]
+        },
+        "Tenure Length (Days))": {
+          "id": "iRzg",
+          "type": "formula",
+          "formula": {
+            "type": "number",
+            "number": 116
+          }
+        },
+        "Select": {
+          "id": "u%3B%5CR",
+          "type": "select",
+          "select": {
+            "id": "0cf8911c-e00c-4ac9-9d4f-71536efa0a9c",
+            "name": "Hybrid",
+            "color": "blue"
+          }
+        },
+        "title": {
           "id": "title",
           "type": "title",
           "title": [
@@ -341,7 +705,7 @@
       "object": "page",
       "id": "9f2411e5-5c4c-48df-9119-4e865f82e346",
       "created_time": "2024-06-04T19:51:00.000Z",
-      "last_edited_time": "2025-01-30T03:36:00.000Z",
+      "last_edited_time": "2025-01-30T06:51:00.000Z",
       "created_by": {
         "object": "user",
         "id": "2bd9406f-ec19-4724-9f9c-11bf4a06c369"
@@ -362,6 +726,11 @@
       "archived": false,
       "in_trash": false,
       "properties": {
+        "URL": {
+          "id": "%3DABF",
+          "type": "url",
+          "url": "https://www.virtamove.com"
+        },
         "Tenure": {
           "id": "IYzK",
           "type": "date",
@@ -371,14 +740,83 @@
             "time_zone": null
           }
         },
-        "Company Name": {
+        "Province / State": {
+          "id": "LgQj",
+          "type": "rich_text",
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "ON",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "ON",
+              "href": null
+            }
+          ]
+        },
+        "City": {
+          "id": "NMnU",
+          "type": "rich_text",
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Ottawa",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Ottawa",
+              "href": null
+            }
+          ]
+        },
+        "Country": {
+          "id": "NU~A",
+          "type": "rich_text",
+          "rich_text": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Canada",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Canada",
+              "href": null
+            }
+          ]
+        },
+        "company": {
           "id": "U%60E~",
           "type": "rich_text",
           "rich_text": [
             {
               "type": "text",
               "text": {
-                "content": "Virtamove",
+                "content": "VirtaMove Corp",
                 "link": null
               },
               "annotations": {
@@ -389,19 +827,36 @@
                 "code": false,
                 "color": "default"
               },
-              "plain_text": "Virtamove",
+              "plain_text": "VirtaMove Corp",
               "href": null
             }
           ]
         },
-        "Job Title": {
+        "Tenure Length (Days))": {
+          "id": "iRzg",
+          "type": "formula",
+          "formula": {
+            "type": "number",
+            "number": 113
+          }
+        },
+        "Select": {
+          "id": "u%3B%5CR",
+          "type": "select",
+          "select": {
+            "id": "9d62f2c4-82a4-43cc-8a8f-39d362cd2aaf",
+            "name": "Remote",
+            "color": "orange"
+          }
+        },
+        "title": {
           "id": "title",
           "type": "title",
           "title": [
             {
               "type": "text",
               "text": {
-                "content": "Software Engeneer",
+                "content": "Test Automation Developer",
                 "link": null
               },
               "annotations": {
@@ -412,13 +867,13 @@
                 "code": false,
                 "color": "default"
               },
-              "plain_text": "Software Engeneer",
+              "plain_text": "Test Automation Developer",
               "href": null
             }
           ]
         }
       },
-      "url": "https://www.notion.so/Software-Engeneer-9f2411e55c4c48df91194e865f82e346",
+      "url": "https://www.notion.so/Test-Automation-Developer-9f2411e55c4c48df91194e865f82e346",
       "public_url": null
     }
   ],
@@ -426,5 +881,5 @@
   "has_more": false,
   "type": "page_or_database",
   "page_or_database": {},
-  "request_id": "f1cac437-adce-43f5-8c23-bc403c5b2647"
+  "request_id": "c88d9af0-e335-4a29-a264-5c02948ec85b"
 }

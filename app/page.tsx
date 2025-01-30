@@ -1,64 +1,11 @@
+import {DATABASE_ID, DateResponse, notion} from './notion-uuid';
 import { NotionJob } from './types';
-import { Client } from '@notionhq/client';
-import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
-
+import WorkExperience from './components/WorkExperience';
+import * as NotionAPI from '@notionhq/client/build/src/api-endpoints';
 import * as fs from 'fs/promises';
-const NOTION_API_KEY = 'secret_8zGtazmQsLQXewj4QHkqOcwFoATEXDzpswRe1nty8Ca';
-const notion = new Client({ auth: NOTION_API_KEY });
-const DATABASE_ID = 'ce4d8010744e4fc790d5f1ca4e481955';
+import { JSX } from 'react';
 
-function transformToNotionJob(item: PageObjectResponse): NotionJob {
-  /*
- {
-  Year: { id: 'M_va', type: 'number', number: null },
-  'Job Title': { id: 'title', type: 'title', title: [ [Object] ] }
-}
-  */
-  // console.log(item.properties['Tenure']?.date.start );
-  // // get the content of the page
-  // // mainly need to get the bulletpoints
-  // // need to use the notion client to access the page
-  // const id = item.id;
-  // notion.blocks.children.list({
-  //   block_id: id,
-  // }).then((block) => {
-  //   // block.results is a list
-  //   //console.log(block)
-  //   const results = block.results;
-  //   for (let i = 0; i < results.length; i++) {
-  //     
-  //     const type = results[i].type;
-  //     console.log(`Type ${type}-----------------`);
-  //     console.log(results[i][type]);
-  //     console.log(results[i][type].rich_text);
-  //   }
-  // }).catch((error) => {
-  //   console.error(error);
-  // });
-  // get the content of the page at id
-  // notion.pages.retrieve({ page_id: id }).then((page) => {
-  //   console.log(id);
-  //   console.log(page);
-  // }).catch((error) => {
-  //   console.error(error);
-  // });
-  const tenure = item.properties['Tenure'];
-  let tenureDate = null;
-  if (tenure?.type === 'date') {
-    tenureDate = tenure.date;
-  }
-  const startDate = tenureDate?.start ?? null;
-  const endDate = tenureDate?.end ?? null;
-  const ret : NotionJob = {
-    jobTitle: 'title' in item.properties['Job Title'] ? ('text' in item.properties['Job Title'].title[0] ? item.properties['Job Title'].title[0].text.content : 'Untitled') : 'Untitled',
-    startDate: startDate,
-    endDate: endDate,
-    emoji: (item.icon?.type === 'emoji') ? item.icon.emoji : null
-  };
-  return ret;
-}
-
-async function fetchNotionDatabase(): Promise<NotionJob[] | null> {
+async function fetchNotionDatabase(): Promise<NotionAPI.PageObjectResponse [] | null> {
   try {
     const response = await notion.databases.query({
       database_id: DATABASE_ID,
@@ -70,54 +17,153 @@ async function fetchNotionDatabase(): Promise<NotionJob[] | null> {
     console.log('Fetched Notion database:', jsonOutput);
         // Save to file
     await fs.writeFile('notion-response.json', jsonOutput, 'utf-8');
-    const ret: NotionJob[] = [];
-    //const ret = response.results.map(transformToNotionJob);
-    for (let i = 0; i < response.results.length; i++) {
-      const result: PageObjectResponse  = response.results[i] as PageObjectResponse;
-      if ('properties' in result) {
-        ret.push(transformToNotionJob(result));
-      }
-    }
+
+    const ret = response.results as NotionAPI.PageObjectResponse[];
     return ret;
   } catch (error) {
     console.error('Error fetching Notion database:', error);
     return [];
   }
 }
-function formatDate(dateString: string | null): string {
-  if (!dateString) return 'Present';
-  
-  const date = new Date(dateString);
-  const month = date.toLocaleString('en-US', { month: 'short' });
-  // const year = date.getFullYear().toString();
-  
-  return `${month}.`;
+
+
+
+function renderRichText(richTextList: NotionAPI.RichTextItemResponse[]) {
+  if (!richTextList || richTextList.length === 0) {
+    return <span className="text-gray-400">No content</span>;
+  }
+
+  return (
+    <>
+      {richTextList.map((textItem, index) => {
+        const { annotations, type } = textItem;
+        let className = '';
+        
+        if (type !== 'text') {
+          throw new Error(`Unsupported text type: ${type}`);
+        }
+        
+        const text = textItem.text;
+        if (annotations.bold) className += ' font-bold';
+        if (annotations.italic) className += ' italic';
+        if (annotations.strikethrough) className += ' line-through';
+        if (annotations.underline) className += ' underline';
+        if (annotations.code) className += ' font-mono bg-gray-100 rounded px-1';
+        
+        return (
+          <span key={index} className={className.trim()}>
+            {text.link ? (
+              <a href={text.link.url} className="text-blue-600 hover:underline">
+                {text.content}
+              </a>
+            ) : (
+              text.content
+            )}
+          </span>
+        );
+      })}
+    </>
+  );
 }
 
-function formatDateRange(startDate: string | null, endDate: string | null): string {
-  const start = formatDate(startDate);
-  const end = formatDate(endDate);
-  const yearString = startDate ? new Date(startDate).getFullYear() : '';
+// render the date
+function renderDate(date_response: DateResponse | null) {
   
-  return `${start} ~ ${end}, ${yearString}`;
+  if (!date_response) {
+    return <span className="text-gray-400">No date</span>;
+  }
+
+  const start_date = date_response.start ? new Date(date_response.start) : null;
+  const end_date = date_response.end ? new Date(date_response.end) : null;
+
+  if (!start_date) {
+    return <span className="text-gray-400">No date</span>;
+  }
+
+  const start_month = start_date.toLocaleString('default', { month: 'short' });
+  const start_year = start_date.getFullYear();
+  
+  if (!end_date) {
+    return <span>{start_month}. {start_year} ~ Present</span>;
+  }
+
+  const end_month = end_date.toLocaleString('default', { month: 'short' });
+  const end_year = end_date.getFullYear();
+
+  if (start_year === end_year) {
+    return <span>{start_month} ~ {end_month}, {end_year}</span>;
+  }
+
+  return <span>{start_month}. {start_year} ~ {end_month}. {end_year}</span>;
 }
+
+export function renderNotionPage(page: NotionAPI.PageObjectResponse) {
+  let emoji = '📄';
+  if (page.icon && page.icon.type === 'emoji') {
+    emoji = page.icon.emoji;
+  }
+
+  let titleContent = null;
+  let tenure = null;
+  const richTextContents: JSX.Element[] = [];
+
+  // Collect all properties
+  if (!page.properties) {
+    throw new Error('Page does not have properties');
+  }
+
+  for (const [key, value] of Object.entries(page.properties)) {
+    if (value.type === 'title') {
+      titleContent = renderRichText(value.title);
+    } else if (value.type === 'rich_text') {
+      const renderedText = renderRichText(value.rich_text);
+      richTextContents.push(
+        <div key={key} className="mt-2">
+          <span className="text-lg font-semibold pr-2">{key}:</span>
+          {renderedText}
+        </div>
+      );
+    }else if (value.type === 'date') {
+
+      tenure = renderDate(value.date)
+    
+    }
+  }
+
+  return (
+    <div key={page.id} className="border rounded-lg p-4 mb-4">
+      <div className="flex items-center space-x-2 mb-4">
+        <span className="text-xl">{emoji}</span>
+        <span className="text-xl">{titleContent}</span>
+        <span className="text-gray-400 text-sm">{tenure}</span>
+      </div>
+      <div className="ml-8">
+        {richTextContents}
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
 export default async function Home() {
   const jobs = await fetchNotionDatabase();
 
   return (
     <div className="p-8">
+
+
+
+    <WorkExperience />
       <h1 className="text-3xl font-bold mb-6">Jobs Database</h1>
       <div className="grid gap-4">
-        {jobs && jobs.map((job, index) => (
-          <div key={index} className="border p-4 rounded-lg">
-            <h2 className="text-xl font-semibold">
-              {job.emoji && <span className="mr-2">{job.emoji}</span>}
-              {job.jobTitle}
-            </h2>
-            <p className="text-gray-600 mt-2">
-              {formatDateRange(job.startDate, job.endDate)}
-            </p>
-        </div>
+        {jobs && jobs.map((job) => (
+          <div key={job.id}>
+            {/* Render job details here */}
+            <pre>{renderNotionPage(job)}</pre>
+          </div>
         ))}
       </div>
     </div>

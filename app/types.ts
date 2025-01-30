@@ -1,9 +1,11 @@
+
 export interface NotionJob {
     jobTitle: string;
     // startdate and end date
     startDate: string | null;
     endDate: string | null;
     emoji: string | null;
+    company: string;
     // bullet points make a list of string
     //bulletPoints: string[];
   }
