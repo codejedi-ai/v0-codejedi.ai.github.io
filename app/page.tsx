@@ -1,5 +1,5 @@
 import {DATABASE_ID, DateResponse, notion} from './notion-uuid';
-import { NotionJob } from './types';
+// import { NotionJob } from './types';
 import WorkExperience from './components/WorkExperience';
 import * as NotionAPI from '@notionhq/client/build/src/api-endpoints';
 import * as fs from 'fs/promises';
