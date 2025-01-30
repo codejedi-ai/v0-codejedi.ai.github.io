@@ -34,3 +34,82 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+
+each block is in the format of
+
+```json
+{
+  object: 'list',
+  results: [
+    {
+      object: 'block',
+      id: '18ba9ae1-b608-8015-b467-c1c485c2b7fe',
+      parent: [Object],
+      created_time: '2025-01-30T03:36:00.000Z',
+      last_edited_time: '2025-01-30T03:36:00.000Z',
+      created_by: [Object],
+      last_edited_by: [Object],
+      has_children: false,
+      archived: false,
+      in_trash: false,
+      type: 'bulleted_list_item',
+      bulleted_list_item: [Object]
+    },
+    {
+      object: 'block',
+      id: '18ba9ae1-b608-808b-aa96-dd6e2aec8643',
+      parent: [Object],
+      created_time: '2025-01-30T03:36:00.000Z',
+      last_edited_time: '2025-01-30T03:36:00.000Z',
+      created_by: [Object],
+      last_edited_by: [Object],
+      has_children: false,
+      archived: false,
+      in_trash: false,
+      type: 'bulleted_list_item',
+      bulleted_list_item: [Object]
+    },
+    {
+      object: 'block',
+      id: '18ba9ae1-b608-80ea-a38d-ebdef2bf1139',
+      parent: [Object],
+      created_time: '2025-01-30T03:36:00.000Z',
+      last_edited_time: '2025-01-30T03:36:00.000Z',
+      created_by: [Object],
+      last_edited_by: [Object],
+      has_children: false,
+      archived: false,
+      in_trash: false,
+      type: 'bulleted_list_item',
+      bulleted_list_item: [Object]
+    }
+  ],
+  next_cursor: null,
+  has_more: false,
+  type: 'block',
+  block: {},
+  request_id: '033cec8a-9479-44b5-b2aa-3613c18c6722'
+}
+```
+
+Then there is a rich text array with the following text in it
+
+
+```json
+{
+    type: 'text',
+    text: { content: 'OANDA  Point 3', link: null },
+    annotations: {
+        bold: false,
+        italic: false,
+        strikethrough: false,
+        underline: false,
+        code: false,
+        color: 'default'
+    },
+    plain_text: 'OANDA  Point 3',
+    href: null
+}
+```
