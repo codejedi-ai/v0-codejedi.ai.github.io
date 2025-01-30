@@ -73,9 +73,9 @@ async function fetchNotionDatabase(): Promise<NotionJob[] | null> {
     const ret: NotionJob[] = [];
     //const ret = response.results.map(transformToNotionJob);
     for (let i = 0; i < response.results.length; i++) {
-      const result = response.results[i];
+      const result: PageObjectResponse  = response.results[i] as PageObjectResponse;
       if ('properties' in result) {
-        ret.push(transformToNotionJob(result as PageObjectResponse));
+        ret.push(transformToNotionJob(result));
       }
     }
     return ret;
