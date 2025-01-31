@@ -5,6 +5,7 @@ export interface YearGroup {
 
 
 export interface Position {
+  emoji: string | null,
   title: string,
   company: string,
   location: string,
