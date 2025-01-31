@@ -1,3 +1,4 @@
+import * as path from 'path';
 import React from 'react';
 import { Clock } from 'lucide-react';
 import { YearGroup, Position } from './types';
@@ -34,10 +35,16 @@ async function fetchWorkExperiance(): Promise<NotionAPI.PageObjectResponse [] | 
     // Pretty print JSON with 2 space indentation
     const jsonOutput = JSON.stringify(response, null, 2);
 
-    // Log to console
-    // console.log('Fetched Notion database:', jsonOutput);
-        // Save to file
-    await fs.writeFile('notion-response.json', jsonOutput, 'utf-8');
+    const folder = path.join(process.cwd(), '.jsons');
+    try {
+      await fs.access(folder);
+    } catch {
+      await fs.mkdir(folder, { recursive: true });
+    }
+    
+    const filePath = path.join(folder, 'fetchWorkExperiance.json');
+    await fs.writeFile(filePath, jsonOutput, 'utf-8');
+
 
     const ret = response.results as NotionAPI.PageObjectResponse[];
     return ret;

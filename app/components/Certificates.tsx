@@ -1,3 +1,4 @@
+import * as path from 'path';
 import {CERTS_DATABASE_ID, DateResponse, notion} from '../notion-uuid';
 import * as NotionAPI from '@notionhq/client/build/src/api-endpoints';
 import Image from 'next/image';
@@ -20,12 +21,18 @@ async function fetchCertificates(): Promise<Certificate []> {
       ]
     });
     // Pretty print JSON with 2 space indentation
+    // Pretty print JSON with 2 space indentation
     const jsonOutput = JSON.stringify(response, null, 2);
 
-    // Log to console
-    // console.log('Fetched Notion database:', jsonOutput);
-        // Save to file
-    await fs.writeFile('fetchCertificates.json', jsonOutput, 'utf-8');
+    const folder = path.join(process.cwd(), '.jsons');
+    try {
+      await fs.access(folder);
+    } catch {
+      await fs.mkdir(folder, { recursive: true });
+    }
+    
+    const filePath = path.join(folder, 'fetchCertificate.json');
+    await fs.writeFile(filePath, jsonOutput, 'utf-8');
 
     const ret = response.results as NotionAPI.PageObjectResponse[];
     

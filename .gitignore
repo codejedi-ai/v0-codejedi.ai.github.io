@@ -9,7 +9,7 @@ notion-response.json
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-
+.jsons
 # testing
 /coverage
 
