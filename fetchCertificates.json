@@ -1,0 +1,353 @@
+{
+  "object": "list",
+  "results": [
+    {
+      "object": "page",
+      "id": "09b3ffd9-9a1e-4b20-8b01-774f738642d3",
+      "created_time": "2023-10-26T12:40:00.000Z",
+      "last_edited_time": "2025-01-31T07:58:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "2bd9406f-ec19-4724-9f9c-11bf4a06c369"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "2bd9406f-ec19-4724-9f9c-11bf4a06c369"
+      },
+      "cover": {
+        "type": "external",
+        "external": {
+          "url": "https://www.notion.so/images/page-cover/woodcuts_4.jpg"
+        }
+      },
+      "icon": null,
+      "parent": {
+        "type": "database_id",
+        "database_id": "7ad088a9-fa3e-4261-8eb4-d140952aaa3f"
+      },
+      "archived": false,
+      "in_trash": false,
+      "properties": {
+        "alt": {
+          "id": ")Y7%22",
+          "type": "rich_text",
+          "rich_text": []
+        },
+        "date": {
+          "id": "%2F7eo",
+          "type": "date",
+          "date": {
+            "start": "2023-10-26",
+            "end": null,
+            "time_zone": null
+          }
+        },
+        "title": {
+          "id": "title",
+          "type": "title",
+          "title": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Cert1",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Cert1",
+              "href": null
+            }
+          ]
+        }
+      },
+      "url": "https://www.notion.so/Cert1-09b3ffd99a1e4b208b01774f738642d3",
+      "public_url": null
+    },
+    {
+      "object": "page",
+      "id": "de11509d-1d35-4cde-b065-7cc23712453f",
+      "created_time": "2024-02-01T15:32:00.000Z",
+      "last_edited_time": "2025-01-31T07:53:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "2bd9406f-ec19-4724-9f9c-11bf4a06c369"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "2bd9406f-ec19-4724-9f9c-11bf4a06c369"
+      },
+      "cover": {
+        "type": "file",
+        "file": {
+          "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/02788782-ec33-4cd7-81c6-26b72be47a78/061c78df-6fc0-4882-b34f-163475bc20b7/aws-practitioner.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4665N7VIYTJ%2F20250131%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250131T081044Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjELD%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJGMEQCIEFvNvvBksLuGPP5P6ziF50KSoC%2FGAWmu2wdnu2xp4t2AiBBY4UP2agc%2BDbbLpj9JFhyeWGMlnTZ6%2BFoonqPym5mgSqIBAi5%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAAaDDYzNzQyMzE4MzgwNSIMJvwGFjiSHbkArHZLKtwDSs7eJZrqBV7qs5NhRQ67IwfW7tx7MlXT8AhikUrv2i3%2BGjNVNovfQlCtj33ncdakNEEtb8Z2AUyNmsYyZTKvBv0qoz89oEulpGgLhNLNdO477SE%2FXOLjSU31d9bwqoJWacZ2eXDITpu5gw3MsFW7EFpxBSKFDekA%2B9fdqPr%2B0mId3lvT9lDkiGhFktgi%2FfjmF91Zc4sroNZHWoB8K6HvN%2BqoA%2FUrKt3YOKgRYCiXVACGuhOhE%2BGwt04QFw08f4KEtuLEUzPeUgayyDnKWFXX2jd25bq0iuGvXMJSi3%2Bx11gKwqwPQ9GWLQT%2BUK9pZPe%2F4P6HKenRKV1tYsh0kuRyDMxOvzaNFwtFAVNBqyzahkCCz2cf%2FxJWVOIcaJFusb5AIflUOfSuwJjChgzTPDC2wvzeSyS2PN9FJNt%2FG9DtJ3zYT6tGXfhR4wfaGTCzZvuYPu22sLPR5b4c5XmR4QEqApIsi7ZfogRKmpFSVrx%2B%2BxAh7p3ZrI7BlF9ercHsk%2BskeCBTyXhmjaMvlkzI90iuMh07f0cQDp0HiZZBTj01eN%2F%2FlZgCr3FufOiNxB1yQ9rkydUCV97ax5i5vIua3ZyTey%2FDypgU4jcSPT6lYYtd%2FQodSEAN41F00npKJaEw%2B%2F3xvAY6pgH6IwTL%2FL4hfdnGdOCllFN0lFwt3VUbENH8PTlbNklTI6TB%2Fv7QDGtY8vz5P9Ab4taFbRspgg2iPvmWAEEpYak1If0gSFuEvcIBMvpwGXRf3WjCARqeFJa9zGv5ercIeXBUra5d69wSm3v8lGQq7LFaFmVgma4jbyRXsXzj508cT31QvVx2VQ9r2M4YGVO6MAxFuuKXZSSmsA6zkS0OoQDpjtZwTqul&X-Amz-Signature=ff791fed992f84a083be4431cfd75e3b31cf0ec5de35ba85feb5240d3b3237eb&X-Amz-SignedHeaders=host&x-id=GetObject",
+          "expiry_time": "2025-01-31T09:10:44.161Z"
+        }
+      },
+      "icon": {
+        "type": "file",
+        "file": {
+          "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/02788782-ec33-4cd7-81c6-26b72be47a78/d6f8950c-44d3-4486-90b9-34f47b97e9d8/aws-practitioner.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4665N7VIYTJ%2F20250131%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250131T081044Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjELD%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJGMEQCIEFvNvvBksLuGPP5P6ziF50KSoC%2FGAWmu2wdnu2xp4t2AiBBY4UP2agc%2BDbbLpj9JFhyeWGMlnTZ6%2BFoonqPym5mgSqIBAi5%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAAaDDYzNzQyMzE4MzgwNSIMJvwGFjiSHbkArHZLKtwDSs7eJZrqBV7qs5NhRQ67IwfW7tx7MlXT8AhikUrv2i3%2BGjNVNovfQlCtj33ncdakNEEtb8Z2AUyNmsYyZTKvBv0qoz89oEulpGgLhNLNdO477SE%2FXOLjSU31d9bwqoJWacZ2eXDITpu5gw3MsFW7EFpxBSKFDekA%2B9fdqPr%2B0mId3lvT9lDkiGhFktgi%2FfjmF91Zc4sroNZHWoB8K6HvN%2BqoA%2FUrKt3YOKgRYCiXVACGuhOhE%2BGwt04QFw08f4KEtuLEUzPeUgayyDnKWFXX2jd25bq0iuGvXMJSi3%2Bx11gKwqwPQ9GWLQT%2BUK9pZPe%2F4P6HKenRKV1tYsh0kuRyDMxOvzaNFwtFAVNBqyzahkCCz2cf%2FxJWVOIcaJFusb5AIflUOfSuwJjChgzTPDC2wvzeSyS2PN9FJNt%2FG9DtJ3zYT6tGXfhR4wfaGTCzZvuYPu22sLPR5b4c5XmR4QEqApIsi7ZfogRKmpFSVrx%2B%2BxAh7p3ZrI7BlF9ercHsk%2BskeCBTyXhmjaMvlkzI90iuMh07f0cQDp0HiZZBTj01eN%2F%2FlZgCr3FufOiNxB1yQ9rkydUCV97ax5i5vIua3ZyTey%2FDypgU4jcSPT6lYYtd%2FQodSEAN41F00npKJaEw%2B%2F3xvAY6pgH6IwTL%2FL4hfdnGdOCllFN0lFwt3VUbENH8PTlbNklTI6TB%2Fv7QDGtY8vz5P9Ab4taFbRspgg2iPvmWAEEpYak1If0gSFuEvcIBMvpwGXRf3WjCARqeFJa9zGv5ercIeXBUra5d69wSm3v8lGQq7LFaFmVgma4jbyRXsXzj508cT31QvVx2VQ9r2M4YGVO6MAxFuuKXZSSmsA6zkS0OoQDpjtZwTqul&X-Amz-Signature=1b6413cf5f911db46972ed40419922b79f33bced51c6c4cd67ea75345e51d853&X-Amz-SignedHeaders=host&x-id=GetObject",
+          "expiry_time": "2025-01-31T09:10:44.187Z"
+        }
+      },
+      "parent": {
+        "type": "database_id",
+        "database_id": "7ad088a9-fa3e-4261-8eb4-d140952aaa3f"
+      },
+      "archived": false,
+      "in_trash": false,
+      "properties": {
+        "alt": {
+          "id": ")Y7%22",
+          "type": "rich_text",
+          "rich_text": []
+        },
+        "date": {
+          "id": "%2F7eo",
+          "type": "date",
+          "date": {
+            "start": "2024-04-02",
+            "end": null,
+            "time_zone": null
+          }
+        },
+        "title": {
+          "id": "title",
+          "type": "title",
+          "title": [
+            {
+              "type": "text",
+              "text": {
+                "content": "AWS Cloud Practitioner",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "AWS Cloud Practitioner",
+              "href": null
+            }
+          ]
+        }
+      },
+      "url": "https://www.notion.so/AWS-Cloud-Practitioner-de11509d1d354cdeb0657cc23712453f",
+      "public_url": null
+    },
+    {
+      "object": "page",
+      "id": "18ca9ae1-b608-80e2-919b-d77a5fee1f0c",
+      "created_time": "2025-01-31T05:22:00.000Z",
+      "last_edited_time": "2025-01-31T07:46:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "2bd9406f-ec19-4724-9f9c-11bf4a06c369"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "2bd9406f-ec19-4724-9f9c-11bf4a06c369"
+      },
+      "cover": {
+        "type": "file",
+        "file": {
+          "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/02788782-ec33-4cd7-81c6-26b72be47a78/d13ab3c4-60bd-41c8-baa9-48dd10de25ec/aws-developer.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4665N7VIYTJ%2F20250131%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250131T081044Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjELD%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJGMEQCIEFvNvvBksLuGPP5P6ziF50KSoC%2FGAWmu2wdnu2xp4t2AiBBY4UP2agc%2BDbbLpj9JFhyeWGMlnTZ6%2BFoonqPym5mgSqIBAi5%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAAaDDYzNzQyMzE4MzgwNSIMJvwGFjiSHbkArHZLKtwDSs7eJZrqBV7qs5NhRQ67IwfW7tx7MlXT8AhikUrv2i3%2BGjNVNovfQlCtj33ncdakNEEtb8Z2AUyNmsYyZTKvBv0qoz89oEulpGgLhNLNdO477SE%2FXOLjSU31d9bwqoJWacZ2eXDITpu5gw3MsFW7EFpxBSKFDekA%2B9fdqPr%2B0mId3lvT9lDkiGhFktgi%2FfjmF91Zc4sroNZHWoB8K6HvN%2BqoA%2FUrKt3YOKgRYCiXVACGuhOhE%2BGwt04QFw08f4KEtuLEUzPeUgayyDnKWFXX2jd25bq0iuGvXMJSi3%2Bx11gKwqwPQ9GWLQT%2BUK9pZPe%2F4P6HKenRKV1tYsh0kuRyDMxOvzaNFwtFAVNBqyzahkCCz2cf%2FxJWVOIcaJFusb5AIflUOfSuwJjChgzTPDC2wvzeSyS2PN9FJNt%2FG9DtJ3zYT6tGXfhR4wfaGTCzZvuYPu22sLPR5b4c5XmR4QEqApIsi7ZfogRKmpFSVrx%2B%2BxAh7p3ZrI7BlF9ercHsk%2BskeCBTyXhmjaMvlkzI90iuMh07f0cQDp0HiZZBTj01eN%2F%2FlZgCr3FufOiNxB1yQ9rkydUCV97ax5i5vIua3ZyTey%2FDypgU4jcSPT6lYYtd%2FQodSEAN41F00npKJaEw%2B%2F3xvAY6pgH6IwTL%2FL4hfdnGdOCllFN0lFwt3VUbENH8PTlbNklTI6TB%2Fv7QDGtY8vz5P9Ab4taFbRspgg2iPvmWAEEpYak1If0gSFuEvcIBMvpwGXRf3WjCARqeFJa9zGv5ercIeXBUra5d69wSm3v8lGQq7LFaFmVgma4jbyRXsXzj508cT31QvVx2VQ9r2M4YGVO6MAxFuuKXZSSmsA6zkS0OoQDpjtZwTqul&X-Amz-Signature=d2da43fc6a3bf5cb75f94b657db98c97f0262c22853959c80864b863c26ac020&X-Amz-SignedHeaders=host&x-id=GetObject",
+          "expiry_time": "2025-01-31T09:10:44.163Z"
+        }
+      },
+      "icon": {
+        "type": "file",
+        "file": {
+          "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/02788782-ec33-4cd7-81c6-26b72be47a78/6edefc0b-012e-413b-9852-5c14a570e19e/aws-developer.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4665N7VIYTJ%2F20250131%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250131T081044Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjELD%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJGMEQCIEFvNvvBksLuGPP5P6ziF50KSoC%2FGAWmu2wdnu2xp4t2AiBBY4UP2agc%2BDbbLpj9JFhyeWGMlnTZ6%2BFoonqPym5mgSqIBAi5%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAAaDDYzNzQyMzE4MzgwNSIMJvwGFjiSHbkArHZLKtwDSs7eJZrqBV7qs5NhRQ67IwfW7tx7MlXT8AhikUrv2i3%2BGjNVNovfQlCtj33ncdakNEEtb8Z2AUyNmsYyZTKvBv0qoz89oEulpGgLhNLNdO477SE%2FXOLjSU31d9bwqoJWacZ2eXDITpu5gw3MsFW7EFpxBSKFDekA%2B9fdqPr%2B0mId3lvT9lDkiGhFktgi%2FfjmF91Zc4sroNZHWoB8K6HvN%2BqoA%2FUrKt3YOKgRYCiXVACGuhOhE%2BGwt04QFw08f4KEtuLEUzPeUgayyDnKWFXX2jd25bq0iuGvXMJSi3%2Bx11gKwqwPQ9GWLQT%2BUK9pZPe%2F4P6HKenRKV1tYsh0kuRyDMxOvzaNFwtFAVNBqyzahkCCz2cf%2FxJWVOIcaJFusb5AIflUOfSuwJjChgzTPDC2wvzeSyS2PN9FJNt%2FG9DtJ3zYT6tGXfhR4wfaGTCzZvuYPu22sLPR5b4c5XmR4QEqApIsi7ZfogRKmpFSVrx%2B%2BxAh7p3ZrI7BlF9ercHsk%2BskeCBTyXhmjaMvlkzI90iuMh07f0cQDp0HiZZBTj01eN%2F%2FlZgCr3FufOiNxB1yQ9rkydUCV97ax5i5vIua3ZyTey%2FDypgU4jcSPT6lYYtd%2FQodSEAN41F00npKJaEw%2B%2F3xvAY6pgH6IwTL%2FL4hfdnGdOCllFN0lFwt3VUbENH8PTlbNklTI6TB%2Fv7QDGtY8vz5P9Ab4taFbRspgg2iPvmWAEEpYak1If0gSFuEvcIBMvpwGXRf3WjCARqeFJa9zGv5ercIeXBUra5d69wSm3v8lGQq7LFaFmVgma4jbyRXsXzj508cT31QvVx2VQ9r2M4YGVO6MAxFuuKXZSSmsA6zkS0OoQDpjtZwTqul&X-Amz-Signature=d39c55fbec391ccb44a17ee2b3b12e48b6c5caca9b9c7fd240df65adddb034ac&X-Amz-SignedHeaders=host&x-id=GetObject",
+          "expiry_time": "2025-01-31T09:10:44.194Z"
+        }
+      },
+      "parent": {
+        "type": "database_id",
+        "database_id": "7ad088a9-fa3e-4261-8eb4-d140952aaa3f"
+      },
+      "archived": false,
+      "in_trash": false,
+      "properties": {
+        "alt": {
+          "id": ")Y7%22",
+          "type": "rich_text",
+          "rich_text": []
+        },
+        "date": {
+          "id": "%2F7eo",
+          "type": "date",
+          "date": {
+            "start": "2024-08-13",
+            "end": null,
+            "time_zone": null
+          }
+        },
+        "title": {
+          "id": "title",
+          "type": "title",
+          "title": []
+        }
+      },
+      "url": "https://www.notion.so/18ca9ae1b60880e2919bd77a5fee1f0c",
+      "public_url": null
+    },
+    {
+      "object": "page",
+      "id": "18ca9ae1-b608-804e-b2ae-da716df2570a",
+      "created_time": "2025-01-31T07:52:00.000Z",
+      "last_edited_time": "2025-01-31T07:53:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "2bd9406f-ec19-4724-9f9c-11bf4a06c369"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "2bd9406f-ec19-4724-9f9c-11bf4a06c369"
+      },
+      "cover": {
+        "type": "file",
+        "file": {
+          "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/02788782-ec33-4cd7-81c6-26b72be47a78/b14aba64-4d80-40f9-99c2-13ab66fd8c0b/aws-devops-prof.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4665N7VIYTJ%2F20250131%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250131T081044Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjELD%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJGMEQCIEFvNvvBksLuGPP5P6ziF50KSoC%2FGAWmu2wdnu2xp4t2AiBBY4UP2agc%2BDbbLpj9JFhyeWGMlnTZ6%2BFoonqPym5mgSqIBAi5%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAAaDDYzNzQyMzE4MzgwNSIMJvwGFjiSHbkArHZLKtwDSs7eJZrqBV7qs5NhRQ67IwfW7tx7MlXT8AhikUrv2i3%2BGjNVNovfQlCtj33ncdakNEEtb8Z2AUyNmsYyZTKvBv0qoz89oEulpGgLhNLNdO477SE%2FXOLjSU31d9bwqoJWacZ2eXDITpu5gw3MsFW7EFpxBSKFDekA%2B9fdqPr%2B0mId3lvT9lDkiGhFktgi%2FfjmF91Zc4sroNZHWoB8K6HvN%2BqoA%2FUrKt3YOKgRYCiXVACGuhOhE%2BGwt04QFw08f4KEtuLEUzPeUgayyDnKWFXX2jd25bq0iuGvXMJSi3%2Bx11gKwqwPQ9GWLQT%2BUK9pZPe%2F4P6HKenRKV1tYsh0kuRyDMxOvzaNFwtFAVNBqyzahkCCz2cf%2FxJWVOIcaJFusb5AIflUOfSuwJjChgzTPDC2wvzeSyS2PN9FJNt%2FG9DtJ3zYT6tGXfhR4wfaGTCzZvuYPu22sLPR5b4c5XmR4QEqApIsi7ZfogRKmpFSVrx%2B%2BxAh7p3ZrI7BlF9ercHsk%2BskeCBTyXhmjaMvlkzI90iuMh07f0cQDp0HiZZBTj01eN%2F%2FlZgCr3FufOiNxB1yQ9rkydUCV97ax5i5vIua3ZyTey%2FDypgU4jcSPT6lYYtd%2FQodSEAN41F00npKJaEw%2B%2F3xvAY6pgH6IwTL%2FL4hfdnGdOCllFN0lFwt3VUbENH8PTlbNklTI6TB%2Fv7QDGtY8vz5P9Ab4taFbRspgg2iPvmWAEEpYak1If0gSFuEvcIBMvpwGXRf3WjCARqeFJa9zGv5ercIeXBUra5d69wSm3v8lGQq7LFaFmVgma4jbyRXsXzj508cT31QvVx2VQ9r2M4YGVO6MAxFuuKXZSSmsA6zkS0OoQDpjtZwTqul&X-Amz-Signature=9e8463346fbcff59685886ce5f049b3bcda8a17b7ca71d4767bd2bcca24994a8&X-Amz-SignedHeaders=host&x-id=GetObject",
+          "expiry_time": "2025-01-31T09:10:44.162Z"
+        }
+      },
+      "icon": {
+        "type": "file",
+        "file": {
+          "url": "https://prod-files-secure.s3.us-west-2.amazonaws.com/02788782-ec33-4cd7-81c6-26b72be47a78/663d10d4-c9b9-4c7d-b6ab-80772baee366/aws-devops-prof.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4665N7VIYTJ%2F20250131%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250131T081044Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjELD%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJGMEQCIEFvNvvBksLuGPP5P6ziF50KSoC%2FGAWmu2wdnu2xp4t2AiBBY4UP2agc%2BDbbLpj9JFhyeWGMlnTZ6%2BFoonqPym5mgSqIBAi5%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAAaDDYzNzQyMzE4MzgwNSIMJvwGFjiSHbkArHZLKtwDSs7eJZrqBV7qs5NhRQ67IwfW7tx7MlXT8AhikUrv2i3%2BGjNVNovfQlCtj33ncdakNEEtb8Z2AUyNmsYyZTKvBv0qoz89oEulpGgLhNLNdO477SE%2FXOLjSU31d9bwqoJWacZ2eXDITpu5gw3MsFW7EFpxBSKFDekA%2B9fdqPr%2B0mId3lvT9lDkiGhFktgi%2FfjmF91Zc4sroNZHWoB8K6HvN%2BqoA%2FUrKt3YOKgRYCiXVACGuhOhE%2BGwt04QFw08f4KEtuLEUzPeUgayyDnKWFXX2jd25bq0iuGvXMJSi3%2Bx11gKwqwPQ9GWLQT%2BUK9pZPe%2F4P6HKenRKV1tYsh0kuRyDMxOvzaNFwtFAVNBqyzahkCCz2cf%2FxJWVOIcaJFusb5AIflUOfSuwJjChgzTPDC2wvzeSyS2PN9FJNt%2FG9DtJ3zYT6tGXfhR4wfaGTCzZvuYPu22sLPR5b4c5XmR4QEqApIsi7ZfogRKmpFSVrx%2B%2BxAh7p3ZrI7BlF9ercHsk%2BskeCBTyXhmjaMvlkzI90iuMh07f0cQDp0HiZZBTj01eN%2F%2FlZgCr3FufOiNxB1yQ9rkydUCV97ax5i5vIua3ZyTey%2FDypgU4jcSPT6lYYtd%2FQodSEAN41F00npKJaEw%2B%2F3xvAY6pgH6IwTL%2FL4hfdnGdOCllFN0lFwt3VUbENH8PTlbNklTI6TB%2Fv7QDGtY8vz5P9Ab4taFbRspgg2iPvmWAEEpYak1If0gSFuEvcIBMvpwGXRf3WjCARqeFJa9zGv5ercIeXBUra5d69wSm3v8lGQq7LFaFmVgma4jbyRXsXzj508cT31QvVx2VQ9r2M4YGVO6MAxFuuKXZSSmsA6zkS0OoQDpjtZwTqul&X-Amz-Signature=7a2cfac9a83479bc02486a9f77fdd34943954b5fd086e2d23a09465ad2f81263&X-Amz-SignedHeaders=host&x-id=GetObject",
+          "expiry_time": "2025-01-31T09:10:44.205Z"
+        }
+      },
+      "parent": {
+        "type": "database_id",
+        "database_id": "7ad088a9-fa3e-4261-8eb4-d140952aaa3f"
+      },
+      "archived": false,
+      "in_trash": false,
+      "properties": {
+        "alt": {
+          "id": ")Y7%22",
+          "type": "rich_text",
+          "rich_text": []
+        },
+        "date": {
+          "id": "%2F7eo",
+          "type": "date",
+          "date": {
+            "start": "2024-12-30",
+            "end": null,
+            "time_zone": null
+          }
+        },
+        "title": {
+          "id": "title",
+          "type": "title",
+          "title": [
+            {
+              "type": "text",
+              "text": {
+                "content": "AWS Certified DevOps Engineer - Professional",
+                "link": null
+              },
+              "annotations": {
+                "bold": true,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "AWS Certified DevOps Engineer - Professional",
+              "href": null
+            }
+          ]
+        }
+      },
+      "url": "https://www.notion.so/AWS-Certified-DevOps-Engineer-Professional-18ca9ae1b608804eb2aeda716df2570a",
+      "public_url": null
+    },
+    {
+      "object": "page",
+      "id": "21605bfd-a924-4fbf-af23-efdda7d1840e",
+      "created_time": "2023-09-07T13:08:00.000Z",
+      "last_edited_time": "2025-01-31T07:58:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "2bd9406f-ec19-4724-9f9c-11bf4a06c369"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "2bd9406f-ec19-4724-9f9c-11bf4a06c369"
+      },
+      "cover": {
+        "type": "external",
+        "external": {
+          "url": "https://www.notion.so/images/page-cover/nasa_the_blue_marble.jpg"
+        }
+      },
+      "icon": null,
+      "parent": {
+        "type": "database_id",
+        "database_id": "7ad088a9-fa3e-4261-8eb4-d140952aaa3f"
+      },
+      "archived": false,
+      "in_trash": false,
+      "properties": {
+        "alt": {
+          "id": ")Y7%22",
+          "type": "rich_text",
+          "rich_text": []
+        },
+        "date": {
+          "id": "%2F7eo",
+          "type": "date",
+          "date": {
+            "start": "2024-12-30",
+            "end": null,
+            "time_zone": null
+          }
+        },
+        "title": {
+          "id": "title",
+          "type": "title",
+          "title": [
+            {
+              "type": "text",
+              "text": {
+                "content": "Cert2",
+                "link": null
+              },
+              "annotations": {
+                "bold": false,
+                "italic": false,
+                "strikethrough": false,
+                "underline": false,
+                "code": false,
+                "color": "default"
+              },
+              "plain_text": "Cert2",
+              "href": null
+            }
+          ]
+        }
+      },
+      "url": "https://www.notion.so/Cert2-21605bfda9244fbfaf23efdda7d1840e",
+      "public_url": null
+    }
+  ],
+  "next_cursor": null,
+  "has_more": false,
+  "type": "page_or_database",
+  "page_or_database": {},
+  "request_id": "109c8eda-05f6-4ee8-9b5c-f21497645734"
+}
