@@ -1,8 +1,11 @@
+
 import * as path from 'path';
 import {CERTS_DATABASE_ID, DateResponse, notion} from '../notion-uuid';
 import * as NotionAPI from '@notionhq/client/build/src/api-endpoints';
 import Image from 'next/image';
 import * as fs from 'fs/promises';
+import { revalidateTag } from 'next/cache';
+
 interface Certificate {
   image: string;
   alt: string;
@@ -113,7 +116,7 @@ async function fetchCertificates(): Promise<Certificate []> {
 async function fetchDatabaseCoverImage(databaseId: string): Promise<string> {
   try {
     const database = await notion.databases.retrieve({
-      database_id: databaseId
+      database_id: databaseId,
     });
 
     const fullDatabase = database as NotionAPI.DatabaseObjectResponse;
@@ -143,7 +146,7 @@ export default async function Certificates() {
   return (
         <section 
         id="Certs" 
-        className="py-16" 
+        className="py-16 text-white" 
         style={{ 
           backgroundImage: `url(${coverImage})`,
           backgroundSize: 'cover',

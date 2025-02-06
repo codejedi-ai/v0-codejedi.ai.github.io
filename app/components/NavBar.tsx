@@ -1,41 +1,10 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 
 export function NavBar() {
-  const [isFixed, setIsFixed] = useState(false);
-  const navRef = useRef<HTMLElement>(null);
-  const initialPosRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    // Store initial position on mount
-    if (navRef.current && initialPosRef.current === null) {
-      initialPosRef.current = navRef.current.getBoundingClientRect().top + window.scrollY;
-    }
-
-    const handleScroll = () => {
-      if (!navRef.current || initialPosRef.current === null) return;
-
-      const currentScrollY = window.scrollY;
-      const shouldFix = currentScrollY > initialPosRef.current;
-
-      setIsFixed(shouldFix);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   return (
-    <nav 
-      ref={navRef}
-      className={`bg-gray-500/80 w-screen z-50 transition-transform duration-300 left-0
-        ${isFixed ? 'fixed top-0 translate-y-0 ' : 'absolute -translate-y-full'}`}
-      style={{
-        top: isFixed ? '0' : initialPosRef.current ? `${initialPosRef.current}px` : 'auto'
-      }}
-    >
+    <nav className="fixed top-0 left-0 bg-gray-500/80 w-screen z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-6">

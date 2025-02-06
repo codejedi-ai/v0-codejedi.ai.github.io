@@ -23,7 +23,7 @@ export default function AboutMe() {
   };
   const quote = "\"Let each person examine his own work, and then he can take pride in himself alone, and not compare himself with someone else.\" -- Galatians 6:4"
   return (
-    <section id="about" className="py-20">
+    <section id="about" className="py-20 text-white">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-16 p-8  from-gray-900 to-gray-800 rounded-lg shadow-2xl">
