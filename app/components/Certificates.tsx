@@ -110,27 +110,63 @@ async function fetchCertificates(): Promise<Certificate []> {
     return [];
   }
 }
+async function fetchDatabaseCoverImage(databaseId: string): Promise<string> {
+  try {
+    const database = await notion.databases.retrieve({
+      database_id: databaseId
+    });
+
+    const fullDatabase = database as NotionAPI.DatabaseObjectResponse;
+    if (!fullDatabase.cover) {
+      return '';
+    }
+
+    switch (fullDatabase.cover.type) {
+      case 'external':
+        return fullDatabase.cover.external.url;
+      case 'file': 
+        return fullDatabase.cover.file.url;
+      default:
+        return '';
+    }
+  } catch (error) {
+    console.error('Error fetching database cover:', error);
+    return '';
+  }
+}
 
 export default async function Certificates() {
   const quote_certificates = "The only true wisdom is in knowing you know nothing. -- Socrates";
   const certificates = await fetchCertificates();
-  
+  const coverImage = await fetchDatabaseCoverImage(CERTS_DATABASE_ID);
+
   return (
-    <section id="skills" className="py-16">
-      <div className="container mx-auto px-4">
-        <h2 className="text-4xl font-bold text-center mb-4">Skills</h2>
-        <p className="text-center text-gray-600 italic mb-12">
+        <section 
+        id="Certs" 
+        className="py-16" 
+        style={{ 
+          backgroundImage: `url(${coverImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          zIndex: -1
+        }}
+    >
+
+        <h2 className="text-4xl font-bold text-center mb-4">Certificates</h2>
+        <p className="text-center text-white italic mb-12">
           {quote_certificates}
         </p>
 
-        <div className="flex justify-center">
+        <div className="justify-center">
         <div className="mx-auto grid grid-cols-1 gap-8 max-w-6xl
                 sm:grid-cols-[repeat(auto-fit,minmax(250px,1fr))]
                 place-content-center
                 place-items-center
                 justify-items-center
                 content-center
-                auto-cols-min">
+                auto-cols-min"
+                >
                 
                 {certificates.map((cert, index) => (
               <div key={index} className="flex flex-col items-center justify-center">
@@ -152,13 +188,13 @@ export default async function Certificates() {
                 </div>
                 <div className="text-center">
                   <h3 className="font-semibold text-lg mb-2">{cert.title}</h3>
-                  <p className="text-gray-600 text-sm">{cert.date.start}</p>
+                  <p className="text-white text-sm">{cert.date.start}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
-      </div>
+
     </section>
   );
 }

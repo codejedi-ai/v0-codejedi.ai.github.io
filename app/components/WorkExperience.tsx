@@ -1,7 +1,7 @@
 import * as path from 'path';
 import React from 'react';
 import { Clock } from 'lucide-react';
-import { YearGroup, Position } from './types';
+import { YearGroup, Position } from '../types/types';
 import * as NotionAPI from '@notionhq/client/build/src/api-endpoints';
 import {WORK_EXPERIANCE_DATABASE_ID, DateResponse, notion} from '../notion-uuid';
 import * as fs from 'fs/promises';
@@ -245,7 +245,13 @@ function TimelineItem({ position }: { position: Position }) {
   return (
     <div className={`flex w-full ${position.isLeft ? 'justify-start' : 'justify-end'}`}>
       <div className={`w-5/12 ${position.isLeft ? 'pr-8' : 'pl-8'}`}>
-        <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+        <div className="bg-white p-6 rounded-lg shadow-md
+                      hover:shadow-[0_0_15px_rgba(59,130,246,0.5)] 
+                      hover:shadow-blue-500/50
+                      hover:scale-105
+                      hover:border-blue-500
+                      border-2 border-transparent
+                      transition-all duration-300 ease-in-out">
           <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
             <span>{position.emoji}</span>
             <span>{position.title}</span>
@@ -275,6 +281,9 @@ async function WorkExperience() {
   const experiences = createYearGroups(jobs);
   
   return (
+    <section 
+    id="WorkExperience" 
+    className="py-16" >
     <div className="container mx-auto px-4 max-w-6xl">
       <div className="text-center mb-16">
         <h2 className="text-4xl font-bold mb-4">Work Experience</h2>
@@ -316,6 +325,7 @@ async function WorkExperience() {
         ))}
       </div>
     </div>
+     </section>
   );
 }
 
