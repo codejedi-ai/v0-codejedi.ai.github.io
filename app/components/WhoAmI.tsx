@@ -21,7 +21,7 @@ export default function AboutMe() {
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
-
+  const quote = "\"Let each person examine his own work, and then he can take pride in himself alone, and not compare himself with someone else.\" -- Galatians 6:4"
   return (
     <section id="about" className="py-20">
       <div className="container mx-auto px-4">
@@ -32,8 +32,7 @@ export default function AboutMe() {
       Who Am I
     </h2>
     <p className="text-gray-300 italic text-lg">
-      "Let each person examine his own work, and then he can take pride in himself
-      alone, and not compare himself with someone else." -- Galatians 6:4
+    {quote}
     </p>
   </div>
   <div className="w-32 h-32 relative">

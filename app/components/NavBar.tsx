@@ -30,8 +30,8 @@ export function NavBar() {
   return (
     <nav 
       ref={navRef}
-      className={`w-screen z-50 transition-transform duration-300 left-0
-        ${isFixed ? 'fixed top-0 translate-y-0 bg-gray-500/80' : 'absolute -translate-y-full'}`}
+      className={`bg-gray-500/80 w-screen z-50 transition-transform duration-300 left-0
+        ${isFixed ? 'fixed top-0 translate-y-0 ' : 'absolute -translate-y-full'}`}
       style={{
         top: isFixed ? '0' : initialPosRef.current ? `${initialPosRef.current}px` : 'auto'
       }}
