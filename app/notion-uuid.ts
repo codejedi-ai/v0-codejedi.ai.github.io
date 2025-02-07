@@ -16,7 +16,15 @@ export async function fetchPortfolioBackendPageChildren() : Promise<(NotionAPI.P
     });
     const jsonOutput = JSON.stringify(response, null, 2);
     console.log('Fetched Notion database:', jsonOutput);
-    await fs.writeFile('WORK_EXPERIANCE_DATABASE_ID.json', jsonOutput, 'utf-8');
+    const folder = path.join(process.cwd(), '.jsons');
+    try {
+      await fs.access(folder);
+    } catch {
+      await fs.mkdir(folder, { recursive: true });
+    }
+
+    const filePath = path.join(folder, 'WORK_EXPERIANCE_DATABASE_ID.json');
+    await fs.writeFile(filePath, jsonOutput, 'utf-8');
     return response.results;
   } catch (error) {
     console.error('Error fetching Notion database:', error);
