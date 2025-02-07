@@ -4,8 +4,6 @@ import {CERTS_DATABASE_ID, DateResponse, notion} from '../notion-uuid';
 import * as NotionAPI from '@notionhq/client/build/src/api-endpoints';
 import Image from 'next/image';
 import * as fs from 'fs/promises';
-import { revalidateTag } from 'next/cache';
-
 interface Certificate {
   image: string;
   alt: string;
