@@ -14,6 +14,7 @@ export async function GET(request: Request) {
       imageData: `data:${mimeType};base64,${base64Image}`
     });
   } catch (error) {
+    console.error('Error fetching image:', error);
     return NextResponse.json({ error: 'Failed to fetch image' }, { status: 500 });
   }
 }

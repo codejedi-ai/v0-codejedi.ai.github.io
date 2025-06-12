@@ -1,4 +1,5 @@
 import * as fs from 'fs/promises';
+import { NextResponse } from 'next/server';
 import path from 'path';
 
 async function downloadImage(imageUrl: string): Promise<string> {
@@ -22,7 +23,7 @@ async function downloadImage(imageUrl: string): Promise<string> {
     return `/images/${filename}`; // Return public path
   } catch (error) {
     console.error('Failed to download image:', error);
-    return '';
+    return NextResponse
   }
 }
 
