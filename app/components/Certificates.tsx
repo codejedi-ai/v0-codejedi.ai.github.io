@@ -1,4 +1,3 @@
-
 import * as path from 'path';
 import {CERTS_DATABASE_ID, DateResponse, notion} from '../notion-uuid';
 import * as NotionAPI from '@notionhq/client/build/src/api-endpoints';
