@@ -187,7 +187,7 @@ export default function Contact() {
         <div className="fixed inset-0 bg-dark/90 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
           <div
             ref={qrModalRef}
-            className="bg-dark-lighter p-6 rounded-lg shadow-2xl max-w-xs w-full text-center relative border-gradient animate-float"
+            className="bg-dark-lighter p-6 rounded-lg shadow-2xl max-w-xs w-full text-center relative border-gradient"
           >
             <button
               onClick={() => setActiveQrCodeContactId(null)}
