@@ -1,0 +1,63 @@
+[
+  {
+    "id": "duo-keyboard",
+    "title": "Duo Keyboard Koalition",
+    "description": "A collaborative community of hackers, engineers, and builders who believe that hackathons are just the beginning. Founded to address the all-too-common issue of abandoned weekend projects, the Koalition exists to carry great ideas forward — turning short-term hacks into long-term, meaningful solutions.",
+    "image": "/placeholder.svg?height=400&width=600",
+    "tags": ["Community", "Hackathons", "Collaboration"],
+    "link": "https://duo-keyboard-koalition.github.io",
+    "github": "https://github.com/duo-keyboard-koalition",
+    "featured": true,
+    "longDescription": "The Duo Keyboard Koalition is a collaborative community of hackers, engineers, and builders who believe that hackathons are just the beginning. Founded to address the all-too-common issue of abandoned weekend projects, the Koalition exists to carry great ideas forward — turning short-term hacks into long-term, meaningful solutions.\n\nWe're not just here for the demo day or the post-event applause. Our focus is on continued development, iteration, and real-world application. Members of the Koalition work together to maintain, refine, and evolve their projects, often transforming them into polished tools, products, or platforms well after the event ends.\n\nThe Koalition brings together talent from across campuses like the University of Waterloo, UofT, McGill, and more. It's a space where students and early-career developers come to learn, collaborate, and grow — supported by a shared passion for building impactful technology. With a thriving GitHub organization, 100+ members, and over 10+ collective hackathon wins, we are creating a space where momentum doesn't stop on Sunday night.\n\nThis is more than a team — it's a community focused on learning, building, and creating real impact together."
+  },
+  {
+    "id": "galatea-ai",
+    "title": "Galatea AI",
+    "description": "An artificial intelligence platform that generates realistic 3D avatars from text descriptions, using advanced neural networks and computer vision techniques.",
+    "image": "/placeholder.svg?height=400&width=600",
+    "tags": ["AI", "Computer Vision", "Neural Networks"],
+    "link": "https://example.com/galatea-ai",
+    "github": "https://github.com/codejedi/galatea-ai",
+    "featured": true
+  },
+  {
+    "id": "syntaxual-ai",
+    "title": "Syntaxual AI",
+    "description": "A code generation and analysis tool that uses machine learning to understand programming patterns and suggest optimizations or detect potential bugs.",
+    "image": "/placeholder.svg?height=400&width=600",
+    "tags": ["Machine Learning", "Code Analysis", "Developer Tools"],
+    "link": "https://example.com/syntaxual-ai",
+    "github": "https://github.com/codejedi/syntaxual-ai",
+    "featured": false
+  },
+  {
+    "id": "magic-quill",
+    "title": "Magic.Quill",
+    "description": "An AI-powered writing assistant that helps users craft compelling stories, essays, and articles with intelligent suggestions and style analysis.",
+    "image": "/placeholder.svg?height=400&width=600",
+    "tags": ["NLP", "Creative Writing", "Education"],
+    "link": "https://example.com/magic-quill",
+    "github": "https://github.com/codejedi/magic-quill",
+    "featured": false
+  },
+  {
+    "id": "ali",
+    "title": "Ali",
+    "description": "A personal assistant AI that helps manage schedules, answer questions, and automate routine tasks through natural language processing.",
+    "image": "/placeholder.svg?height=400&width=600",
+    "tags": ["AI", "Automation", "Productivity"],
+    "link": "https://example.com/ali",
+    "github": "https://github.com/codejedi/ali",
+    "featured": true
+  },
+  {
+    "id": "code-civilization",
+    "title": "CodeCivilization",
+    "description": "An educational game that teaches programming concepts through a civilization-building simulation, making coding accessible and fun.",
+    "image": "/placeholder.svg?height=400&width=600",
+    "tags": ["Education", "Game Development", "Programming"],
+    "link": "https://example.com/code-civilization",
+    "github": "https://github.com/codejedi/code-civilization",
+    "featured": false
+  }
+]

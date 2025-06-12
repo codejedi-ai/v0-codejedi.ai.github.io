@@ -1,21 +1,23 @@
-import WorkExperience from './components/WorkExperience';
-import Certificates from './components/Certificates';
-import AboutMe from './components/WhoAmI';
-import MatrixRain from './components/MatrixRain';
-import Header from './components/Header';
-// import { JSX } from 'react';
+import WorkExperience from "./components/WorkExperience"
+import Certificates from "./components/Certificates"
+import AboutMe from "./components/WhoAmI"
+import Header from "./components/Header"
+import Skills from "./components/Skills"
+import Projects from "./components/Projects"
+import Contact from "./components/Contact"
+import Footer from "./components/Footer"
 
-
-
-export default async function Home() {
-
+export default function Home() {
   return (
-    <div className="p-8">
-      <MatrixRain />
+    <div className="bg-dark min-h-screen">
       <Header />
       <AboutMe />
+      <Skills />
       <Certificates />
       <WorkExperience />
+      <Projects />
+      <Contact />
+      <Footer />
     </div>
-  );
+  )
 }

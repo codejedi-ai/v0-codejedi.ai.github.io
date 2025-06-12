@@ -1,0 +1,23 @@
+[
+  {
+    "id": "aws-practitioner",
+    "name": "AWS Certified Practitioner",
+    "image": "/images/aws-practitioner.png",
+    "alt": "AWS Cloud Practitioner Certificate",
+    "date": "2 January 2021"
+  },
+  {
+    "id": "aws-developer",
+    "name": "AWS Certified Developer",
+    "image": "/images/aws-developer.png",
+    "alt": "AWS Developer Associate Certificate",
+    "date": "29 August 2021"
+  },
+  {
+    "id": "aws-devops-prof",
+    "name": "AWS Certified DevOps Engineer - Professional",
+    "image": "/images/aws-devops-prof.png",
+    "alt": "AWS DevOps Engineer Professional Certificate",
+    "date": "23 August 2024"
+  }
+]
