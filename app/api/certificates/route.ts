@@ -1,13 +1,31 @@
 import { NextResponse } from "next/server"
-import fs from "fs"
-import path from "path"
 
 export async function GET() {
   try {
-    // Read the certificates data from the JSON file
-    const dataFilePath = path.join(process.cwd(), "data", "certificates.json")
-    const fileContents = fs.readFileSync(dataFilePath, "utf8")
-    const certificates = JSON.parse(fileContents)
+    // Hard-coded certificates data
+    const certificates = [
+      {
+        id: "aws-practitioner",
+        name: "AWS Certified Practitioner",
+        image: "/images/aws-practitioner.png",
+        alt: "AWS Cloud Practitioner Certificate",
+        date: "2 January 2021",
+      },
+      {
+        id: "aws-developer",
+        name: "AWS Certified Developer",
+        image: "/images/aws-developer.png",
+        alt: "AWS Developer Associate Certificate",
+        date: "29 August 2021",
+      },
+      {
+        id: "aws-devops-prof",
+        name: "AWS Certified DevOps Engineer - Professional",
+        image: "/images/aws-devops-prof.png",
+        alt: "AWS DevOps Engineer Professional Certificate",
+        date: "23 August 2024",
+      },
+    ]
 
     // Return the certificates data as JSON
     return NextResponse.json({ certificates }, { status: 200 })

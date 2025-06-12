@@ -76,15 +76,11 @@ export default function WorkExperience() {
       <div className={`flex w-full ${position.isLeft ? "justify-start" : "justify-end"}`}>
         <div className={`w-5/12 ${position.isLeft ? "pr-8" : "pl-8"}`}>
           <div
-            className="bg-white p-6 rounded-lg shadow-md
-                        hover:shadow-[0_0_15px_rgba(59,130,246,0.5)] 
-                        hover:shadow-blue-500/50
-                        hover:scale-105
-                        hover:border-blue-500
-                        border-2 border-transparent
-                        transition-all duration-300 ease-in-out"
+            className="gradient-card p-6 rounded-lg shadow-lg border-gradient
+                      hover:shadow-glow transition-all duration-300
+                      transform hover:scale-105"
           >
-            <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
               <span>{position.emoji}</span>
               <span>{position.title}</span>
             </h3>
@@ -92,12 +88,15 @@ export default function WorkExperience() {
               href={position.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 font-medium"
+              className="text-primary-cyan hover:text-white font-medium transition-colors"
             >
               {position.company}
             </a>
-            <p className="text-gray-600">{position.location}</p>
-            <p className="text-sm text-gray-500 mt-2">{position.date}</p>
+            <p className="text-gray-300">{position.location}</p>
+            <p className="text-sm text-gray-400 mt-2 flex items-center gap-1">
+              <Clock className="h-3 w-3 text-primary-cyan" />
+              {position.date}
+            </p>
           </div>
         </div>
       </div>
@@ -105,21 +104,21 @@ export default function WorkExperience() {
   }
 
   return (
-    <section id="WorkExperience" className="py-16 text-white">
+    <section id="WorkExperience" className="py-20 text-white">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-16">
           <h2 className="text-5xl font-bold text-center mb-4 text-white">WORK EXPERIENCE</h2>
-          <p className="italic">{quote_work_experience}</p>
+          <p className="italic text-gray-300">{quote_work_experience}</p>
         </div>
 
         {isLoading && (
           <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-cyan"></div>
           </div>
         )}
 
         {error && (
-          <div className="text-center text-red-400 mb-8">
+          <div className="text-center text-primary-pink mb-8">
             <p>{error}</p>
           </div>
         )}
@@ -127,9 +126,11 @@ export default function WorkExperience() {
         {!isLoading && !error && (
           <div className="relative">
             {/* Center line */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gray-200"></div>
+            <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-primary-blue via-primary-cyan to-primary-purple"></div>
+
+            {/* Clock icon at the top */}
             <div className="flex justify-center">
-              <div className="bg-blue-500 text-white rounded-full p-3 z-10">
+              <div className="bg-primary-blue text-white rounded-full p-3 z-10 shadow-glow">
                 <Clock className="h-6 w-6" />
               </div>
             </div>
@@ -139,9 +140,9 @@ export default function WorkExperience() {
                 <input type="hidden" name="index" value={index} />
 
                 {/* Year marker */}
-                <div className="flex justify-center mb-8">
-                  <div className="absolute bg-white px-4 py-1 rounded-full shadow-sm transform">
-                    <span className="text-gray-800 font-semibold">{yearGroup.year}</span>
+                <div className="flex justify-center mb-8 mt-8">
+                  <div className="bg-primary-blue text-white px-4 py-1 rounded-full shadow-glow z-10">
+                    <span className="font-semibold">{yearGroup.year}</span>
                   </div>
                 </div>
 
@@ -151,9 +152,13 @@ export default function WorkExperience() {
                     <TimelineItem key={posIndex} position={position} />
                   ))}
                 </div>
-                <div className="flex items-center w-full my-4">
-                  <div className="w-full border-t-2 border-dashed border-gray-300"></div>
-                </div>
+
+                {/* Only add divider if not the last group */}
+                {index < experiences.length - 1 && (
+                  <div className="flex items-center w-full my-4">
+                    <div className="w-full border-t-2 border-dashed border-gray-700 opacity-50"></div>
+                  </div>
+                )}
               </div>
             ))}
           </div>

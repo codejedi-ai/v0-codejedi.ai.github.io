@@ -1,13 +1,30 @@
 import { NextResponse } from "next/server"
-import fs from "fs"
-import path from "path"
 
 export async function GET() {
   try {
-    // Read the about images data from the JSON file
-    const dataFilePath = path.join(process.cwd(), "data", "about-images.json")
-    const fileContents = fs.readFileSync(dataFilePath, "utf8")
-    const aboutImages = JSON.parse(fileContents)
+    // Hard-coded about images data
+    const aboutImages = [
+      {
+        id: "about1",
+        src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/about1.jpg-TbfdbEe1niYCAR6Fqv7JYcqm2zeKO9.jpeg",
+        alt: "Kayaking with a Star Wars Rebel Alliance cap",
+      },
+      {
+        id: "about2",
+        src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/about2-X48rWZdpV4Q7RxVbbD5F7xRy5JhQdO.jpeg",
+        alt: "Sailing at the beach with life vest",
+      },
+      {
+        id: "about3",
+        src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/about3-9AFwiFVEdtKGJqM9LmWvBQWHcfyyC2.jpeg",
+        alt: "Building a sand castle on the beach",
+      },
+      {
+        id: "about4",
+        src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/about4-Vpsom9WTaJ93mBOvtKEjXoCSR1QzC5.jpeg",
+        alt: "Kayaking in a blue Hydro-Force inflatable kayak",
+      },
+    ]
 
     // Return the about images data as JSON
     return NextResponse.json({ aboutImages }, { status: 200 })
