@@ -51,7 +51,7 @@ export default function Skills() {
   return (
     <section id="skills" className="py-20 bg-dark-lighter text-white">
       <div className="container mx-auto px-4">
-        <h2 className="text-5xl font-bold text-center mb-16 text-gradient">SKILLS</h2>
+        <h2 className="text-5xl font-bold text-center mb-16 text-white">SKILLS</h2>
 
         {isLoading && (
           <div className="flex justify-center">

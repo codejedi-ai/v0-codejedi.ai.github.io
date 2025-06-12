@@ -59,7 +59,7 @@ export default function Certificates() {
 
       {/* Content container */}
       <div className="relative z-10 container mx-auto px-4 py-24 text-white">
-        <h2 className="text-5xl font-bold text-center mb-4 ">CERTIFICATES</h2>
+        <h2 className="text-5xl font-bold text-center mb-4 text-white">CERTIFICATES</h2>
         <p className="text-center text-white italic mb-16 max-w-4xl mx-auto">{quote}</p>
 
         {isLoading && (

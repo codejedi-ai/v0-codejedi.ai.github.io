@@ -79,7 +79,7 @@ export default function Projects() {
     <section id="projects" className="py-20 bg-gray-900 text-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold mb-4">PROJECTS</h2>
+          <h2 className="text-5xl font-bold text-center mb-4 text-white">PROJECTS</h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Explore my side projects and personal endeavors that showcase my passion for technology and innovation.
           </p>

@@ -99,9 +99,7 @@ export default function AboutMe() {
         {/* Header */}
         <div className="flex items-center justify-between mb-16 p-8 from-gray-900 to-gray-800 rounded-lg shadow-2xl">
           <div className="max-w-2xl">
-            <h2 className="text-5xl font-bold mb-4 text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
-               I am ...
-            </h2>
+            <h2 className="text-5xl font-bold mb-4 text-white">I believe ...</h2>
             <p className="text-gray-300 italic text-lg">{quote}</p>
           </div>
           <div className="w-32 h-32 relative">

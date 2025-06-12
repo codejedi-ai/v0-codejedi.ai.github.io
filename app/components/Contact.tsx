@@ -99,7 +99,7 @@ export default function Contact() {
 
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold mb-4 text-gradient">GET IN TOUCH</h2>
+          <h2 className="text-5xl font-bold text-center mb-4 text-white">GET IN TOUCH</h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Connect with me through various channels. For quick access during in-person meetups, use the QR codes
             provided for select platforms.

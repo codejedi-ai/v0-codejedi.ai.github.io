@@ -108,7 +108,7 @@ export default function WorkExperience() {
     <section id="WorkExperience" className="py-16 text-white">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">Work Experience</h2>
+          <h2 className="text-5xl font-bold text-center mb-4 text-white">WORK EXPERIENCE</h2>
           <p className="italic">{quote_work_experience}</p>
         </div>
 
