@@ -33,12 +33,13 @@ export function NavBar() {
           <div className="flex items-center">
             <div className="mr-4">
               <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo-nobg-6VRcp31i5tVIDRZnNmb2gTF55EQSi1.png"
+                src="/img/CodeJedi.png"
                 alt="Logo"
                 width={40}
                 height={40}
-                className="object-contain"
+                className="rounded-full object-contain border-4 border-blue-400"
               />
+              
             </div>
             <div className="flex items-center space-x-6">
               <Link href="#hero" className="text-white hover:text-primary-cyan transition-colors">

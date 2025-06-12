@@ -17,11 +17,12 @@ export function Hero() {
         <div className="text-center">
 
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-4 glow-text">
-            Hello, I am 
+            Hello, my Name is
             <br />
             <span className="flex items-center justify-center gap-2 mt-2">
               Darcy <Heart className="text-primary-pink animate-pulse" size={32} /> Liu
             </span>
+
           </h2>
 
           <div className="divider w-24 mx-auto my-8" />
