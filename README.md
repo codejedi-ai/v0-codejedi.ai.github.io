@@ -4,7 +4,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 First, run the development server:
 
-```bash
+\`\`\`bash
 npm run dev
 # or
 yarn dev
@@ -12,7 +12,7 @@ yarn dev
 pnpm dev
 # or
 bun dev
-```
+\`\`\`
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
@@ -39,7 +39,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 each block is in the format of
 
-```json
+\`\`\`json
 {
   object: 'list',
   results: [
@@ -92,12 +92,12 @@ each block is in the format of
   block: {},
   request_id: '033cec8a-9479-44b5-b2aa-3613c18c6722'
 }
-```
+\`\`\`
 
 Then there is a rich text array with the following text in it
 
 
-```json
+\`\`\`json
 {
     type: 'text',
     text: { content: 'OANDA  Point 3', link: null },
@@ -112,13 +112,13 @@ Then there is a rich text array with the following text in it
     plain_text: 'OANDA  Point 3',
     href: null
 }
-```
+\`\`\`
 
 
 # PAge Type
 
 
-```json
+\`\`\`json
  {
     object: 'page',
     id: '9f2411e5-5c4c-48df-9119-4e865f82e346',
@@ -142,11 +142,11 @@ Then there is a rich text array with the following text in it
     url: 'https://www.notion.so/Software-Engeneer-9f2411e55c4c48df91194e865f82e346',
     public_url: null
   }
-```
+\`\`\`
 
 # Properties 
 
-```json
+\`\`\`json
 {
   Tenure: {
     id: 'IYzK',
@@ -157,4 +157,4 @@ Then there is a rich text array with the following text in it
   'Job Title': { id: 'title', type: 'title', title: [ [Object] ] }
 }
 
-```
+\`\`\`
