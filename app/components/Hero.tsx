@@ -15,21 +15,12 @@ export function Hero() {
 
       <div className="container mx-auto px-4 z-10">
         <div className="text-center">
-          <div className="mb-8 relative w-40 h-40 mx-auto">
-            <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo-nobg-6VRcp31i5tVIDRZnNmb2gTF55EQSi1.png"
-              alt="Logo"
-              width={160}
-              height={160}
-              className="object-contain animate-float"
-            />
-          </div>
 
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-4 glow-text">
-            Hello, I am a CodeJedi
+            Hello, I am 
             <br />
             <span className="flex items-center justify-center gap-2 mt-2">
-              I <Heart className="text-primary-pink animate-pulse" size={32} /> Programming
+              Darcy <Heart className="text-primary-pink animate-pulse" size={32} /> Liu
             </span>
           </h2>
 
