@@ -17,7 +17,7 @@ export function Hero() {
         <div className="text-center">
 
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-4 glow-text">
-            Hello, my Name is
+            Hello, my name is
             <br />
             <span className="flex items-center justify-center gap-2 mt-2">
               Darcy <Heart className="text-primary-pink animate-pulse" size={32} /> Liu
