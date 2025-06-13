@@ -76,7 +76,7 @@ export default function Projects() {
   }
 
   return (
-    <section id="projects" className="py-20 bg-gray-900 text-white">
+    <section id="projects" className="py-20 text-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-5xl font-bold text-center mb-4 text-white">PROJECTS</h2>

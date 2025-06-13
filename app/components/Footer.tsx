@@ -14,11 +14,11 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0 flex items-center">
             <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo-nobg-6VRcp31i5tVIDRZnNmb2gTF55EQSi1.png"
+              src="/img/CodeJedi.png"
               alt="Logo"
               width={40}
               height={40}
-              className="mr-3"
+              className="mr-3 rounded-full"
             />
             <div>
               <h3 className="text-2xl font-bold text-gradient">CodeJedi</h3>

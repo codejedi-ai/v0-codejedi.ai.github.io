@@ -91,12 +91,12 @@ export default function Contact() {
       id="contact"
       className="py-20 bg-gradient-to-b from-dark-lighter to-dark text-white relative overflow-hidden"
     >
+
       {/* Background effects */}
       <div className="absolute inset-0 z-[-1]">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_30%,rgba(0,210,255,0.2)_0%,rgba(10,10,24,0)_60%)]"></div>
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_70%_70%,rgba(157,78,221,0.2)_0%,rgba(10,10,24,0)_60%)]"></div>
+        <div className="absolute top-0 left-0  bg-[radial-gradient(circle_at_30%_30%,rgba(0,210,255,0.2)_0%,rgba(10,10,24,0)_60%)]"></div>
+        <div className="absolute top-0 left-0 bg-[radial-gradient(circle_at_70%_70%,rgba(157,78,221,0.2)_0%,rgba(10,10,24,0)_60%)]"></div>
       </div>
-
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-5xl font-bold text-center mb-4 text-white">GET IN TOUCH</h2>

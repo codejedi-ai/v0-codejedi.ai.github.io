@@ -37,7 +37,7 @@ export function NavBar() {
                 alt="Logo"
                 width={40}
                 height={40}
-                className="rounded-full object-contain border-4 border-blue-400"
+                className="rounded-full object-contain border-2 border-blue-400"
               />
               
             </div>
