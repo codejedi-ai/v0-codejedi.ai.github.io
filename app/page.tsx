@@ -6,7 +6,6 @@ import Skills from "./components/Skills"
 import Projects from "./components/Projects"
 import Contact from "./components/Contact"
 import Footer from "./components/Footer"
-import Blog from "./components/Blog"
 
 export default function Home() {
   return (
@@ -14,10 +13,9 @@ export default function Home() {
       <Header />
       <AboutMe />
       <Skills />
-      <Certificates />
       <WorkExperience />
+      <Certificates />
       <Projects />
-      <Blog />
       <Contact />
       <Footer />
     </div>
