@@ -1,13 +1,9 @@
 import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  /* other config options here */
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  /* config for GitHub Pages deployment */
+  output: "export",
+  trailingSlash: true,
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -29,8 +25,23 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "hebbkx1anhila5yf.public.blob.vercel-storage.com",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  // GitHub Pages specific configuration
+  basePath: process.env.NODE_ENV === "production" ? "/codejedi.ai.github.io-v2" : "",
+  assetPrefix: process.env.NODE_ENV === "production" ? "/codejedi.ai.github.io-v2/" : "",
 }
 
 export default nextConfig

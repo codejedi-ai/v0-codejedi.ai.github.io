@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 
 export async function GET() {
   try {
-    // Hard-coded certificates data
+    // Hard-coded certificates data - AWS + one featured Hugging Face certificate
     const certificates = [
       {
         id: "aws-practitioner",
@@ -24,6 +24,14 @@ export async function GET() {
         image: "/images/aws-devops-prof.png",
         alt: "AWS DevOps Engineer Professional Certificate",
         date: "23 August 2024",
+      },
+      {
+        id: "hugging-face-agents-course",
+        name: "Hugging Face AI Agents Course",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Hugging%20Face%20Agents%20Course%20Certificate-h7by0WgWsn0t2ppzw1UJSwuqagcWUR.webp",
+        alt: "Hugging Face Agents Course Certificate of Excellence",
+        date: "19 June 2025",
       },
     ]
 

@@ -75,7 +75,7 @@ export default function Certificates() {
         )}
 
         {!isLoading && !error && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 max-w-6xl mx-auto">
             {certificates.map((cert) => (
               <div key={cert.id} className="flex flex-col items-center">
                 {/* Certificate badge */}
@@ -87,7 +87,7 @@ export default function Certificates() {
 
                 {/* Certificate title and date */}
                 <div className="text-center">
-                  <h3 className="text-2xl font-semibold mb-2">{cert.name}</h3>
+                  <h3 className="text-xl font-semibold mb-2">{cert.name}</h3>
                   <p className="text-gray-300">{cert.date}</p>
                 </div>
               </div>

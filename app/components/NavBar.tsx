@@ -39,32 +39,34 @@ export function NavBar() {
                 height={40}
                 className="rounded-full object-contain border-2 border-blue-400"
               />
-              
             </div>
             <div className="flex items-center space-x-6">
-              <Link href="#hero" className="text-white hover:text-primary-cyan transition-colors">
+              <Link href="/#hero" className="text-white hover:text-primary-cyan transition-colors">
                 Home
               </Link>
-              <Link href="#about" className="text-white hover:text-primary-cyan transition-colors">
+              <Link href="/#about" className="text-white hover:text-primary-cyan transition-colors">
                 About
               </Link>
-              <Link href="#skills" className="text-white hover:text-primary-cyan transition-colors">
+              <Link href="/#skills" className="text-white hover:text-primary-cyan transition-colors">
                 Skills
               </Link>
             </div>
           </div>
           <div className="flex items-center space-x-6">
-            <Link href="#certificates" className="text-white hover:text-primary-cyan transition-colors">
+            <Link href="/#certificates" className="text-white hover:text-primary-cyan transition-colors">
               Certificates
             </Link>
-            <Link href="#WorkExperience" className="text-white hover:text-primary-cyan transition-colors">
+            <Link href="/blog" className="text-white hover:text-primary-cyan transition-colors">
+              Blog
+            </Link>
+            <Link href="/#WorkExperience" className="text-white hover:text-primary-cyan transition-colors">
               Experience
             </Link>
-            <Link href="#projects" className="text-white hover:text-primary-cyan transition-colors">
+            <Link href="/#projects" className="text-white hover:text-primary-cyan transition-colors">
               Projects
             </Link>
             <Link
-              href="#contact"
+              href="/#contact"
               className="text-white hover:text-primary-cyan border border-primary-blue/50 px-4 py-1 rounded-full hover:bg-primary-blue/10 transition-all"
             >
               Contact

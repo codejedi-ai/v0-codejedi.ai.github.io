@@ -137,11 +137,15 @@ export default function Projects() {
               >
                 <div className="relative h-48 overflow-hidden">
                   <Image
-                    src={project.image || "/placeholder.svg"}
+                    src={project.image || "/placeholder.svg?height=400&width=600&query=project"}
                     alt={project.title}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    onError={(e) => {
+                      console.warn(`Failed to load image for ${project.title}:`, project.image)
+                      e.currentTarget.src = "/project-management-team.png"
+                    }}
                   />
                   {project.featured && (
                     <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">
@@ -199,11 +203,15 @@ export default function Projects() {
             <div className="bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="relative h-64 md:h-80">
                 <Image
-                  src={selectedProject.image || "/placeholder.svg"}
+                  src={selectedProject.image || "/placeholder.svg?height=400&width=600&query=project"}
                   alt={selectedProject.title}
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 800px"
+                  onError={(e) => {
+                    console.warn(`Failed to load modal image for ${selectedProject.title}:`, selectedProject.image)
+                    e.currentTarget.src = "/project-management-team.png"
+                  }}
                 />
                 <button
                   onClick={closeProjectDetails}
