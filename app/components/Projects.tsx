@@ -15,6 +15,8 @@ interface Project {
   link: string
   github: string
   featured: boolean
+  icon?: string | null
+  iconType?: string | null
 }
 
 export default function Projects() {
@@ -154,7 +156,15 @@ export default function Projects() {
                   )}
                 </div>
                 <div className="p-6 flex-grow">
-                  <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
+                  <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
+                    {project.icon && project.iconType === "emoji" && (
+                      <span className="text-2xl">{project.icon}</span>
+                    )}
+                    {project.icon && project.iconType !== "emoji" && (
+                      <img src={project.icon} alt="Project icon" className="w-6 h-6 object-contain" />
+                    )}
+                    <span>{project.title}</span>
+                  </h3>
                   <p className="text-gray-300 mb-4">{project.description}</p>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {project.tags.map((tag) => (
@@ -236,7 +246,15 @@ export default function Projects() {
               </div>
               <div className="p-8">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-3xl font-bold">{selectedProject.title}</h3>
+                  <h3 className="text-3xl font-bold flex items-center gap-3">
+                    {selectedProject.icon && selectedProject.iconType === "emoji" && (
+                      <span className="text-4xl">{selectedProject.icon}</span>
+                    )}
+                    {selectedProject.icon && selectedProject.iconType !== "emoji" && (
+                      <img src={selectedProject.icon} alt="Project icon" className="w-8 h-8 object-contain" />
+                    )}
+                    <span>{selectedProject.title}</span>
+                  </h3>
                   {selectedProject.featured && (
                     <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full flex items-center gap-1">
                       <Award className="h-4 w-4" /> Featured
