@@ -150,6 +150,8 @@ export interface WorkExperienceItem {
   link: string
   emoji: string
   year: string
+  icon?: string | null
+  iconType?: string | null
 }
 
 export interface AboutImage {
@@ -183,4 +185,24 @@ export interface Project {
   link: string
   github: string
   featured: boolean
+  icon?: string | null
+  iconType?: string | null
+}
+
+export interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  excerpt: string
+  content: string
+  author: string
+  publishedAt: string
+  updatedAt: string
+  tags: string[]
+  featured: boolean
+  readTime: string
+  image: string
+  category: string
+  icon?: string | null
+  iconType?: string | null
 }

@@ -75,7 +75,7 @@ export default function Certificates() {
         )}
 
         {!isLoading && !error && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 max-w-6xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-12 max-w-5xl mx-auto">
             {certificates.map((cert) => (
               <div key={cert.id} className="flex flex-col items-center">
                 {/* Certificate badge */}

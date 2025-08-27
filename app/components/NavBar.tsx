@@ -56,7 +56,7 @@ export function NavBar() {
             <Link href="/#certificates" className="text-white hover:text-primary-cyan transition-colors">
               Certificates
             </Link>
-            <Link href="/blog" className="text-white hover:text-primary-cyan transition-colors">
+            <Link href="/#blog" className="text-white hover:text-primary-cyan transition-colors">
               Blog
             </Link>
             <Link href="/#WorkExperience" className="text-white hover:text-primary-cyan transition-colors">

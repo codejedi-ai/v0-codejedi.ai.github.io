@@ -4,9 +4,6 @@ import { Mail, ExternalLink, QrCode, X } from "lucide-react"
 import * as LucideIcons from "lucide-react"
 import Link from "next/link"
 import { QRCodeSVG } from "qrcode.react"
-import { submitContactForm, type ContactFormState } from "../actions/contact"
-import { useActionState } from "react"
-
 interface ContactInfo {
   id: string
   name: string
@@ -17,13 +14,22 @@ interface ContactInfo {
   qr: boolean
 }
 
-const initialState: ContactFormState = {}
+interface FormState {
+  success?: boolean
+  message?: string
+  errors?: {
+    name?: string[]
+    email?: string[]
+    subject?: string[]
+    message?: string[]
+  }
+}
 
 export default function Contact() {
   const [contacts, setContacts] = useState<ContactInfo[]>([])
   const [isLoadingContacts, setIsLoadingContacts] = useState(true)
   const [contactsError, setContactsError] = useState<string | null>(null)
-  const [state, formAction] = useActionState(submitContactForm, initialState)
+  const [formState, setFormState] = useState<FormState>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [activeQrCodeContactId, setActiveQrCodeContactId] = useState<string | null>(null)
   const qrModalRef = useRef<HTMLDivElement>(null)
@@ -85,6 +91,49 @@ export default function Contact() {
   }
 
   const selectedContactForQr = contacts.find((c) => c.id === activeQrCodeContactId)
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setIsSubmitting(true)
+    setFormState({})
+
+    const formData = new FormData(event.currentTarget)
+    const name = formData.get("name") as string
+    const email = formData.get("email") as string
+    const subject = formData.get("subject") as string
+    const message = formData.get("message") as string
+
+    // Basic validation
+    const errors: FormState["errors"] = {}
+    if (!name?.trim()) errors.name = ["Name is required"]
+    if (!email?.trim()) errors.email = ["Email is required"]
+    else if (!/\S+@\S+\.\S+/.test(email)) errors.email = ["Please enter a valid email"]
+    if (!subject?.trim()) errors.subject = ["Subject is required"]
+    if (!message?.trim()) errors.message = ["Message is required"]
+
+    if (Object.keys(errors).length > 0) {
+      setFormState({ errors, message: "Please fix the errors in the form." })
+      setIsSubmitting(false)
+      return
+    }
+
+    try {
+      // Simulate form submission (replace with actual implementation)
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      setFormState({
+        success: true,
+        message: "Thank you for your message! I'll get back to you soon."
+      })
+      ;(event.target as HTMLFormElement).reset()
+    } catch (error) {
+      setFormState({
+        success: false,
+        message: "Failed to send message. Please try again later."
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <section

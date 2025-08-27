@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
 
+export const dynamic = "force-static"
+
 export async function GET() {
   try {
     // Hard-coded Hugging Face certificates data for the journal

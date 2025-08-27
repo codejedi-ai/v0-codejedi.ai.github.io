@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 import { Client } from "@notionhq/client"
 
+export const dynamic = "force-static"
+
 // Initialize Notion client
 const notion = new Client({
   auth: process.env.NOTION_INTEGRATION_SECRET,
@@ -108,6 +110,10 @@ export async function GET() {
         }
       }
 
+      // Get page emoji/icon
+      const pageIcon = page.icon?.emoji || page.icon?.file?.url || page.icon?.external?.url || null
+      const iconType = page.icon?.type || null // "emoji", "file", or "external"
+
       return {
         id: page.id,
         name,
@@ -116,6 +122,9 @@ export async function GET() {
         createdTime: page.created_time,
         lastEditedTime: page.last_edited_time,
         url: page.url,
+        // Page icon/emoji
+        icon: pageIcon,
+        iconType: iconType,
       }
     })
 

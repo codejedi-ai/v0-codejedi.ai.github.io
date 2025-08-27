@@ -1,64 +1,7 @@
-"use client"
-
-import { useEffect, useState } from "react"
-import Image from "next/image"
 import Link from "next/link"
-import { Calendar, Clock, ChevronRight, BookOpen } from "lucide-react"
-
-interface BlogPost {
-  id: string
-  title: string
-  slug: string
-  excerpt: string
-  author: string
-  publishedAt: string
-  tags: string[]
-  featured: boolean
-  readTime: string
-  image: string
-  category: string
-}
+import { ExternalLink, BookOpen, PenTool } from "lucide-react"
 
 export default function Blog() {
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [activeCategory, setActiveCategory] = useState<string>("all")
-
-  useEffect(() => {
-    async function fetchBlogPosts() {
-      try {
-        const response = await fetch("/api/blog")
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch blog posts")
-        }
-
-        const data = await response.json()
-        setBlogPosts(data.blogPosts)
-      } catch (err) {
-        console.error("Error fetching blog posts:", err)
-        setError("Failed to load blog posts. Please try again later.")
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchBlogPosts()
-  }, [])
-
-  // Get unique categories
-  const categories = ["all", ...Array.from(new Set(blogPosts.map((post) => post.category)))]
-
-  // Filter posts by category
-  const filteredPosts =
-    activeCategory === "all" ? blogPosts : blogPosts.filter((post) => post.category === activeCategory)
-
-  const featuredPosts = filteredPosts.filter((post) => post.featured)
-  const regularPosts = filteredPosts.filter((post) => !post.featured)
-
-  // Get Hugging Face Journey posts for special section
-  const huggingFacePosts = blogPosts.filter((post) => post.category === "Hugging Face Journey")
 
   return (
     <section id="blog" className="py-20 bg-dark-lighter text-white">
@@ -67,247 +10,96 @@ export default function Blog() {
           <h2 className="text-5xl font-bold text-center mb-4 text-white">BLOG</h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Sharing insights, experiences, and learnings from my journey in AI, cloud computing, and software
-            development.
+            development on Medium.
           </p>
         </div>
 
-        {isLoading && (
-          <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-cyan"></div>
-          </div>
-        )}
-
-        {error && (
-          <div className="text-center text-primary-pink mb-8">
-            <p>{error}</p>
-          </div>
-        )}
-
-        {!isLoading && !error && (
-          <div className="max-w-6xl mx-auto">
-            {/* Hugging Face Journey Section */}
-            {huggingFacePosts.length > 0 && (
-              <div className="mb-16">
-                <div className="text-center mb-12">
-                  <div className="flex items-center justify-center gap-3 mb-4">
-                    <span className="text-4xl">🤗</span>
-                    <h3 className="text-3xl font-bold text-gradient">Hugging Face Journey</h3>
-                  </div>
-                  <p className="text-gray-300 max-w-2xl mx-auto">
-                    Documenting my learning journey through the Hugging Face ecosystem, exploring AI agents and
-                    cutting-edge ML technologies.
-                  </p>
-                </div>
-
-                <div className="grid md:grid-cols-3 gap-6 mb-8">
-                  {huggingFacePosts.map((post) => (
-                    <article
-                      key={post.id}
-                      className="gradient-card rounded-lg overflow-hidden shadow-lg border-gradient group hover:shadow-glow transition-all duration-300"
-                    >
-                      <div className="relative h-32 overflow-hidden">
-                        <Image
-                          src={post.image || "/placeholder.svg"}
-                          alt={post.title}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-110"
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                        />
-                        <div className="absolute top-2 left-2">
-                          <span className="bg-primary-purple/80 text-white px-2 py-1 rounded text-xs font-semibold">
-                            🤗 HF
-                          </span>
-                        </div>
-                      </div>
-                      <div className="p-4">
-                        <div className="flex items-center gap-2 text-xs text-gray-400 mb-2">
-                          <Calendar className="h-3 w-3" />
-                          <span>{new Date(post.publishedAt).toLocaleDateString()}</span>
-                          <span>•</span>
-                          <Clock className="h-3 w-3" />
-                          <span>{post.readTime}</span>
-                        </div>
-                        <h3 className="text-lg font-semibold mb-2 text-white group-hover:text-primary-cyan transition-colors line-clamp-2">
-                          {post.title}
-                        </h3>
-                        <p className="text-gray-300 text-sm mb-3 line-clamp-2">{post.excerpt}</p>
-                        <div className="flex flex-wrap gap-1 mb-3">
-                          {post.tags.slice(0, 2).map((tag) => (
-                            <span
-                              key={tag}
-                              className="bg-dark text-primary-purple px-1 py-0.5 rounded text-xs border border-primary-purple/30"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                        <Link
-                          href={`/blog/${post.slug}`}
-                          className="inline-flex items-center gap-1 text-primary-cyan hover:text-white transition-colors text-sm"
-                        >
-                          Read More <ChevronRight className="h-3 w-3" />
-                        </Link>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-
-                <div className="text-center">
-                  <Link
-                    href="/blog"
-                    className="inline-flex items-center gap-2 bg-gradient-primary text-white px-6 py-3 rounded-md hover:opacity-90 transition-opacity shadow-glow"
-                  >
-                    <BookOpen className="h-4 w-4" />
-                    View All Hugging Face Posts
-                  </Link>
-                </div>
+        <div className="max-w-4xl mx-auto">
+          {/* Medium Blog Section */}
+          <div className="gradient-card rounded-2xl p-8 border-gradient shadow-glow">
+            <div className="text-center mb-8">
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <PenTool className="h-12 w-12 text-primary-cyan" />
+                <h3 className="text-3xl font-bold text-gradient">Medium Blog</h3>
               </div>
-            )}
-
-            {/* Category Filter */}
-            <div className="flex flex-wrap justify-center gap-3 mb-12">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setActiveCategory(category)}
-                  className={`px-4 py-2 rounded-full transition-all ${
-                    activeCategory === category
-                      ? "bg-primary-cyan text-dark font-semibold"
-                      : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                  }`}
-                >
-                  {category === "all" ? "All Posts" : category}
-                </button>
-              ))}
+              <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
+                I share my thoughts, tutorials, and experiences in AI, machine learning, cloud computing, and software development on Medium. 
+                Join me on my journey as I explore cutting-edge technologies and share practical insights.
+              </p>
             </div>
 
-            {/* Featured Posts */}
-            {featuredPosts.length > 0 && (
-              <div className="mb-16">
-                <h3 className="text-2xl font-semibold mb-8 text-primary-cyan">Featured Posts</h3>
-                <div className="grid md:grid-cols-2 gap-8">
-                  {featuredPosts.map((post) => (
-                    <article
-                      key={post.id}
-                      className="gradient-card rounded-lg overflow-hidden shadow-lg border-gradient group hover:shadow-glow transition-all duration-300"
-                    >
-                      <div className="relative h-48 overflow-hidden">
-                        <Image
-                          src={post.image || "/placeholder.svg"}
-                          alt={post.title}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-110"
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                        />
-                        <div className="absolute top-4 left-4">
-                          <span className="bg-primary-cyan text-dark px-2 py-1 rounded text-xs font-semibold">
-                            FEATURED
-                          </span>
-                        </div>
-                        <div className="absolute top-4 right-4">
-                          <span className="bg-dark/80 text-primary-cyan px-2 py-1 rounded text-xs">
-                            {post.category}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="p-6">
-                        <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
-                          <div className="flex items-center gap-1">
-                            <Calendar className="h-4 w-4" />
-                            <span>{new Date(post.publishedAt).toLocaleDateString()}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-4 w-4" />
-                            <span>{post.readTime}</span>
-                          </div>
-                        </div>
-                        <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-primary-cyan transition-colors">
-                          {post.title}
-                        </h3>
-                        <p className="text-gray-300 mb-4 line-clamp-3">{post.excerpt}</p>
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {post.tags.slice(0, 3).map((tag) => (
-                            <span
-                              key={tag}
-                              className="bg-dark text-primary-purple px-2 py-1 rounded text-xs border border-primary-purple/30"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                        <Link
-                          href={`/blog/${post.slug}`}
-                          className="inline-flex items-center gap-2 text-primary-cyan hover:text-white transition-colors"
-                        >
-                          Read More <ChevronRight className="h-4 w-4" />
-                        </Link>
-                      </div>
-                    </article>
-                  ))}
-                </div>
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <div className="bg-dark/50 rounded-lg p-6 border border-primary-cyan/20">
+                <BookOpen className="h-8 w-8 text-primary-cyan mb-4" />
+                <h4 className="text-xl font-semibold text-white mb-3">Technical Articles</h4>
+                <p className="text-gray-300 mb-4">
+                  Deep dives into AI agents, cloud architectures, DevOps practices, and emerging technologies.
+                </p>
+                <ul className="text-sm text-gray-400 space-y-1">
+                  <li>• AI & Machine Learning</li>
+                  <li>• Cloud Computing & AWS</li>
+                  <li>• DevOps & Infrastructure</li>
+                  <li>• Software Development</li>
+                </ul>
               </div>
-            )}
 
-            {/* Regular Posts */}
-            {regularPosts.length > 0 && (
-              <div>
-                <h3 className="text-2xl font-semibold mb-8 text-white">Recent Posts</h3>
-                <div className="grid md:grid-cols-3 gap-6">
-                  {regularPosts.map((post) => (
-                    <article
-                      key={post.id}
-                      className="gradient-card rounded-lg overflow-hidden shadow-lg border-gradient group hover:shadow-glow transition-all duration-300"
-                    >
-                      <div className="relative h-32 overflow-hidden">
-                        <Image
-                          src={post.image || "/placeholder.svg"}
-                          alt={post.title}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-110"
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                        />
-                        <div className="absolute top-2 right-2">
-                          <span className="bg-dark/80 text-primary-cyan px-2 py-1 rounded text-xs">
-                            {post.category}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="p-4">
-                        <div className="flex items-center gap-2 text-xs text-gray-400 mb-2">
-                          <Calendar className="h-3 w-3" />
-                          <span>{new Date(post.publishedAt).toLocaleDateString()}</span>
-                          <span>•</span>
-                          <Clock className="h-3 w-3" />
-                          <span>{post.readTime}</span>
-                        </div>
-                        <h3 className="text-lg font-semibold mb-2 text-white group-hover:text-primary-cyan transition-colors line-clamp-2">
-                          {post.title}
-                        </h3>
-                        <p className="text-gray-300 text-sm mb-3 line-clamp-2">{post.excerpt}</p>
-                        <div className="flex flex-wrap gap-1 mb-3">
-                          {post.tags.slice(0, 2).map((tag) => (
-                            <span
-                              key={tag}
-                              className="bg-dark text-primary-purple px-1 py-0.5 rounded text-xs border border-primary-purple/30"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                        <Link
-                          href={`/blog/${post.slug}`}
-                          className="inline-flex items-center gap-1 text-primary-cyan hover:text-white transition-colors text-sm"
-                        >
-                          Read More <ChevronRight className="h-3 w-3" />
-                        </Link>
-                      </div>
-                    </article>
-                  ))}
-                </div>
+              <div className="bg-dark/50 rounded-lg p-6 border border-primary-purple/20">
+                <PenTool className="h-8 w-8 text-primary-purple mb-4" />
+                <h4 className="text-xl font-semibold text-white mb-3">Learning Journey</h4>
+                <p className="text-gray-300 mb-4">
+                  Documenting my continuous learning journey through certifications, courses, and hands-on projects.
+                </p>
+                <ul className="text-sm text-gray-400 space-y-1">
+                  <li>• Hugging Face AI Agents</li>
+                  <li>• AWS Certifications</li>
+                  <li>• Technology Reviews</li>
+                  <li>• Project Tutorials</li>
+                </ul>
               </div>
-            )}
+            </div>
+
+            <div className="text-center">
+              <Link
+                href="https://medium.com/@darcy.ldx"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 bg-gradient-primary text-white px-8 py-4 rounded-lg hover:opacity-90 transition-all duration-300 shadow-glow text-lg font-semibold"
+              >
+                <ExternalLink className="h-5 w-5" />
+                Visit My Medium Blog
+              </Link>
+              <p className="text-gray-400 text-sm mt-4">
+                Follow me on Medium for the latest articles and insights
+              </p>
+            </div>
           </div>
-        )}
+
+          {/* Call to Action */}
+          <div className="mt-12 text-center">
+            <div className="bg-dark/30 rounded-lg p-6 border border-gray-700">
+              <h4 className="text-xl font-semibold text-white mb-3">Stay Updated</h4>
+              <p className="text-gray-300 mb-4">
+                Get notified when I publish new articles about AI, cloud computing, and software development.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link
+                  href="https://medium.com/@darcy.ldx"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-primary-cyan text-dark px-6 py-3 rounded-md hover:bg-primary-cyan/90 transition-colors font-semibold"
+                >
+                  Follow on Medium
+                </Link>
+                <Link
+                  href="/#contact"
+                  className="inline-flex items-center gap-2 border border-primary-cyan text-primary-cyan px-6 py-3 rounded-md hover:bg-primary-cyan/10 transition-colors"
+                >
+                  Subscribe to Updates
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   )

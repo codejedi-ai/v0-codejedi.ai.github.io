@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 import { Client } from "@notionhq/client"
 
+export const dynamic = "force-static"
+
 // Initialize Notion client
 const notion = new Client({
   auth: process.env.NOTION_INTEGRATION_SECRET,
@@ -119,6 +121,11 @@ export async function GET() {
       const endDate = dateRange?.end || dateRange?.start || "" // Use start date if no end date
       const year = startDate ? new Date(startDate).getFullYear().toString() : ""
 
+      // Get page emoji/icon
+      const pageIcon = page.icon?.emoji || page.icon?.file?.url || page.icon?.external?.url || null
+      const iconType = page.icon?.type || null // "emoji", "file", or "external"
+      const emoji = pageIcon || "💎" // Use page icon or default emoji
+
       return {
         id: page.id,
         title,
@@ -128,8 +135,11 @@ export async function GET() {
         endDate,
         tenure,
         link,
-        emoji: "💎", // Default emoji, you can add this as a property in Notion if needed
+        emoji: emoji,
         year,
+        // Page icon/emoji details
+        icon: pageIcon,
+        iconType: iconType,
       }
     })
 
