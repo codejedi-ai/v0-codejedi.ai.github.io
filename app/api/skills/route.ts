@@ -59,78 +59,35 @@ export async function GET() {
       }
     })
 
+    // Helper function to intelligently group skills based on patterns
+    const groupSkillsIntelligently = (skills: string[], categoryTitle: string): string[] => {
+      if (skills.length === 0) return []
+      
+      // For categories with many skills, try to group them logically
+      if (skills.length > 6) {
+        // Group skills in chunks of 3-4 for better readability
+        const chunks: string[] = []
+        for (let i = 0; i < skills.length; i += 3) {
+          chunks.push(skills.slice(i, i + 3).join(", "))
+        }
+        return chunks
+      } else if (skills.length > 3) {
+        // Group skills in chunks of 2-3 for medium-sized categories
+        const chunks: string[] = []
+        for (let i = 0; i < skills.length; i += 2) {
+          chunks.push(skills.slice(i, i + 2).join(", "))
+        }
+        return chunks
+      } else {
+        // For small categories, keep them as a single group or individual items
+        return skills.length <= 2 ? [skills.join(", ")] : skills
+      }
+    }
+
     // Convert to array and format skills into groups of related items
     const skills = Object.values(skillsMap).map((category: any) => {
-      // Group skills into logical chunks for display
-      const groupedSkills: string[] = []
       const skillsList = category.skills
-
-      if (category.title === "Programming Languages") {
-        // Group programming languages logically
-        const cLanguages = skillsList.filter((s: string) => s.match(/^(C|C\+\+|C#)$/))
-        const pythonR = skillsList.filter((s: string) => s.match(/^(Python|R|Java)$/))
-        const webLangs = skillsList.filter((s: string) => s.match(/^(JavaScript|TypeScript|HTML|CSS)$/))
-        const databases = skillsList.filter((s: string) => s.match(/^(SQL|NoSQL)$/))
-        
-        if (cLanguages.length > 0 || pythonR.length > 0) {
-          groupedSkills.push([...cLanguages, ...pythonR].join(", "))
-        }
-        if (webLangs.length > 0) {
-          groupedSkills.push(webLangs.join(", "))
-        }
-        if (databases.length > 0) {
-          groupedSkills.push(databases.join(", "))
-        }
-      } else if (category.title === "Developer Tools") {
-        // Group dev tools logically
-        const ides = skillsList.filter((s: string) => s.match(/(PyCharm|Eclipse|Jupyter|XCode|Visual Studio|VSCode|Code Blocks)/i))
-        const versionControl = skillsList.filter((s: string) => s.match(/(Git|GitHub|Robot Framework)/i))
-        
-        if (ides.length > 0) {
-          // Split IDEs into chunks of 3-4
-          for (let i = 0; i < ides.length; i += 3) {
-            groupedSkills.push(ides.slice(i, i + 3).join(", "))
-          }
-        }
-        if (versionControl.length > 0) {
-          groupedSkills.push(versionControl.join(", "))
-        }
-      } else if (category.title === "Libraries & Frameworks") {
-        // Group libraries logically
-        const aiLibs = skillsList.filter((s: string) => s.match(/(OpenCV|TensorFlow|PyTorch|Scikit-learn)/i))
-        const dataLibs = skillsList.filter((s: string) => s.match(/(Seaborn|Selenium|Pandas|NumPy|Matplotlib)/i))
-        const webFrameworks = skillsList.filter((s: string) => s.match(/(React|Next\.js|OpenAI Gym|Nengo)/i))
-        
-        if (aiLibs.length > 0) {
-          groupedSkills.push(aiLibs.join(", "))
-        }
-        if (dataLibs.length > 0) {
-          groupedSkills.push(dataLibs.join(", "))
-        }
-        if (webFrameworks.length > 0) {
-          groupedSkills.push(webFrameworks.join(", "))
-        }
-      } else if (category.title === "DevOps") {
-        // Group DevOps tools logically
-        const cicd = skillsList.filter((s: string) => s.match(/(CI\/CD|GitHub Actions|CodePipeline)/i))
-        const automation = skillsList.filter((s: string) => s.match(/(Jenkins|Ansible|Docker|Kubernetes)/i))
-        const iac = skillsList.filter((s: string) => s.match(/(Infrastructure|Terraform)/i))
-        
-        if (cicd.length > 0) {
-          groupedSkills.push(cicd.join(", "))
-        }
-        if (automation.length > 0) {
-          groupedSkills.push(automation.join(", "))
-        }
-        if (iac.length > 0) {
-          groupedSkills.push(iac.join(", "))
-        }
-      } else {
-        // For other categories, group in chunks of 2-3
-        for (let i = 0; i < skillsList.length; i += 2) {
-          groupedSkills.push(skillsList.slice(i, i + 2).join(", "))
-        }
-      }
+      const groupedSkills = groupSkillsIntelligently(skillsList, category.title)
 
       return {
         ...category,
