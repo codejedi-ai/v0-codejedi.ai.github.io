@@ -1,6 +1,6 @@
 "use client"
-import { useState } from "react"
-import { Mail, Send, User, Phone, MessageSquare, Instagram, Twitter, Linkedin, Github } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { Mail, Send, User, Phone, MessageSquare, Instagram, Twitter, Linkedin, Github, Plus, X } from "lucide-react"
 
 interface FormState {
   success?: boolean
@@ -8,32 +8,97 @@ interface FormState {
   error?: string
 }
 
+interface ContactMethod {
+  id: string
+  type: string
+  value: string
+  label: string
+  placeholder: string
+  icon: any
+}
+
 interface ContactFormData {
   name: string
-  email: string
-  phone: string
-  instagram: string
-  twitter: string
-  discord: string
-  linkedin: string
-  github: string
   message: string
+  contactMethods: ContactMethod[]
 }
+
+const CONTACT_METHOD_OPTIONS = [
+  {
+    type: "email",
+    label: "Email",
+    placeholder: "your.email@example.com",
+    icon: Mail,
+    validation: "email"
+  },
+  {
+    type: "phone",
+    label: "Phone Number",
+    placeholder: "+1 (555) 123-4567",
+    icon: Phone,
+    validation: "phone"
+  },
+  {
+    type: "instagram",
+    label: "Instagram",
+    placeholder: "@yourusername",
+    icon: Instagram,
+    validation: "instagram"
+  },
+  {
+    type: "twitter",
+    label: "Twitter/X",
+    placeholder: "@yourusername",
+    icon: Twitter,
+    validation: "twitter"
+  },
+  {
+    type: "discord",
+    label: "Discord",
+    placeholder: "username#1234",
+    icon: MessageSquare,
+    validation: "discord"
+  },
+  {
+    type: "linkedin",
+    label: "LinkedIn",
+    placeholder: "https://linkedin.com/in/yourname",
+    icon: Linkedin,
+    validation: "linkedin"
+  },
+  {
+    type: "github",
+    label: "GitHub",
+    placeholder: "https://github.com/yourusername",
+    icon: Github,
+    validation: "github"
+  }
+]
 
 export default function Contact() {
   const [formState, setFormState] = useState<FormState>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
-    email: "",
-    phone: "",
-    instagram: "",
-    twitter: "",
-    discord: "",
-    linkedin: "",
-    github: "",
-    message: ""
+    message: "",
+    contactMethods: []
   })
+  const [showContactDropdown, setShowContactDropdown] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowContactDropdown(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -43,10 +108,67 @@ export default function Contact() {
     }))
   }
 
+  const handleContactMethodChange = (id: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      contactMethods: prev.contactMethods.map(method =>
+        method.id === id ? { ...method, value } : method
+      )
+    }))
+  }
+
+  const addContactMethod = (type: string) => {
+    const option = CONTACT_METHOD_OPTIONS.find(opt => opt.type === type)
+    if (!option) return
+
+    const newMethod: ContactMethod = {
+      id: `${type}-${Date.now()}`,
+      type: option.type,
+      value: "",
+      label: option.label,
+      placeholder: option.placeholder,
+      icon: option.icon
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      contactMethods: [...prev.contactMethods, newMethod]
+    }))
+    setShowContactDropdown(false)
+  }
+
+  const removeContactMethod = (id: string) => {
+    setFormData(prev => ({
+      ...prev,
+      contactMethods: prev.contactMethods.filter(method => method.id !== id)
+    }))
+  }
+
+  const getAvailableContactMethods = () => {
+    const usedTypes = formData.contactMethods.map(method => method.type)
+    return CONTACT_METHOD_OPTIONS.filter(option => !usedTypes.includes(option.type))
+  }
+
   const validateSocialMedia = (platform: string, value: string): string | null => {
     if (!value.trim()) return null // Optional fields
     
     switch (platform) {
+      case 'email':
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(value)) {
+          return "Please enter a valid email address."
+        }
+        break
+      
+      case 'phone':
+        // Basic phone validation
+        const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/
+        if (!phoneRegex.test(value.replace(/[\s\-\(\)]/g, ''))) {
+          return "Please enter a valid phone number."
+        }
+        break
+      
       case 'instagram':
         // Instagram username validation: alphanumeric, dots, underscores, 1-30 chars
         const instagramRegex = /^@?[a-zA-Z0-9._]{1,30}$/
@@ -91,15 +213,9 @@ export default function Contact() {
     return null
   }
 
-  const validateAtLeastOneSocial = (): boolean => {
-    const socialFields = [
-      formData.instagram,
-      formData.twitter,
-      formData.discord,
-      formData.linkedin,
-      formData.github
-    ]
-    return socialFields.some(field => field.trim() !== '')
+  const validateAtLeastOneContact = (): boolean => {
+    return formData.contactMethods.length > 0 && 
+           formData.contactMethods.some(method => method.value.trim() !== '')
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -108,66 +224,59 @@ export default function Contact() {
     setFormState({})
 
     // Basic validation
-    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+    if (!formData.name.trim() || !formData.message.trim()) {
       setFormState({
-        error: "Name, email, and message are required fields."
+        error: "Name and message are required fields."
       })
       setIsSubmitting(false)
       return
     }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(formData.email)) {
+    // Check if at least one contact method is provided
+    if (!validateAtLeastOneContact()) {
       setFormState({
-        error: "Please enter a valid email address."
+        error: "Please add at least one contact method so I can reach you."
       })
       setIsSubmitting(false)
       return
     }
 
-    // Check if at least one social media contact is provided
-    if (!validateAtLeastOneSocial()) {
-      setFormState({
-        error: "Please provide at least one social media contact (Instagram, Twitter, Discord, LinkedIn, or GitHub)."
-      })
-      setIsSubmitting(false)
-      return
+    // Validate contact methods
+    const contactErrors = []
+    
+    for (const method of formData.contactMethods) {
+      if (method.value.trim()) {
+        const error = validateSocialMedia(method.type, method.value)
+        if (error) {
+          contactErrors.push(`${method.label}: ${error}`)
+        }
+      }
     }
-
-    // Social media validation
-    const socialMediaErrors = []
     
-    const instagramError = validateSocialMedia('instagram', formData.instagram)
-    if (instagramError) socialMediaErrors.push(`Instagram: ${instagramError}`)
-    
-    const twitterError = validateSocialMedia('twitter', formData.twitter)
-    if (twitterError) socialMediaErrors.push(`Twitter: ${twitterError}`)
-    
-    const discordError = validateSocialMedia('discord', formData.discord)
-    if (discordError) socialMediaErrors.push(`Discord: ${discordError}`)
-    
-    const linkedinError = validateSocialMedia('linkedin', formData.linkedin)
-    if (linkedinError) socialMediaErrors.push(`LinkedIn: ${linkedinError}`)
-    
-    const githubError = validateSocialMedia('github', formData.github)
-    if (githubError) socialMediaErrors.push(`GitHub: ${githubError}`)
-    
-    if (socialMediaErrors.length > 0) {
+    if (contactErrors.length > 0) {
       setFormState({
-        error: socialMediaErrors.join(' ')
+        error: contactErrors.join(' ')
       })
       setIsSubmitting(false)
       return
     }
 
     try {
+      // Convert contact methods to the expected API format
+      const apiData = {
+        name: formData.name,
+        message: formData.message,
+        ...Object.fromEntries(
+          formData.contactMethods.map(method => [method.type, method.value])
+        )
+      }
+
       const response = await fetch("/api/contacts/submit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(apiData),
       })
 
       const result = await response.json()
@@ -180,14 +289,8 @@ export default function Contact() {
         // Reset form
         setFormData({
           name: "",
-          email: "",
-          phone: "",
-          instagram: "",
-          twitter: "",
-          discord: "",
-          linkedin: "",
-          github: "",
-          message: ""
+          message: "",
+          contactMethods: []
         })
       } else {
         setFormState({
@@ -242,155 +345,25 @@ export default function Contact() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Required Fields */}
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-200 mb-2">
-                    <User className="h-4 w-4 inline mr-2" />
-                    Name *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-primary-cyan focus:outline-none transition-colors"
-                    placeholder="Your full name"
-                  />
-          </div>
-
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
-                    <Mail className="h-4 w-4 inline mr-2" />
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-primary-cyan focus:outline-none transition-colors"
-                    placeholder="your.email@example.com"
-                  />
-                </div>
-            </div>
-
-              {/* Phone Number */}
+                        <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Core Required Fields */}
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-200 mb-2">
-                  <Phone className="h-4 w-4 inline mr-2" />
-                  Phone Number (Optional)
+                <label htmlFor="name" className="block text-sm font-medium text-gray-200 mb-2">
+                  <User className="h-4 w-4 inline mr-2" />
+                  Name *
                 </label>
                 <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
                   onChange={handleInputChange}
+                  required
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-primary-cyan focus:outline-none transition-colors"
-                  placeholder="+1 (555) 123-4567"
+                  placeholder="Your full name"
                 />
               </div>
 
-              {/* Social Media Section */}
-              <div className="border-t border-gray-700 pt-6">
-                <h4 className="text-lg font-medium text-gray-200 mb-2">
-                  Social Media Contacts
-                </h4>
-                <p className="text-sm text-gray-400 mb-4">
-                  Please provide at least one social media contact so I can connect with you.
-                </p>
-                
-                <div className="grid md:grid-cols-2 gap-6">
-
-                  <div>
-                    <label htmlFor="instagram" className="block text-sm font-medium text-gray-200 mb-2">
-                      <Instagram className="h-4 w-4 inline mr-2" />
-                      Instagram
-                    </label>
-                    <input
-                      type="text"
-                      id="instagram"
-                      name="instagram"
-                      value={formData.instagram}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-primary-cyan focus:outline-none transition-colors"
-                      placeholder="@yourusername"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="twitter" className="block text-sm font-medium text-gray-200 mb-2">
-                      <Twitter className="h-4 w-4 inline mr-2" />
-                      Twitter/X
-                    </label>
-                    <input
-                      type="text"
-                      id="twitter"
-                      name="twitter"
-                      value={formData.twitter}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-primary-cyan focus:outline-none transition-colors"
-                      placeholder="@yourusername"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="discord" className="block text-sm font-medium text-gray-200 mb-2">
-                      <MessageSquare className="h-4 w-4 inline mr-2" />
-                      Discord
-                    </label>
-                    <input
-                      type="text"
-                      id="discord"
-                      name="discord"
-                      value={formData.discord}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-primary-cyan focus:outline-none transition-colors"
-                      placeholder="username#1234"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="linkedin" className="block text-sm font-medium text-gray-200 mb-2">
-                      <Linkedin className="h-4 w-4 inline mr-2" />
-                      LinkedIn
-                    </label>
-                    <input
-                      type="url"
-                      id="linkedin"
-                      name="linkedin"
-                      value={formData.linkedin}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-primary-cyan focus:outline-none transition-colors"
-                      placeholder="https://linkedin.com/in/yourname"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="github" className="block text-sm font-medium text-gray-200 mb-2">
-                      <Github className="h-4 w-4 inline mr-2" />
-                      GitHub
-                    </label>
-                    <input
-                      type="url"
-                      id="github"
-                      name="github"
-                      value={formData.github}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-primary-cyan focus:outline-none transition-colors"
-                      placeholder="https://github.com/yourusername"
-                    />
-          </div>
-        </div>
-      </div>
-
-              {/* Message Field */}
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-200 mb-2">
                   <MessageSquare className="h-4 w-4 inline mr-2" />
@@ -405,8 +378,84 @@ export default function Contact() {
                   rows={6}
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-primary-cyan focus:outline-none transition-colors resize-vertical"
                   placeholder="Tell me about your project, ask a question, or just say hello..."
-              />
-            </div>
+                />
+              </div>
+
+              {/* Dynamic Contact Methods */}
+              <div className="border-t border-gray-700 pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg font-medium text-gray-200">
+                    Contact Methods
+                  </h4>
+                  <p className="text-sm text-gray-400">
+                    Add at least one way for me to reach you
+                  </p>
+                </div>
+                
+                {/* Existing Contact Methods */}
+                <div className="space-y-4 mb-4">
+                  {formData.contactMethods.map((method) => {
+                    const IconComponent = method.icon
+                    return (
+                      <div key={method.id} className="flex items-center gap-3 p-4 bg-gray-800/50 rounded-lg border border-gray-600">
+                        <IconComponent className="h-5 w-5 text-primary-cyan flex-shrink-0" />
+                        <div className="flex-1">
+                          <label className="block text-sm font-medium text-gray-200 mb-1">
+                            {method.label}
+                          </label>
+                          <input
+                            type={method.type === 'email' ? 'email' : method.type === 'linkedin' || method.type === 'github' ? 'url' : 'text'}
+                            value={method.value}
+                            onChange={(e) => handleContactMethodChange(method.id, e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:border-primary-cyan focus:outline-none transition-colors"
+                            placeholder={method.placeholder}
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeContactMethod(method.id)}
+                          className="text-red-400 hover:text-red-300 p-1 rounded transition-colors"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {/* Add Contact Method Button */}
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => setShowContactDropdown(!showContactDropdown)}
+                    disabled={getAvailableContactMethods().length === 0}
+                    className="flex items-center gap-2 px-4 py-2 bg-primary-cyan/10 border border-primary-cyan/30 rounded-lg text-primary-cyan hover:bg-primary-cyan/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Contact Method
+                  </button>
+
+                  {/* Dropdown */}
+                  {showContactDropdown && getAvailableContactMethods().length > 0 && (
+                    <div className="absolute top-full left-0 mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-10">
+                      {getAvailableContactMethods().map((option) => {
+                        const IconComponent = option.icon
+                        return (
+                          <button
+                            key={option.type}
+                            type="button"
+                            onClick={() => addContactMethod(option.type)}
+                            className="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-200 hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors"
+                          >
+                            <IconComponent className="h-4 w-4 text-primary-cyan" />
+                            <span>{option.label}</span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
 
               {/* Submit Button */}
               <div className="text-center">
