@@ -27,6 +27,8 @@ export default function Projects() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+  const [imageLoadingStates, setImageLoadingStates] = useState<Record<string, boolean>>({})
+  const [modalImageLoading, setModalImageLoading] = useState(false)
 
   useEffect(() => {
     async function fetchProjects() {
@@ -40,6 +42,13 @@ export default function Projects() {
         const data = await response.json()
         setProjects(data.projects)
         setFilteredProjects(data.projects)
+        
+        // Initialize loading states for all projects
+        const initialLoadingStates = data.projects.reduce((acc: Record<string, boolean>, project: Project) => {
+          acc[project.id] = true
+          return acc
+        }, {})
+        setImageLoadingStates(initialLoadingStates)
       } catch (err) {
         console.error("Error fetching projects:", err)
         setError("Failed to load projects. Please try again later.")
@@ -66,9 +75,19 @@ export default function Projects() {
     }
   }
 
+  // Handle image loading
+  const handleImageLoad = (projectId: string) => {
+    setImageLoadingStates(prev => ({ ...prev, [projectId]: false }))
+  }
+
+  const handleImageError = (projectId: string) => {
+    setImageLoadingStates(prev => ({ ...prev, [projectId]: false }))
+  }
+
   // Open project details modal
   const openProjectDetails = (project: Project) => {
     setSelectedProject(project)
+    setModalImageLoading(true)
     document.body.style.overflow = "hidden" // Prevent scrolling when modal is open
   }
 
@@ -139,15 +158,22 @@ export default function Projects() {
                 className="bg-gray-800/50 rounded-lg overflow-hidden border border-gray-700 hover:border-blue-500 transition-all duration-300 flex flex-col h-full group"
               >
                 <div className="relative h-48 overflow-hidden">
+                  {imageLoadingStates[project.id] && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-800 z-10">
+                      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                    </div>
+                  )}
                   <Image
                     src={project.image || "/placeholder.svg?height=400&width=600&query=project"}
                     alt={project.title}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    onLoad={() => handleImageLoad(project.id)}
                     onError={(e) => {
                       console.warn(`Failed to load image for ${project.title}:`, project.image)
                       e.currentTarget.src = "/project-management-team.png"
+                      handleImageError(project.id)
                     }}
                   />
                   {project.featured && (
@@ -213,15 +239,22 @@ export default function Projects() {
           <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
             <div className="bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="relative h-64 md:h-80">
+                {modalImageLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-800 z-10">
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+                  </div>
+                )}
                 <Image
                   src={selectedProject.image || "/placeholder.svg?height=400&width=600&query=project"}
                   alt={selectedProject.title}
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 800px"
+                  onLoad={() => setModalImageLoading(false)}
                   onError={(e) => {
                     console.warn(`Failed to load modal image for ${selectedProject.title}:`, selectedProject.image)
                     e.currentTarget.src = "/project-management-team.png"
+                    setModalImageLoading(false)
                   }}
                 />
                 <button
