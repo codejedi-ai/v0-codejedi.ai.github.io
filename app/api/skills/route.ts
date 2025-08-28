@@ -11,9 +11,34 @@ const SKILLS_DATABASE_ID = "93762143-ef43-4c4b-be97-cb7e7d2dd2f4"
 
 export async function GET() {
   try {
-    // Fetch skills from Notion database
+    // Fetch skills from Notion database with display filter
     const response = await notion.databases.query({
       database_id: SKILLS_DATABASE_ID,
+      filter: {
+        property: "display",
+        checkbox: {
+          equals: true
+        }
+      }
+    })
+
+    // Also get all skills for comparison
+    const allSkillsResponse = await notion.databases.query({
+      database_id: SKILLS_DATABASE_ID,
+    })
+
+    // Analysis logging
+    console.log('\n🔍 SKILLS DATABASE ANALYSIS:')
+    console.log(`📊 Total skills in database: ${allSkillsResponse.results.length}`)
+    console.log(`✅ Skills with display=true: ${response.results.length}`)
+    
+    // Show all skills with display=true
+    console.log('\n✅ SKILLS WITH DISPLAY CHECKED:')
+    response.results.forEach((page: any, index: number) => {
+      const properties = page.properties
+      const name = properties.Name?.title?.[0]?.plain_text || "Untitled"
+      const category = properties.category?.select?.name || "No Category"
+      console.log(`   ${index + 1}. ${name} [${category}]`)
     })
 
     // Group skills by category
@@ -148,8 +173,17 @@ export async function GET() {
     ]
 
     // Return the skills data as JSON
-    return NextResponse.json({ 
-      skills: skills.length > 0 ? skills : fallbackSkills 
+        console.log(`\n🎯 FINAL RESULT: ${skills.length} categories will be displayed on frontend`)
+    console.log('📋 Categories:', skills.map(s => s.title).join(', '))
+
+    return NextResponse.json({
+      skills: skills.length > 0 ? skills : fallbackSkills,
+      meta: {
+        totalSkillsInDatabase: allSkillsResponse.results.length,
+        skillsWithDisplayTrue: response.results.length,
+        categoriesDisplayed: skills.length,
+        analysisTimestamp: new Date().toISOString()
+      }
     }, { status: 200 })
   } catch (error) {
     console.error("Error fetching skills:", error)
