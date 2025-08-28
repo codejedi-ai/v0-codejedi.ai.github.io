@@ -193,6 +193,7 @@ export default function AboutMe() {
               alt="CodeJedi"
               fill
               className="rounded-full object-cover border-4 border-blue-400 shadow-lg"
+              sizes="128px"
             />
           </div>
         </div>

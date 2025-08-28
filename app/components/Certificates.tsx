@@ -81,7 +81,13 @@ export default function Certificates() {
                 {/* Certificate badge */}
                 <div className="mb-6 transform hover:scale-110 transition-transform duration-300">
                   <div className="relative w-40 h-40">
-                    <Image src={cert.image || "/placeholder.svg"} alt={cert.alt} fill className="object-contain" />
+                    <Image 
+                      src={cert.image || "/placeholder.svg"} 
+                      alt={cert.alt} 
+                      fill 
+                      className="object-contain" 
+                      sizes="160px"
+                    />
                   </div>
                 </div>
 

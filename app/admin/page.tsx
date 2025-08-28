@@ -21,7 +21,11 @@ interface ImagesData {
   images: any[]
 }
 
-type DatabaseType = "work-experience" | "blog" | "projects" | "images"
+interface AboutImagesData {
+  aboutImages: any[]
+}
+
+type DatabaseType = "work-experience" | "blog" | "projects" | "images" | "about-images"
 
 export default function AdminPage() {
   const [activeDatabase, setActiveDatabase] = useState<DatabaseType>("work-experience")
@@ -29,6 +33,7 @@ export default function AdminPage() {
   const [blogData, setBlogData] = useState<BlogData | null>(null)
   const [projectsData, setProjectsData] = useState<ProjectsData | null>(null)
   const [imagesData, setImagesData] = useState<ImagesData | null>(null)
+  const [aboutImagesData, setAboutImagesData] = useState<AboutImagesData | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [rawResponse, setRawResponse] = useState<string>("")
@@ -61,6 +66,13 @@ export default function AdminPage() {
       icon: ImageIcon,
       endpoint: "/api/images",
       description: "Fetch images from Notion",
+    },
+    {
+      id: "about-images" as DatabaseType,
+      name: "About Images",
+      icon: ImageIcon,
+      endpoint: "/api/about-images",
+      description: "Fetch about images from Notion",
     },
   ]
 
@@ -123,6 +135,15 @@ export default function AdminPage() {
           }
           setImagesData(data)
           break
+        case "about-images":
+          console.log("📊 Number of about images:", data.aboutImages?.length || 0)
+          if (data.aboutImages) {
+            data.aboutImages.forEach((item: any, index: number) => {
+              console.log(`📋 About Image ${index + 1}:`, item)
+            })
+          }
+          setAboutImagesData(data)
+          break
       }
 
       setRawResponse(JSON.stringify(data, null, 2))
@@ -154,6 +175,8 @@ export default function AdminPage() {
         return projectsData
       case "images":
         return imagesData
+      case "about-images":
+        return aboutImagesData
       default:
         return null
     }
@@ -165,13 +188,15 @@ export default function AdminPage() {
 
     switch (activeDatabase) {
       case "work-experience":
-        return data.workExperience || []
+        return (data as WorkExperienceData).workExperience || []
       case "blog":
         return (data as BlogData).blogPosts || []
       case "projects":
         return (data as ProjectsData).projects || []
       case "images":
         return (data as ImagesData).images || []
+      case "about-images":
+        return (data as AboutImagesData).aboutImages || []
       default:
         return []
     }
@@ -316,6 +341,38 @@ export default function AdminPage() {
     </div>
   )
 
+  const renderAboutImageItem = (item: any, index: number) => (
+    <div key={item.id || index} className="bg-dark-lighter/50 rounded-lg p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <p className="text-gray-400 text-sm">ID</p>
+          <p className="text-white font-medium">{item.id || "N/A"}</p>
+        </div>
+        <div>
+          <p className="text-gray-400 text-sm">Alt Text</p>
+          <p className="text-white">{item.alt || "N/A"}</p>
+        </div>
+        <div className="md:col-span-2">
+          <p className="text-gray-400 text-sm">Source URL</p>
+          <p className="text-white break-all">{item.src || "N/A"}</p>
+        </div>
+        {item.src && (
+          <div className="md:col-span-2">
+            <p className="text-gray-400 text-sm mb-2">Preview</p>
+            <img
+              src={item.src || "/placeholder.svg"}
+              alt={item.alt || item.id}
+              className="max-w-xs max-h-32 object-cover rounded border border-gray-600"
+              onError={(e) => {
+                e.currentTarget.style.display = "none"
+              }}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  )
+
   const renderFormattedItem = (item: any, index: number) => {
     switch (activeDatabase) {
       case "work-experience":
@@ -326,6 +383,8 @@ export default function AdminPage() {
         return renderProjectItem(item, index)
       case "images":
         return renderImageItem(item, index)
+      case "about-images":
+        return renderAboutImageItem(item, index)
       default:
         return null
     }
