@@ -1,7 +1,6 @@
 import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  /* config for GitHub Pages deployment */
   output: "export",
   trailingSlash: true,
   images: {
@@ -39,9 +38,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // GitHub Pages specific configuration
-  basePath: process.env.NODE_ENV === "production" ? "/codejedi.ai.github.io-v2" : "",
-  assetPrefix: process.env.NODE_ENV === "production" ? "/codejedi.ai.github.io-v2/" : "",
+
 }
 
 export default nextConfig
