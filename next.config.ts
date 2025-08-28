@@ -1,10 +1,11 @@
 import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  output: "export",
+  // Removed static export for Vercel deployment with dynamic API routes
   trailingSlash: true,
   images: {
-    unoptimized: true,
+    // Re-enable optimization for Vercel
+    unoptimized: false,
     remotePatterns: [
       {
         protocol: "https",

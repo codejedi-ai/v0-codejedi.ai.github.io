@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server"
 import { Client } from "@notionhq/client"
 
-// This API route handles POST requests and must be dynamic
-export const dynamic = "force-dynamic"
+// This API route handles POST requests and needs to be dynamic (removed static export)
 
 // Initialize Notion client
 const notion = new Client({

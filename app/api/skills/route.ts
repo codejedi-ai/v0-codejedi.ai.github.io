@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 
-export const dynamic = "force-static"
+// Removed force-static export for Vercel deployment
 
 export async function GET() {
   try {

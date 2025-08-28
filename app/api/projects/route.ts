@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { Client } from "@notionhq/client"
 
-export const dynamic = "force-static"
+// Removed force-static export for Vercel deployment
 
 // Initialize Notion client
 const notion = new Client({
