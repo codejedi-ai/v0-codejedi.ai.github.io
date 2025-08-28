@@ -180,6 +180,9 @@ export async function GET() {
 
         const featured =
           properties.Featured?.checkbox || properties.Highlight?.checkbox || properties.Important?.checkbox || false
+        
+        const technical =
+          properties.Technical?.checkbox || false
 
         // Extract cover image from page cover property (PRIORITY)
         let image = "/placeholder.svg"
@@ -228,6 +231,7 @@ export async function GET() {
           link,
           github,
           featured,
+          technical,
           // Page icon/emoji
           icon: pageIcon,
           iconType: iconType,

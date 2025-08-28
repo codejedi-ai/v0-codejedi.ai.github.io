@@ -11,9 +11,12 @@ interface FormState {
 interface ContactMethod {
   id: string
   type: string
-  value: string
   label: string
+  platform: string
+  value: string
+  category: string
   placeholder: string
+  inputType: string
   icon: any
 }
 
@@ -24,54 +27,124 @@ interface ContactFormData {
 }
 
 const CONTACT_METHOD_OPTIONS = [
+  // Email Category
   {
     type: "email",
     label: "Email",
+    platform: "Email",
+    category: "email",
     placeholder: "your.email@example.com",
+    inputType: "email",
     icon: Mail,
     validation: "email"
   },
+  
+  // Phone Category
   {
     type: "phone",
     label: "Phone Number",
+    platform: "Phone",
+    category: "phone",
     placeholder: "+1 (555) 123-4567",
+    inputType: "tel",
     icon: Phone,
     validation: "phone"
   },
   {
-    type: "instagram",
-    label: "Instagram",
-    placeholder: "@yourusername",
-    icon: Instagram,
-    validation: "instagram"
-  },
-  {
-    type: "twitter",
-    label: "Twitter/X",
-    placeholder: "@yourusername",
-    icon: Twitter,
-    validation: "twitter"
-  },
-  {
-    type: "discord",
-    label: "Discord",
-    placeholder: "username#1234",
+    type: "whatsapp",
+    label: "WhatsApp",
+    platform: "WhatsApp",
+    category: "phone",
+    placeholder: "+1 (555) 123-4567",
+    inputType: "tel",
     icon: MessageSquare,
-    validation: "discord"
+    validation: "phone"
   },
+  
+  // URL Category
   {
     type: "linkedin",
     label: "LinkedIn",
+    platform: "LinkedIn",
+    category: "url",
     placeholder: "https://linkedin.com/in/yourname",
+    inputType: "url",
     icon: Linkedin,
     validation: "linkedin"
   },
   {
     type: "github",
     label: "GitHub",
+    platform: "GitHub",
+    category: "url",
     placeholder: "https://github.com/yourusername",
+    inputType: "url",
     icon: Github,
     validation: "github"
+  },
+  
+  // Social Handle Category
+  {
+    type: "discord",
+    label: "Discord",
+    platform: "Discord",
+    category: "handle",
+    placeholder: "username#1234",
+    inputType: "text",
+    icon: MessageSquare,
+    validation: "discord"
+  },
+  {
+    type: "telegram",
+    label: "Telegram",
+    platform: "Telegram",
+    category: "handle",
+    placeholder: "@username",
+    inputType: "text",
+    icon: MessageSquare,
+    validation: "telegram"
+  },
+  {
+    type: "instagram",
+    label: "Instagram",
+    platform: "Instagram",
+    category: "handle",
+    placeholder: "@yourusername",
+    inputType: "text",
+    icon: Instagram,
+    validation: "instagram"
+  },
+  {
+    type: "twitter",
+    label: "Twitter/X",
+    platform: "Twitter",
+    category: "handle",
+    placeholder: "@yourusername",
+    inputType: "text",
+    icon: Twitter,
+    validation: "twitter"
+  },
+  {
+    type: "wechat",
+    label: "WeChat",
+    platform: "WeChat",
+    category: "handle",
+    placeholder: "wechat-id",
+    inputType: "text",
+    icon: MessageSquare,
+    validation: "text"
+  },
+  
+  // Other Category
+  {
+    type: "other",
+    label: "Other",
+    platform: "",
+    category: "other",
+    placeholder: "Contact info",
+    inputType: "text",
+    icon: MessageSquare,
+    validation: "text"
   }
 ]
 
@@ -84,6 +157,7 @@ export default function Contact() {
     contactMethods: []
   })
   const [showContactDropdown, setShowContactDropdown] = useState(false)
+  const [dropdownDirection, setDropdownDirection] = useState<'down' | 'up'>('down')
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   // Close dropdown when clicking outside
@@ -108,11 +182,11 @@ export default function Contact() {
     }))
   }
 
-  const handleContactMethodChange = (id: string, value: string) => {
+  const handleContactMethodChange = (id: string, field: 'platform' | 'value', value: string) => {
     setFormData(prev => ({
       ...prev,
       contactMethods: prev.contactMethods.map(method =>
-        method.id === id ? { ...method, value } : method
+        method.id === id ? { ...method, [field]: value } : method
       )
     }))
   }
@@ -124,9 +198,12 @@ export default function Contact() {
     const newMethod: ContactMethod = {
       id: `${type}-${Date.now()}`,
       type: option.type,
-      value: "",
       label: option.label,
+      platform: option.platform,
+      value: "",
+      category: option.category,
       placeholder: option.placeholder,
+      inputType: option.inputType,
       icon: option.icon
     }
 
@@ -147,6 +224,29 @@ export default function Contact() {
   const getAvailableContactMethods = () => {
     const usedTypes = formData.contactMethods.map(method => method.type)
     return CONTACT_METHOD_OPTIONS.filter(option => !usedTypes.includes(option.type))
+  }
+
+  const calculateDropdownDirection = () => {
+    if (dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect()
+      const dropdownHeight = 400 // max-height of dropdown (96 * 4)
+      const spaceBelow = window.innerHeight - rect.bottom
+      const spaceAbove = rect.top
+      
+      // If there's not enough space below but enough above, open upward
+      if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
+        setDropdownDirection('up')
+    } else {
+        setDropdownDirection('down')
+      }
+    }
+  }
+
+  const handleDropdownToggle = () => {
+    if (!showContactDropdown) {
+      calculateDropdownDirection()
+    }
+    setShowContactDropdown(!showContactDropdown)
   }
 
   const validateSocialMedia = (platform: string, value: string): string | null => {
@@ -209,6 +309,30 @@ export default function Contact() {
           return "Please enter a valid GitHub profile URL (e.g., https://github.com/yourusername)."
         }
         break
+      
+      case 'telegram':
+        // Telegram username validation
+        const telegramRegex = /^@?[a-zA-Z0-9_]{5,32}$/
+        if (!telegramRegex.test(value.replace('@', ''))) {
+          return "Telegram username must be 5-32 characters and contain only letters, numbers, and underscores."
+        }
+        break
+      
+      case 'text':
+        // Basic text validation for other platforms
+        if (value.trim().length < 2) {
+          return "Please enter a valid username/handle."
+        }
+        break
+      
+      case 'url':
+        // Basic URL validation
+        try {
+          new URL(value.startsWith('http') ? value : `https://${value}`)
+        } catch {
+          return "Please enter a valid URL."
+        }
+        break
     }
     return null
   }
@@ -245,11 +369,17 @@ export default function Contact() {
     const contactErrors = []
     
     for (const method of formData.contactMethods) {
+      // Validate the value if it exists
       if (method.value.trim()) {
         const error = validateSocialMedia(method.type, method.value)
         if (error) {
           contactErrors.push(`${method.label}: ${error}`)
         }
+      }
+      
+      // For "Other" type, ensure platform is filled
+      if (method.type === 'other' && !method.platform.trim()) {
+        contactErrors.push(`${method.label}: Please specify the platform name`)
       }
     }
     
@@ -262,13 +392,15 @@ export default function Contact() {
     }
 
     try {
-      // Convert contact methods to the expected API format
+      // Convert contact methods to the new API format
       const apiData = {
         name: formData.name,
         message: formData.message,
-        ...Object.fromEntries(
-          formData.contactMethods.map(method => [method.type, method.value])
-        )
+        contactMethods: formData.contactMethods.map(method => ({
+          platform: method.platform || method.label,
+          category: method.category,
+          value: method.value
+        }))
       }
 
       const response = await fetch("/api/contacts/submit", {
@@ -362,7 +494,7 @@ export default function Contact() {
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-primary-cyan focus:outline-none transition-colors"
                   placeholder="Your full name"
                 />
-              </div>
+          </div>
 
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-200 mb-2">
@@ -379,7 +511,7 @@ export default function Contact() {
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-primary-cyan focus:outline-none transition-colors resize-vertical"
                   placeholder="Tell me about your project, ask a question, or just say hello..."
                 />
-              </div>
+            </div>
 
               {/* Dynamic Contact Methods */}
               <div className="border-t border-gray-700 pt-6">
@@ -389,35 +521,61 @@ export default function Contact() {
                   </h4>
                   <p className="text-sm text-gray-400">
                     Add at least one way for me to reach you
-                  </p>
-                </div>
+            </p>
+          </div>
                 
                 {/* Existing Contact Methods */}
                 <div className="space-y-4 mb-4">
                   {formData.contactMethods.map((method) => {
                     const IconComponent = method.icon
                     return (
-                      <div key={method.id} className="flex items-center gap-3 p-4 bg-gray-800/50 rounded-lg border border-gray-600">
-                        <IconComponent className="h-5 w-5 text-primary-cyan flex-shrink-0" />
-                        <div className="flex-1">
-                          <label className="block text-sm font-medium text-gray-200 mb-1">
-                            {method.label}
-                          </label>
-                          <input
-                            type={method.type === 'email' ? 'email' : method.type === 'linkedin' || method.type === 'github' ? 'url' : 'text'}
-                            value={method.value}
-                            onChange={(e) => handleContactMethodChange(method.id, e.target.value)}
-                            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:border-primary-cyan focus:outline-none transition-colors"
-                            placeholder={method.placeholder}
-                          />
+                      <div key={method.id} className="p-4 bg-gray-800/50 rounded-lg border border-gray-600">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <IconComponent className="h-5 w-5 text-primary-cyan" />
+                            <span className="text-sm font-medium text-gray-200">{method.label}</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeContactMethod(method.id)}
+                            className="text-red-400 hover:text-red-300 p-1 rounded transition-colors"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => removeContactMethod(method.id)}
-                          className="text-red-400 hover:text-red-300 p-1 rounded transition-colors"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
+                        
+                        <div className="space-y-3">
+                          {/* Platform Field - Only show for "Other" */}
+                          {method.type === 'other' && (
+                            <div>
+                              <label className="block text-xs font-medium text-gray-300 mb-1">Platform *</label>
+                              <input
+                                type="text"
+                                value={method.platform}
+                                onChange={(e) => handleContactMethodChange(method.id, 'platform', e.target.value)}
+                                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:border-primary-cyan focus:outline-none transition-colors"
+                                placeholder="Platform name (e.g., Signal, TikTok, etc.)"
+                              />
+                            </div>
+                          )}
+                          
+                          {/* Single Input Field Based on Category */}
+                          <div>
+                            <label className="block text-xs font-medium text-gray-300 mb-1">
+                              {method.category === 'email' ? 'Email Address' : 
+                               method.category === 'phone' ? 'Phone Number' :
+                               method.category === 'url' ? 'Profile URL' :
+                               method.category === 'handle' ? 'Username/Handle' : 'Contact Info'} *
+                            </label>
+                            <input
+                              type={method.inputType}
+                              value={method.value}
+                              onChange={(e) => handleContactMethodChange(method.id, 'value', e.target.value)}
+                              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:border-primary-cyan focus:outline-none transition-colors"
+                              placeholder={method.placeholder}
+                            />
+                          </div>
+                        </div>
                       </div>
                     )
                   })}
@@ -427,7 +585,7 @@ export default function Contact() {
                 <div className="relative" ref={dropdownRef}>
                   <button
                     type="button"
-                    onClick={() => setShowContactDropdown(!showContactDropdown)}
+                    onClick={handleDropdownToggle}
                     disabled={getAvailableContactMethods().length === 0}
                     className="flex items-center gap-2 px-4 py-2 bg-primary-cyan/10 border border-primary-cyan/30 rounded-lg text-primary-cyan hover:bg-primary-cyan/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
@@ -437,29 +595,151 @@ export default function Contact() {
 
                   {/* Dropdown */}
                   {showContactDropdown && getAvailableContactMethods().length > 0 && (
-                    <div className="absolute top-full left-0 mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-10">
-                      {getAvailableContactMethods().map((option) => {
-                        const IconComponent = option.icon
+                    <div 
+                      className={`absolute left-0 w-72 bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-50 max-h-96 overflow-y-auto ${
+                        dropdownDirection === 'up' 
+                          ? 'bottom-full mb-2' 
+                          : 'top-full mt-2'
+                      }`}
+                    >
+                      {/* Group options by category */}
+                      {(() => {
+                        const availableOptions = getAvailableContactMethods()
+                        const categories = {
+                          email: availableOptions.filter(opt => opt.category === 'email'),
+                          phone: availableOptions.filter(opt => opt.category === 'phone'),
+                          url: availableOptions.filter(opt => opt.category === 'url'),
+                          handle: availableOptions.filter(opt => opt.category === 'handle'),
+                          other: availableOptions.filter(opt => opt.category === 'other')
+                        }
+
                         return (
-                          <button
-                            key={option.type}
-                            type="button"
-                            onClick={() => addContactMethod(option.type)}
-                            className="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-200 hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors"
-                          >
-                            <IconComponent className="h-4 w-4 text-primary-cyan" />
-                            <span>{option.label}</span>
-                          </button>
+                          <>
+                            {/* Email Category */}
+                            {categories.email.length > 0 && (
+                              <div>
+                                <div className="px-4 py-2 text-xs font-semibold text-gray-400 bg-gray-750 border-b border-gray-600">
+                                  EMAIL
+                                </div>
+                                {categories.email.map((option) => {
+                                  const IconComponent = option.icon
+                                  return (
+                                    <button
+                                      key={option.type}
+                                      type="button"
+                                      onClick={() => addContactMethod(option.type)}
+                                      className="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-200 hover:bg-gray-700 transition-colors"
+                                    >
+                                      <IconComponent className="h-4 w-4 text-primary-cyan" />
+                                      <span>{option.label}</span>
+                                    </button>
+                                  )
+                                })}
+                              </div>
+                            )}
+
+                            {/* Phone Category */}
+                            {categories.phone.length > 0 && (
+                              <div>
+                                <div className="px-4 py-2 text-xs font-semibold text-gray-400 bg-gray-750 border-b border-gray-600">
+                                  PHONE
+                                </div>
+                                {categories.phone.map((option) => {
+                                  const IconComponent = option.icon
+                                  return (
+                                    <button
+                                      key={option.type}
+                                      type="button"
+                                      onClick={() => addContactMethod(option.type)}
+                                      className="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-200 hover:bg-gray-700 transition-colors"
+                                    >
+                                      <IconComponent className="h-4 w-4 text-primary-cyan" />
+                                      <span>{option.label}</span>
+                                    </button>
+                                  )
+                                })}
+                              </div>
+                            )}
+
+                            {/* URL Category */}
+                            {categories.url.length > 0 && (
+                              <div>
+                                <div className="px-4 py-2 text-xs font-semibold text-gray-400 bg-gray-750 border-b border-gray-600">
+                                  PROFILE LINKS
+                                </div>
+                                {categories.url.map((option) => {
+                                  const IconComponent = option.icon
+                                  return (
+                                    <button
+                                      key={option.type}
+                                      type="button"
+                                      onClick={() => addContactMethod(option.type)}
+                                      className="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-200 hover:bg-gray-700 transition-colors"
+                                    >
+                                      <IconComponent className="h-4 w-4 text-primary-cyan" />
+                                      <span>{option.label}</span>
+                                    </button>
+                                  )
+                                })}
+                              </div>
+                            )}
+
+                            {/* Social Handle Category */}
+                            {categories.handle.length > 0 && (
+                              <div>
+                                <div className="px-4 py-2 text-xs font-semibold text-gray-400 bg-gray-750 border-b border-gray-600">
+                                  SOCIAL MEDIA
+                                </div>
+                                {categories.handle.map((option) => {
+                                  const IconComponent = option.icon
+                                  return (
+                                    <button
+                                      key={option.type}
+                                      type="button"
+                                      onClick={() => addContactMethod(option.type)}
+                                      className="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-200 hover:bg-gray-700 transition-colors"
+                                    >
+                                      <IconComponent className="h-4 w-4 text-primary-cyan" />
+                                      <span>{option.label}</span>
+                                    </button>
+                                  )
+                                })}
+                              </div>
+                            )}
+
+                            {/* Other Category */}
+                            {categories.other.length > 0 && (
+                              <div>
+                                <div className="px-4 py-2 text-xs font-semibold text-gray-400 bg-gray-750 border-b border-gray-600">
+                                  OTHER
+                                </div>
+                                {categories.other.map((option) => {
+                                  const IconComponent = option.icon
+                                  return (
+                                    <button
+                                      key={option.type}
+                                      type="button"
+                                      onClick={() => addContactMethod(option.type)}
+                                      className="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-200 hover:bg-gray-700 rounded-b-lg transition-colors"
+                                    >
+                                      <IconComponent className="h-4 w-4 text-primary-cyan" />
+                                      <span>{option.label}</span>
+                                    </button>
+                                  )
+                                })}
+                              </div>
+                            )}
+                          </>
                         )
-                      })}
+                      })()}
                     </div>
                   )}
-                </div>
-              </div>
+        </div>
+      </div>
 
               {/* Submit Button */}
               <div className="text-center">
-                <button
+            <button
                   type="submit"
                   disabled={isSubmitting}
                   className="inline-flex items-center gap-3 bg-gradient-primary text-white px-8 py-4 rounded-lg hover:opacity-90 transition-all duration-300 shadow-glow text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
@@ -475,8 +755,8 @@ export default function Contact() {
                       Send Message
                     </>
                   )}
-                </button>
-              </div>
+            </button>
+            </div>
             </form>
           </div>
         </div>

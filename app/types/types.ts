@@ -185,6 +185,7 @@ export interface Project {
   link: string
   github: string
   featured: boolean
+  technical: boolean
   icon?: string | null
   iconType?: string | null
 }
