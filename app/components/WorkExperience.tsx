@@ -55,7 +55,7 @@ export default function WorkExperience() {
         const yearGroups = Object.entries(groupedByYear)
           .map(([year, positions]) => ({
             year,
-            positions,
+            positions: positions as Position[],
           }))
           .sort((a, b) => Number.parseInt(b.year) - Number.parseInt(a.year))
 
