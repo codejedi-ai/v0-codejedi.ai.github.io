@@ -1,28 +1,43 @@
 import { NextResponse } from "next/server"
-import { Client } from "@notionhq/client"
-
-const notion = new Client({
-  auth: process.env.NOTION_INTEGRATION_SECRET,
-})
 
 const SKILLS_DATABASE_ID = "93762143-ef43-4c4b-be97-cb7e7d2dd2f4"
 
-// Removed force-static export for Vercel deployment
-
 export async function GET() {
   try {
-    // Fetch skills from Notion database
-    const response = await notion.databases.query({
-      database_id: SKILLS_DATABASE_ID,
+    console.log("Fetching skills from Notion using REST API...")
+    console.log("Database ID:", SKILLS_DATABASE_ID)
+    console.log("Integration Secret exists:", !!process.env.NOTION_INTEGRATION_SECRET)
+
+    if (!process.env.NOTION_INTEGRATION_SECRET) {
+      throw new Error("NOTION_INTEGRATION_SECRET is not configured")
+    }
+
+    // Fetch skills from Notion database using REST API
+    const response = await fetch(`https://api.notion.com/v1/databases/${SKILLS_DATABASE_ID}/query`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.NOTION_INTEGRATION_SECRET}`,
+        "Notion-Version": "2022-06-28",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}),
     })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error("Notion API error:", response.status, errorText)
+      throw new Error(`Notion API returned ${response.status}: ${errorText}`)
+    }
+
+    const data = await response.json()
 
     // Analysis logging
     console.log('\n🔍 SKILLS DATABASE ANALYSIS:')
-    console.log(`📊 Total skills in database: ${response.results.length}`)
-    
+    console.log(`📊 Total skills in database: ${data.results.length}`)
+
     // Show all skills that will be processed
     console.log('\n📋 ALL SKILLS IN DATABASE:')
-    response.results.forEach((page: any, index: number) => {
+    data.results.forEach((page: any, index: number) => {
       const properties = page.properties
       const name = properties.Name?.title?.[0]?.plain_text || "Untitled"
       const category = properties.category?.select?.name || "No Category"
@@ -32,7 +47,7 @@ export async function GET() {
     // Group skills by category
     const skillsMap: Record<string, any> = {}
 
-    response.results.forEach((page: any) => {
+    data.results.forEach((page: any) => {
       const properties = page.properties
       const name = 
         properties.Name?.title?.[0]?.plain_text ||
@@ -162,7 +177,7 @@ export async function GET() {
     return NextResponse.json({
       skills: skills.length > 0 ? skills : fallbackSkills,
       meta: {
-        totalSkillsInDatabase: response.results.length,
+        totalSkillsInDatabase: data.results.length,
         categoriesDisplayed: skills.length,
         analysisTimestamp: new Date().toISOString()
       }

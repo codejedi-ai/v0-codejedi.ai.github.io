@@ -1,19 +1,10 @@
 import { NextResponse } from "next/server"
-import { Client } from "@notionhq/client"
 
-// Removed force-static export for Vercel deployment
-
-// Initialize Notion client
-const notion = new Client({
-  auth: process.env.NOTION_INTEGRATION_SECRET,
-})
-
-// Correct database ID format (with hyphens)
 const SIDE_PROJECTS_DATABASE_ID = "8845d571-4240-4f4d-9e67-e54f552c4e2e"
 
 export async function GET() {
   try {
-    console.log("Fetching projects from Notion...")
+    console.log("Fetching projects from Notion using REST API...")
     console.log("Database ID:", SIDE_PROJECTS_DATABASE_ID)
     console.log("Integration Secret exists:", !!process.env.NOTION_INTEGRATION_SECRET)
 
@@ -21,61 +12,31 @@ export async function GET() {
       throw new Error("NOTION_INTEGRATION_SECRET is not configured")
     }
 
-    // Get database to check available properties
-    const database = await notion.databases.retrieve({
-      database_id: SIDE_PROJECTS_DATABASE_ID,
+    // Query the Notion database using REST API
+    const response = await fetch(`https://api.notion.com/v1/databases/${SIDE_PROJECTS_DATABASE_ID}/query`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.NOTION_INTEGRATION_SECRET}`,
+        "Notion-Version": "2022-06-28",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}),
     })
 
-    console.log("Database retrieved successfully")
-    console.log("Available properties:", Object.keys(database.properties))
-
-    // Try to find a suitable sort property (creation date)
-    let sortProperty = null
-    const possibleSortProperties = [
-      "Created",
-      "Created time",
-      "Date created",
-      "Created at",
-      "Date",
-      "Last edited time",
-    ]
-
-    for (const propName of possibleSortProperties) {
-      if (database.properties[propName]) {
-        sortProperty = propName
-        console.log(`Using sort property: ${propName}`)
-        break
-      }
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error("Notion API error:", response.status, errorText)
+      throw new Error(`Notion API returned ${response.status}: ${errorText}`)
     }
 
-    if (!sortProperty) {
-      console.log("No suitable sort property found, using default order")
-    }
+    const data = await response.json()
 
-    // Query the Notion database
-    const queryOptions: any = {
-      database_id: SIDE_PROJECTS_DATABASE_ID,
-    }
-
-    // Only add sorting if we found a valid property
-    if (sortProperty) {
-      queryOptions.sorts = [
-        {
-          property: sortProperty,
-          direction: "descending",
-        },
-      ]
-    }
-
-    console.log("Querying database with options:", queryOptions)
-    const response = await notion.databases.query(queryOptions)
-
-    console.log(`Notion response received: ${response.results.length} pages found`)
+    console.log(`Notion response received: ${data.results.length} pages found`)
 
     // Transform Notion data to your expected format
     const projects = await Promise.all(
-      response.results.map(async (page: any, index: number) => {
-        console.log(`Processing page ${index + 1}/${response.results.length}: ${page.id}`)
+      data.results.map(async (page: any, index: number) => {
+        console.log(`Processing page ${index + 1}/${data.results.length}: ${page.id}`)
 
         const properties = page.properties
 
@@ -107,13 +68,25 @@ export async function GET() {
         try {
           console.log(`Fetching blocks for page: ${page.id}`)
 
-          // Add timeout and better error handling for block fetching
-          const blocks = (await Promise.race([
-            notion.blocks.children.list({
-              block_id: page.id,
+          // Fetch blocks using REST API with timeout
+          const blocksResponse = await Promise.race([
+            fetch(`https://api.notion.com/v1/blocks/${page.id}/children`, {
+              method: "GET",
+              headers: {
+                "Authorization": `Bearer ${process.env.NOTION_INTEGRATION_SECRET}`,
+                "Notion-Version": "2022-06-28",
+              },
             }),
-            new Promise((_, reject) => setTimeout(() => reject(new Error("Block fetch timeout")), 5000)),
-          ])) as any
+            new Promise<never>((_, reject) =>
+              setTimeout(() => reject(new Error("Block fetch timeout")), 5000)
+            ),
+          ]) as Response
+
+          if (!blocksResponse.ok) {
+            throw new Error(`Failed to fetch blocks: ${blocksResponse.status}`)
+          }
+
+          const blocks = await blocksResponse.json()
 
           console.log(`Found ${blocks.results.length} blocks`)
 
