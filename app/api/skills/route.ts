@@ -37,7 +37,7 @@ export async function GET() {
 
     // Show all skills that will be processed
     console.log('\n📋 ALL SKILLS IN DATABASE:')
-    data.results.forEach((page: Record<string, unknown>, index: number) => {
+    data.results.forEach((page: any, index: number) => {
       const properties = page.properties
       const name = properties.Name?.title?.[0]?.plain_text || "Untitled"
       const category = properties.category?.select?.name || "No Category"
@@ -45,9 +45,9 @@ export async function GET() {
     })
 
     // Group skills by category
-    const skillsMap: Record<string, Record<string, unknown>> = {}
+    const skillsMap: Record<string, any> = {}
 
-    data.results.forEach((page: Record<string, unknown>) => {
+    data.results.forEach((page: any) => {
       const properties = page.properties
       const name = 
         properties.Name?.title?.[0]?.plain_text ||
@@ -83,7 +83,7 @@ export async function GET() {
     })
 
     // Helper function to intelligently group skills based on patterns
-    const groupSkillsIntelligently = (skills: string[]): string[] => {
+    const groupSkillsIntelligently = (skills: string[], categoryTitle: string): string[] => {
       if (skills.length === 0) return []
       
       // For categories with many skills, try to group them logically
@@ -108,9 +108,9 @@ export async function GET() {
     }
 
     // Convert to array and format skills into groups of related items
-    const skills = Object.values(skillsMap).map((category: Record<string, unknown>) => {
+    const skills = Object.values(skillsMap).map((category: any) => {
       const skillsList = category.skills
-      const groupedSkills = groupSkillsIntelligently(skillsList as string[])
+      const groupedSkills = groupSkillsIntelligently(skillsList, category.title)
 
       return {
         ...category,

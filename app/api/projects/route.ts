@@ -35,7 +35,7 @@ export async function GET() {
 
     // Transform Notion data to your expected format
     const projects = await Promise.all(
-      data.results.map(async (page: Record<string, unknown>, index: number) => {
+      data.results.map(async (page: any, index: number) => {
         console.log(`Processing page ${index + 1}/${data.results.length}: ${page.id}`)
 
         const properties = page.properties
@@ -91,18 +91,18 @@ export async function GET() {
           console.log(`Found ${blocks.results.length} blocks`)
 
           const textContent = blocks.results
-            .map((block: Record<string, unknown>) => {
+            .map((block: any) => {
               if (block.type === "paragraph" && block.paragraph?.rich_text) {
-                return block.paragraph.rich_text.map((text: Record<string, unknown>) => text.plain_text).join("")
+                return block.paragraph.rich_text.map((text: any) => text.plain_text).join("")
               }
               if (block.type === "heading_1" && block.heading_1?.rich_text) {
-                return "# " + block.heading_1.rich_text.map((text: Record<string, unknown>) => text.plain_text).join("")
+                return "# " + block.heading_1.rich_text.map((text: any) => text.plain_text).join("")
               }
               if (block.type === "heading_2" && block.heading_2?.rich_text) {
-                return "## " + block.heading_2.rich_text.map((text: Record<string, unknown>) => text.plain_text).join("")
+                return "## " + block.heading_2.rich_text.map((text: any) => text.plain_text).join("")
               }
               if (block.type === "heading_3" && block.heading_3?.rich_text) {
-                return "### " + block.heading_3.rich_text.map((text: Record<string, unknown>) => text.plain_text).join("")
+                return "### " + block.heading_3.rich_text.map((text: any) => text.plain_text).join("")
               }
               return ""
             })
@@ -127,9 +127,9 @@ export async function GET() {
 
         // Extract other properties with multiple possible names
         const tags =
-          properties.Tags?.multi_select?.map((tag: Record<string, unknown>) => tag.name) ||
-          properties.Technologies?.multi_select?.map((tag: Record<string, unknown>) => tag.name) ||
-          properties.Skills?.multi_select?.map((tag: Record<string, unknown>) => tag.name) ||
+          properties.Tags?.multi_select?.map((tag: any) => tag.name) ||
+          properties.Technologies?.multi_select?.map((tag: any) => tag.name) ||
+          properties.Skills?.multi_select?.map((tag: any) => tag.name) ||
           []
 
         console.log(`Project tags: [${tags.join(", ")}]`)

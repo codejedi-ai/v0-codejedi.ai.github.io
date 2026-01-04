@@ -2,6 +2,7 @@
 
 import { Heart } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 //w-full h-full from the background gradient effects
 export function Hero() {
   return (

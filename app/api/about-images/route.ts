@@ -34,7 +34,7 @@ export async function GET() {
     console.log("Notion response received, processing about images...")
 
     // Transform Notion data to your expected format
-    const aboutImages = data.results.map((page: Record<string, unknown>) => {
+    const aboutImages = data.results.map((page: any) => {
       const properties = page.properties
 
       console.log("Processing about image page properties:", Object.keys(properties))
