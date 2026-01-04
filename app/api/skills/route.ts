@@ -237,6 +237,9 @@ export async function GET() {
       },
     ]
 
-    return NextResponse.json({ skills: fallbackSkills }, { status: 500 })
+    return NextResponse.json({
+      skills: fallbackSkills,
+      error: error instanceof Error ? error.message : "Failed to fetch skills data"
+    }, { status: 200 })
   }
 }
