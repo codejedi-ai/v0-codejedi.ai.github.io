@@ -3,9 +3,10 @@ import { Client } from "@notionhq/client"
 
 // Removed force-static export for Vercel deployment
 
-// Initialize Notion client
+// Initialize Notion client with new API version
 const notion = new Client({
   auth: process.env.NOTION_INTEGRATION_SECRET,
+  notionVersion: "2025-09-03",
 })
 
 // Correct database ID format (with hyphens)
@@ -21,45 +22,49 @@ export async function GET() {
       throw new Error("NOTION_INTEGRATION_SECRET is not configured")
     }
 
-    // First, get database schema to check available properties
-    let sortProperty = null
-    try {
-      const database = await notion.databases.retrieve({
-        database_id: SIDE_PROJECTS_DATABASE_ID,
-      })
+    // Step 1: Get database to retrieve data sources (required by new API)
+    const database = await notion.databases.retrieve({
+      database_id: SIDE_PROJECTS_DATABASE_ID,
+    })
 
-      console.log("Database retrieved successfully")
-      console.log("Available properties:", Object.keys(database.properties))
+    console.log("Database retrieved successfully")
+    console.log("Available properties:", Object.keys(database.properties))
 
-      // Try to find a suitable sort property (creation date)
-      const possibleSortProperties = [
-        "Created",
-        "Created time",
-        "Date created",
-        "Created at",
-        "Date",
-        "Last edited time",
-      ]
-
-      for (const propName of possibleSortProperties) {
-        if (database.properties[propName]) {
-          sortProperty = propName
-          console.log(`Using sort property: ${propName}`)
-          break
-        }
-      }
-
-      if (!sortProperty) {
-        console.log("No suitable sort property found, using default order")
-      }
-    } catch (schemaError) {
-      console.warn("Could not retrieve database schema:", schemaError)
-      // Continue without sorting if schema retrieval fails
+    // Step 2: Extract data_source_id from the first data source
+    const dataSources = (database as any).data_sources
+    if (!dataSources || dataSources.length === 0) {
+      throw new Error("No data sources found in database")
     }
 
-    // Query the Notion database for side projects
+    const dataSourceId = dataSources[0].id
+    console.log("Using data source ID:", dataSourceId)
+
+    // Try to find a suitable sort property (creation date)
+    let sortProperty = null
+    const possibleSortProperties = [
+      "Created",
+      "Created time",
+      "Date created",
+      "Created at",
+      "Date",
+      "Last edited time",
+    ]
+
+    for (const propName of possibleSortProperties) {
+      if (database.properties[propName]) {
+        sortProperty = propName
+        console.log(`Using sort property: ${propName}`)
+        break
+      }
+    }
+
+    if (!sortProperty) {
+      console.log("No suitable sort property found, using default order")
+    }
+
+    // Step 3: Query using data_source_id instead of database_id
     const queryOptions: any = {
-      database_id: SIDE_PROJECTS_DATABASE_ID,
+      data_source_id: dataSourceId,
     }
 
     // Only add sorting if we found a valid property
@@ -72,8 +77,8 @@ export async function GET() {
       ]
     }
 
-    console.log("Querying database with options:", queryOptions)
-    const response = await notion.databases.query(queryOptions)
+    console.log("Querying data source with options:", queryOptions)
+    const response = await (notion as any).dataSources.query(queryOptions)
 
     console.log(`Notion response received: ${response.results.length} pages found`)
 

@@ -3,6 +3,7 @@ import { Client } from "@notionhq/client"
 
 const notion = new Client({
   auth: process.env.NOTION_INTEGRATION_SECRET,
+  notionVersion: "2025-09-03",
 })
 
 const SKILLS_DATABASE_ID = "93762143-ef43-4c4b-be97-cb7e7d2dd2f4"
@@ -11,9 +12,23 @@ const SKILLS_DATABASE_ID = "93762143-ef43-4c4b-be97-cb7e7d2dd2f4"
 
 export async function GET() {
   try {
-    // Fetch skills from Notion database
-    const response = await notion.databases.query({
+    // Step 1: Get database to retrieve data sources (required by new API)
+    const database = await notion.databases.retrieve({
       database_id: SKILLS_DATABASE_ID,
+    })
+
+    // Step 2: Extract data_source_id from the first data source
+    const dataSources = (database as any).data_sources
+    if (!dataSources || dataSources.length === 0) {
+      throw new Error("No data sources found in database")
+    }
+
+    const dataSourceId = dataSources[0].id
+    console.log("Using data source ID:", dataSourceId)
+
+    // Step 3: Fetch skills from Notion data source
+    const response = await (notion as any).dataSources.query({
+      data_source_id: dataSourceId,
     })
 
     // Analysis logging
