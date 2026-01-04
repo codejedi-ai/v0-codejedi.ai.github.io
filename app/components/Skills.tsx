@@ -22,14 +22,16 @@ export default function Skills() {
         const response = await fetch("/api/skills")
 
         if (!response.ok) {
-          throw new Error("Failed to fetch skills")
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(errorData.error || `Failed to fetch skills: ${response.status}`)
         }
 
         const data = await response.json()
         setSkills(data.skills)
       } catch (err) {
         console.error("Error fetching skills:", err)
-        setError("Failed to load skills. Please try again later.")
+        const errorMessage = err instanceof Error ? err.message : "Failed to load skills. Please try again later."
+        setError(errorMessage)
       } finally {
         setIsLoading(false)
       }

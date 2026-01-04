@@ -1,74 +1,40 @@
 import { NextResponse } from "next/server"
-import { Client } from "@notionhq/client"
-
-// Removed force-static export for Vercel deployment
-
-// Initialize Notion client
-const notion = new Client({
-  auth: process.env.NOTION_INTEGRATION_SECRET,
-})
 
 const ABOUT_IMAGES_DATABASE_ID = "c8c11443-ac59-4f07-899a-1c0604751414"
 
 export async function GET() {
   try {
-    console.log("Fetching about images from Notion...")
+    console.log("Fetching about images from Notion using REST API...")
     console.log("Database ID:", ABOUT_IMAGES_DATABASE_ID)
     console.log("Integration Secret exists:", !!process.env.NOTION_INTEGRATION_SECRET)
 
-    // First, get database schema to check available properties
-    let sortProperty = null
-    try {
-      const database = await notion.databases.retrieve({
-        database_id: ABOUT_IMAGES_DATABASE_ID,
-      })
-
-      console.log("Available about images properties:", Object.keys(database.properties))
-
-      // Try to find a suitable sort property
-      const possibleSortProperties = [
-        "Created",
-        "Created time", 
-        "Date created",
-        "Created at",
-        "Date",
-        "Last edited time",
-      ]
-
-      for (const propName of possibleSortProperties) {
-        if (database.properties[propName]) {
-          sortProperty = propName
-          console.log(`Using sort property: ${propName}`)
-          break
-        }
-      }
-    } catch (schemaError) {
-      console.warn("Could not retrieve about images database schema:", schemaError)
+    if (!process.env.NOTION_INTEGRATION_SECRET) {
+      throw new Error("NOTION_INTEGRATION_SECRET is not configured")
     }
 
-    // Query the Notion database for about images
-    const queryOptions: any = {
-      database_id: ABOUT_IMAGES_DATABASE_ID,
+    // Query the Notion database using REST API
+    const response = await fetch(`https://api.notion.com/v1/databases/${ABOUT_IMAGES_DATABASE_ID}/query`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.NOTION_INTEGRATION_SECRET}`,
+        "Notion-Version": "2022-06-28",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error("Notion API error:", response.status, errorText)
+      throw new Error(`Notion API returned ${response.status}: ${errorText}`)
     }
 
-    // Only add sorting if we found a valid property
-    if (sortProperty) {
-      queryOptions.sorts = [
-        {
-          property: sortProperty,
-          direction: "ascending", // Use ascending to maintain order like about1, about2, etc.
-        },
-      ]
-    } else {
-      console.log("No suitable sort property found for about images, using default order")
-    }
-
-    const response = await notion.databases.query(queryOptions)
+    const data = await response.json()
 
     console.log("Notion response received, processing about images...")
 
     // Transform Notion data to your expected format
-    const aboutImages = response.results.map((page: any) => {
+    const aboutImages = data.results.map((page: any) => {
       const properties = page.properties
 
       console.log("Processing about image page properties:", Object.keys(properties))

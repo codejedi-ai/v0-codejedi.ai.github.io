@@ -101,14 +101,16 @@ export default function AboutMe() {
         const response = await fetch("/api/about-images")
 
         if (!response.ok) {
-          throw new Error("Failed to fetch about images")
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(errorData.error || `Failed to fetch about images: ${response.status}`)
         }
 
         const data = await response.json()
         setSlidesData(data.aboutImages)
       } catch (err) {
         console.error("Error fetching about images:", err)
-        setSlidesError("Failed to load images. Please try again later.")
+        const errorMessage = err instanceof Error ? err.message : "Failed to load images. Please try again later."
+        setSlidesError(errorMessage)
       } finally {
         setIsLoadingSlides(false)
       }

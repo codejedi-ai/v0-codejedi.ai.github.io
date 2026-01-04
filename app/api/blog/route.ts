@@ -1,76 +1,41 @@
 import { NextResponse } from "next/server"
-import { Client } from "@notionhq/client"
-
-// Removed force-static export for Vercel deployment
-
-// Initialize Notion client
-const notion = new Client({
-  auth: process.env.NOTION_INTEGRATION_SECRET,
-})
 
 const BLOGS_DATABASE_ID = "311b3a0811614102b265b91425edf4df"
 
 export async function GET() {
   try {
-    console.log("Fetching blog posts from Notion...")
+    console.log("Fetching blog posts from Notion using REST API...")
     console.log("Database ID:", BLOGS_DATABASE_ID)
     console.log("Integration Secret exists:", !!process.env.NOTION_INTEGRATION_SECRET)
 
-    // First, get database schema to check available properties
-    let sortProperty = null
-    try {
-      const database = await notion.databases.retrieve({
-        database_id: BLOGS_DATABASE_ID,
-      })
-
-      console.log("Available blog properties:", Object.keys(database.properties))
-
-      // Try to find a suitable sort property (creation date)
-      const possibleSortProperties = [
-        "Created",
-        "Created time",
-        "Date created",
-        "Created at",
-        "Date",
-        "Published",
-        "Last edited time",
-      ]
-
-      for (const propName of possibleSortProperties) {
-        if (database.properties[propName]) {
-          sortProperty = propName
-          console.log(`Using sort property: ${propName}`)
-          break
-        }
-      }
-    } catch (schemaError) {
-      console.warn("Could not retrieve blog database schema:", schemaError)
+    if (!process.env.NOTION_INTEGRATION_SECRET) {
+      throw new Error("NOTION_INTEGRATION_SECRET is not configured")
     }
 
-    // Query the Notion database for blog posts
-    const queryOptions: any = {
-      database_id: BLOGS_DATABASE_ID,
+    // Query the Notion database using REST API
+    const response = await fetch(`https://api.notion.com/v1/databases/${BLOGS_DATABASE_ID}/query`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.NOTION_INTEGRATION_SECRET}`,
+        "Notion-Version": "2022-06-28",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error("Notion API error:", response.status, errorText)
+      throw new Error(`Notion API returned ${response.status}: ${errorText}`)
     }
 
-    // Only add sorting if we found a valid property
-    if (sortProperty) {
-      queryOptions.sorts = [
-        {
-          property: sortProperty,
-          direction: "descending",
-        },
-      ]
-    } else {
-      console.log("No suitable sort property found for blogs, using default order")
-    }
-
-    const response = await notion.databases.query(queryOptions)
+    const data = await response.json()
 
     console.log("Notion response received, processing blog posts...")
 
     // Transform Notion data to your expected format
     const blogPosts = await Promise.all(
-      response.results.map(async (page: any) => {
+      data.results.map(async (page: any) => {
         const properties = page.properties
 
         console.log("Processing blog page properties:", Object.keys(properties))
@@ -93,9 +58,19 @@ export async function GET() {
         let excerpt = ""
 
         try {
-          const blocks = await notion.blocks.children.list({
-            block_id: page.id,
+          const blocksResponse = await fetch(`https://api.notion.com/v1/blocks/${page.id}/children`, {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${process.env.NOTION_INTEGRATION_SECRET}`,
+              "Notion-Version": "2022-06-28",
+            },
           })
+
+          if (!blocksResponse.ok) {
+            throw new Error(`Failed to fetch blocks: ${blocksResponse.status}`)
+          }
+
+          const blocks = await blocksResponse.json()
 
           // Extract text content from blocks
           const textContent = blocks.results

@@ -1,78 +1,40 @@
 import { NextResponse } from "next/server"
-import { Client } from "@notionhq/client"
-
-// Removed force-static export for Vercel deployment
-
-// Initialize Notion client
-const notion = new Client({
-  auth: process.env.NOTION_INTEGRATION_SECRET,
-})
 
 const WORK_EXPERIENCE_DATABASE_ID = "ce4d8010-744e-4fc7-90d5-f1ca4e481955"
 
 export async function GET() {
   try {
-    console.log("Fetching work experience from Notion...")
+    console.log("Fetching work experience from Notion using REST API...")
     console.log("Database ID:", WORK_EXPERIENCE_DATABASE_ID)
     console.log("Integration Secret exists:", !!process.env.NOTION_INTEGRATION_SECRET)
 
-    // First, get database schema to check available properties
-    let sortProperty = null
-    try {
-      const database = await notion.databases.retrieve({
-        database_id: WORK_EXPERIENCE_DATABASE_ID,
-      })
-
-      console.log("Available properties:", Object.keys(database.properties))
-
-      // Try to find a suitable sort property (date-related)
-      const possibleSortProperties = [
-        "Due date",
-        "date",
-        "Date",
-        "Employment Period",
-        "Tenure",
-        "Created",
-        "Created time",
-        "Date created",
-        "Created at",
-        "Last edited time",
-      ]
-
-      for (const propName of possibleSortProperties) {
-        if (database.properties[propName]) {
-          sortProperty = propName
-          console.log(`Using sort property: ${propName}`)
-          break
-        }
-      }
-    } catch (schemaError) {
-      console.warn("Could not retrieve database schema:", schemaError)
+    if (!process.env.NOTION_INTEGRATION_SECRET) {
+      throw new Error("NOTION_INTEGRATION_SECRET is not configured")
     }
 
-    // Query the Notion database for work experience
-    const queryOptions: any = {
-      database_id: WORK_EXPERIENCE_DATABASE_ID,
+    // Query the Notion database using REST API
+    const response = await fetch(`https://api.notion.com/v1/databases/${WORK_EXPERIENCE_DATABASE_ID}/query`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.NOTION_INTEGRATION_SECRET}`,
+        "Notion-Version": "2022-06-28",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error("Notion API error:", response.status, errorText)
+      throw new Error(`Notion API returned ${response.status}: ${errorText}`)
     }
 
-    // Only add sorting if we found a valid property
-    if (sortProperty) {
-      queryOptions.sorts = [
-        {
-          property: sortProperty,
-          direction: "descending",
-        },
-      ]
-    } else {
-      console.log("No suitable sort property found, using default order")
-    }
-
-    const response = await notion.databases.query(queryOptions)
+    const data = await response.json()
 
     console.log("Notion response received, processing results...")
 
     // Transform Notion data to your expected format
-    const workExperience = response.results.map((page: any) => {
+    const workExperience = data.results.map((page: any) => {
       const properties = page.properties
 
       console.log("Processing page properties:", Object.keys(properties))

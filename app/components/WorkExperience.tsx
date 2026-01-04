@@ -17,7 +17,8 @@ export default function WorkExperience() {
         const response = await fetch("/api/work-experience")
 
         if (!response.ok) {
-          throw new Error("Failed to fetch work experience")
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(errorData.error || `Failed to fetch work experience: ${response.status}`)
         }
 
         const data = await response.json()
@@ -62,7 +63,8 @@ export default function WorkExperience() {
         setExperiences(yearGroups)
       } catch (err) {
         console.error("Error fetching work experience:", err)
-        setError("Failed to load work experience. Please try again later.")
+        const errorMessage = err instanceof Error ? err.message : "Failed to load work experience. Please try again later."
+        setError(errorMessage)
       } finally {
         setIsLoading(false)
       }

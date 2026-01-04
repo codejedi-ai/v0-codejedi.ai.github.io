@@ -27,14 +27,16 @@ export default function Certificates() {
         const response = await fetch("/api/certificates")
 
         if (!response.ok) {
-          throw new Error("Failed to fetch certificates")
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(errorData.error || `Failed to fetch certificates: ${response.status}`)
         }
 
         const data = await response.json()
         setCertificates(data.certificates)
       } catch (err) {
         console.error("Error fetching certificates:", err)
-        setError("Failed to load certificates. Please try again later.")
+        const errorMessage = err instanceof Error ? err.message : "Failed to load certificates. Please try again later."
+        setError(errorMessage)
       } finally {
         setIsLoading(false)
       }
