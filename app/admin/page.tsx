@@ -5,24 +5,70 @@ import { NavBar } from "../components/NavBar"
 import Footer from "../components/Footer"
 import { Database, Briefcase, BookOpen, Code, ImageIcon } from "lucide-react"
 
+interface WorkExperienceItem {
+  id: string
+  title: string
+  company: string
+  location: string
+  year: string
+  startDate: string
+  endDate: string
+  tenure: number
+  link: string
+}
+
+interface BlogItem {
+  id: string
+  title: string
+  category: string
+  publishedAt: string
+  featured: boolean
+  excerpt: string
+}
+
+interface ProjectItem {
+  id: string
+  title: string
+  featured: boolean
+  github: string
+  link: string
+  description: string
+  tags: string[]
+}
+
+interface ImageItem {
+  id: string
+  name: string
+  type: string
+  createdTime: string
+  lastEditedTime: string
+  imageUrl: string
+}
+
+interface AboutImageItem {
+  id: string
+  alt: string
+  src: string
+}
+
 interface WorkExperienceData {
-  workExperience: any[]
+  workExperience: WorkExperienceItem[]
 }
 
 interface BlogData {
-  blogPosts: any[]
+  blogPosts: BlogItem[]
 }
 
 interface ProjectsData {
-  projects: any[]
+  projects: ProjectItem[]
 }
 
 interface ImagesData {
-  images: any[]
+  images: ImageItem[]
 }
 
 interface AboutImagesData {
-  aboutImages: any[]
+  aboutImages: AboutImageItem[]
 }
 
 type DatabaseType = "work-experience" | "blog" | "projects" | "images" | "about-images"
@@ -102,7 +148,7 @@ export default function AdminPage() {
         case "work-experience":
           console.log("📊 Number of work experience entries:", data.workExperience?.length || 0)
           if (data.workExperience) {
-            data.workExperience.forEach((item: any, index: number) => {
+            data.workExperience.forEach((item: WorkExperienceItem, index: number) => {
               console.log(`📋 Work Experience Entry ${index + 1}:`, item)
             })
           }
@@ -111,7 +157,7 @@ export default function AdminPage() {
         case "blog":
           console.log("📊 Number of blog posts:", data.blogPosts?.length || 0)
           if (data.blogPosts) {
-            data.blogPosts.forEach((item: any, index: number) => {
+            data.blogPosts.forEach((item: BlogItem, index: number) => {
               console.log(`📋 Blog Post ${index + 1}:`, item)
             })
           }
@@ -120,7 +166,7 @@ export default function AdminPage() {
         case "projects":
           console.log("📊 Number of projects:", data.projects?.length || 0)
           if (data.projects) {
-            data.projects.forEach((item: any, index: number) => {
+            data.projects.forEach((item: ProjectItem, index: number) => {
               console.log(`📋 Project ${index + 1}:`, item)
             })
           }
@@ -129,7 +175,7 @@ export default function AdminPage() {
         case "images":
           console.log("📊 Number of images:", data.images?.length || 0)
           if (data.images) {
-            data.images.forEach((item: any, index: number) => {
+            data.images.forEach((item: ImageItem, index: number) => {
               console.log(`📋 Image ${index + 1}:`, item)
             })
           }
@@ -138,7 +184,7 @@ export default function AdminPage() {
         case "about-images":
           console.log("📊 Number of about images:", data.aboutImages?.length || 0)
           if (data.aboutImages) {
-            data.aboutImages.forEach((item: any, index: number) => {
+            data.aboutImages.forEach((item: AboutImageItem, index: number) => {
               console.log(`📋 About Image ${index + 1}:`, item)
             })
           }
@@ -202,7 +248,7 @@ export default function AdminPage() {
     }
   }
 
-  const renderWorkExperienceItem = (item: any, index: number) => (
+  const renderWorkExperienceItem = (item: WorkExperienceItem, index: number) => (
     <div key={item.id || index} className="bg-dark-lighter/50 rounded-lg p-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -241,7 +287,7 @@ export default function AdminPage() {
     </div>
   )
 
-  const renderBlogItem = (item: any, index: number) => (
+  const renderBlogItem = (item: BlogItem, index: number) => (
     <div key={item.id || index} className="bg-dark-lighter/50 rounded-lg p-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -268,7 +314,7 @@ export default function AdminPage() {
     </div>
   )
 
-  const renderProjectItem = (item: any, index: number) => (
+  const renderProjectItem = (item: ProjectItem, index: number) => (
     <div key={item.id || index} className="bg-dark-lighter/50 rounded-lg p-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -299,7 +345,7 @@ export default function AdminPage() {
     </div>
   )
 
-  const renderImageItem = (item: any, index: number) => (
+  const renderImageItem = (item: ImageItem, index: number) => (
     <div key={item.id || index} className="bg-dark-lighter/50 rounded-lg p-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -341,7 +387,7 @@ export default function AdminPage() {
     </div>
   )
 
-  const renderAboutImageItem = (item: any, index: number) => (
+  const renderAboutImageItem = (item: AboutImageItem, index: number) => (
     <div key={item.id || index} className="bg-dark-lighter/50 rounded-lg p-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -373,18 +419,18 @@ export default function AdminPage() {
     </div>
   )
 
-  const renderFormattedItem = (item: any, index: number) => {
+  const renderFormattedItem = (item: WorkExperienceItem | BlogItem | ProjectItem | ImageItem | AboutImageItem, index: number) => {
     switch (activeDatabase) {
       case "work-experience":
-        return renderWorkExperienceItem(item, index)
+        return renderWorkExperienceItem(item as WorkExperienceItem, index)
       case "blog":
-        return renderBlogItem(item, index)
+        return renderBlogItem(item as BlogItem, index)
       case "projects":
-        return renderProjectItem(item, index)
+        return renderProjectItem(item as ProjectItem, index)
       case "images":
-        return renderImageItem(item, index)
+        return renderImageItem(item as ImageItem, index)
       case "about-images":
-        return renderAboutImageItem(item, index)
+        return renderAboutImageItem(item as AboutImageItem, index)
       default:
         return null
     }
@@ -496,7 +542,7 @@ export default function AdminPage() {
 
             {!currentData && !isLoading && (
               <div className="text-center py-12">
-                <p className="text-gray-400">Click "Fetch {activeDb?.name}" to load data</p>
+                <p className="text-gray-400">Click &quot;Fetch {activeDb?.name}&quot; to load data</p>
               </div>
             )}
           </div>
@@ -506,9 +552,9 @@ export default function AdminPage() {
             <h3 className="text-xl font-semibold text-white mb-4">Instructions</h3>
             <div className="text-gray-300 space-y-2">
               <p>• Select a database from the navigation cards above</p>
-              <p>• Click "Fetch [Database Name]" to query your Notion database</p>
+              <p>• Click &quot;Fetch [Database Name]&quot; to query your Notion database</p>
               <p>• Check the browser console (F12) for detailed logs</p>
-              <p>• Use "Copy JSON" to copy the raw response for debugging</p>
+              <p>• Use &quot;Copy JSON&quot; to copy the raw response for debugging</p>
               <p>• The formatted display shows how the data will appear in your portfolio</p>
             </div>
           </div>

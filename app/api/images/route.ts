@@ -47,7 +47,7 @@ export async function GET() {
     }
 
     // Query the Notion database for images
-    const queryOptions: any = {
+    const queryOptions: Record<string, unknown> = {
       database_id: IMAGES_DATABASE_ID,
     }
 
@@ -68,7 +68,7 @@ export async function GET() {
     console.log("Notion response received, processing images...")
 
     // Transform Notion data to your expected format
-    const images = response.results.map((page: any) => {
+    const images = response.results.map((page: Record<string, unknown>) => {
       const properties = page.properties
 
       console.log("Processing image page properties:", Object.keys(properties))
@@ -138,7 +138,7 @@ export async function GET() {
     })
 
     // Fallback to empty array if Notion fails
-    const fallbackData: any[] = []
+    const fallbackData: Record<string, unknown>[] = []
 
     console.log("Using fallback images data (empty)")
     return NextResponse.json({ images: fallbackData }, { status: 200 })

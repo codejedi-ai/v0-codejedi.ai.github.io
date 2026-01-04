@@ -60,7 +60,7 @@ export default function SiteLoader() {
     // Find the current active step
     const activeStepIndex = steps.findIndex(step => loadingStates[step.key])
     setCurrentStep(activeStepIndex === -1 ? steps.length : activeStepIndex)
-  }, [loadingStates])
+  }, [loadingStates, steps])
 
   if (isAllLoaded) {
     return null

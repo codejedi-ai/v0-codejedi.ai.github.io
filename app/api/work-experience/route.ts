@@ -34,7 +34,7 @@ export async function GET() {
     console.log("Notion response received, processing results...")
 
     // Transform Notion data to your expected format
-    const workExperience = data.results.map((page: any) => {
+    const workExperience = data.results.map((page: Record<string, unknown>) => {
       const properties = page.properties
 
       console.log("Processing page properties:", Object.keys(properties))

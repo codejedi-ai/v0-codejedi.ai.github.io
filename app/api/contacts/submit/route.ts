@@ -50,7 +50,7 @@ export async function POST(request: Request) {
       }
 
       // Create the page properties for this contact method
-      const properties: any = {
+      const properties: Record<string, unknown> = {
         Name: {
           title: [
             {
