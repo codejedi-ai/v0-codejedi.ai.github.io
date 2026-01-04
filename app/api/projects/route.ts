@@ -3,10 +3,9 @@ import { Client } from "@notionhq/client"
 
 // Removed force-static export for Vercel deployment
 
-// Initialize Notion client with new API version
+// Initialize Notion client
 const notion = new Client({
   auth: process.env.NOTION_INTEGRATION_SECRET,
-  notionVersion: "2025-09-03",
 })
 
 // Correct database ID format (with hyphens)
@@ -22,22 +21,13 @@ export async function GET() {
       throw new Error("NOTION_INTEGRATION_SECRET is not configured")
     }
 
-    // Step 1: Get database to retrieve data sources (required by new API)
+    // Get database to check available properties
     const database = await notion.databases.retrieve({
       database_id: SIDE_PROJECTS_DATABASE_ID,
     })
 
     console.log("Database retrieved successfully")
     console.log("Available properties:", Object.keys(database.properties))
-
-    // Step 2: Extract data_source_id from the first data source
-    const dataSources = (database as any).data_sources
-    if (!dataSources || dataSources.length === 0) {
-      throw new Error("No data sources found in database")
-    }
-
-    const dataSourceId = dataSources[0].id
-    console.log("Using data source ID:", dataSourceId)
 
     // Try to find a suitable sort property (creation date)
     let sortProperty = null
@@ -62,9 +52,9 @@ export async function GET() {
       console.log("No suitable sort property found, using default order")
     }
 
-    // Step 3: Query using data_source_id instead of database_id
+    // Query the Notion database
     const queryOptions: any = {
-      data_source_id: dataSourceId,
+      database_id: SIDE_PROJECTS_DATABASE_ID,
     }
 
     // Only add sorting if we found a valid property
@@ -77,8 +67,8 @@ export async function GET() {
       ]
     }
 
-    console.log("Querying data source with options:", queryOptions)
-    const response = await (notion as any).dataSources.query(queryOptions)
+    console.log("Querying database with options:", queryOptions)
+    const response = await notion.databases.query(queryOptions)
 
     console.log(`Notion response received: ${response.results.length} pages found`)
 
@@ -94,16 +84,18 @@ export async function GET() {
 
         // Extract basic properties - try multiple possible property names
         const title =
+          properties.Title?.title?.[0]?.plain_text ||
           properties.title?.title?.[0]?.plain_text ||
           properties.Name?.title?.[0]?.plain_text ||
-          properties.Title?.title?.[0]?.plain_text ||
           properties["Project Name"]?.title?.[0]?.plain_text ||
           "Untitled Project"
 
         console.log(`Project title: "${title}"`)
 
+        // Description can be either rich_text or plain_text type
         const description =
           properties.Description?.rich_text?.[0]?.plain_text ||
+          properties.Description?.plain_text ||
           properties.Summary?.rich_text?.[0]?.plain_text ||
           properties.About?.rich_text?.[0]?.plain_text ||
           ""
