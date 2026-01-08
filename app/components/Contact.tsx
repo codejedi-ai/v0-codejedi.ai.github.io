@@ -1,4 +1,5 @@
 "use client"
+
 import { Linkedin, Twitter, MessageSquare } from "lucide-react"
 
 export default function Contact() {
@@ -29,12 +30,12 @@ export default function Contact() {
                 href="https://www.linkedin.com/in/codejediatuw/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-4 w-full max-w-md p-6 bg-gray-800/50 rounded-lg border border-gray-600 hover:border-primary-cyan hover:bg-gray-800 transition-all group"
+                className="flex items-center gap-4 w-full p-6 bg-gray-800/50 rounded-lg border border-gray-600 hover:border-primary-cyan hover:bg-gray-800 transition-all group"
               >
                 <div className="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center group-hover:bg-blue-600/30 transition-colors">
                   <Linkedin className="h-6 w-6 text-blue-400" />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 text-left">
                   <h3 className="text-lg font-semibold text-white mb-1">LinkedIn</h3>
                   <p className="text-gray-400 text-sm">Connect with me on LinkedIn</p>
                 </div>
@@ -42,26 +43,26 @@ export default function Contact() {
 
               {/* Twitter */}
               <a
-                href="https://x.com/darsboi_cjd"
+                href="https://x.com/darsboi_cjd/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-4 w-full max-w-md p-6 bg-gray-800/50 rounded-lg border border-gray-600 hover:border-primary-cyan hover:bg-gray-800 transition-all group"
+                className="flex items-center gap-4 w-full p-6 bg-gray-800/50 rounded-lg border border-gray-600 hover:border-primary-cyan hover:bg-gray-800 transition-all group"
               >
                 <div className="w-12 h-12 bg-blue-400/20 rounded-lg flex items-center justify-center group-hover:bg-blue-400/30 transition-colors">
                   <Twitter className="h-6 w-6 text-blue-300" />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 text-left">
                   <h3 className="text-lg font-semibold text-white mb-1">Twitter</h3>
                   <p className="text-gray-400 text-sm">Follow me on Twitter/X</p>
                 </div>
               </a>
 
               {/* Discord */}
-              <div className="flex items-center gap-4 w-full max-w-md p-6 bg-gray-800/50 rounded-lg border border-gray-600">
+              <div className="flex items-center gap-4 w-full p-6 bg-gray-800/50 rounded-lg border border-gray-600">
                 <div className="w-12 h-12 bg-indigo-600/20 rounded-lg flex items-center justify-center">
                   <MessageSquare className="h-6 w-6 text-indigo-400" />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 text-left">
                   <h3 className="text-lg font-semibold text-white mb-1">Discord</h3>
                   <p className="text-gray-400 text-sm">d273liu</p>
                 </div>
