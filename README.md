@@ -1,160 +1,200 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CodeJedi Portfolio
 
-## Getting Started
+A modern, responsive portfolio website showcasing my work, skills, and experience. Built with Next.js and hosted on Vercel.
 
-First, run the development server:
+🌐 **Live Site**: [https://codejedi-ai.github.io/](https://codejedi-ai.github.io/)
 
-\`\`\`bash
+## 🚀 Features
+
+- **Modern UI/UX**: Clean, dark-themed design with smooth animations and transitions
+- **Dynamic Content**: Integrated with Notion API for easy content management
+- **Responsive Design**: Fully responsive across all devices and screen sizes
+- **Performance Optimized**: Built with Next.js 16 for optimal performance
+- **CORS Enabled**: API routes configured with CORS for cross-origin requests
+- **Interactive Sections**:
+  - About Me with personal introduction
+  - Skills showcase with categorized technologies
+  - Work Experience timeline
+  - Certificates gallery
+  - Projects portfolio with filtering
+  - Contact form with multiple contact methods
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **Content Management**: Notion API
+- **Deployment**: Vercel
+- **QR Code Generation**: qrcode.react
+
+## 📁 Project Structure
+
+```
+├── app/
+│   ├── api/              # API routes for fetching data from Notion
+│   │   ├── blog/
+│   │   ├── projects/
+│   │   ├── skills/
+│   │   ├── work-experience/
+│   │   ├── certificates/
+│   │   └── contacts/
+│   ├── components/       # React components
+│   │   ├── Header.tsx
+│   │   ├── WhoAmI.tsx
+│   │   ├── Skills.tsx
+│   │   ├── WorkExperience.tsx
+│   │   ├── Certificates.tsx
+│   │   ├── Projects.tsx
+│   │   └── Contact.tsx
+│   ├── admin/            # Admin panel for content management
+│   └── page.tsx          # Main page
+├── lib/
+│   ├── cors.ts           # CORS utility functions
+│   └── utils.ts          # Helper utilities
+├── middleware.ts         # Next.js middleware for CORS
+└── public/               # Static assets
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm, yarn, pnpm, or bun
+- Notion API integration token
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/codejedi-ai/bolt-codejedi.ai.github.io.git
+cd bolt-codejedi.ai.github.io
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+3. Create a `.env.local` file in the root directory:
+```env
+NOTION_INTEGRATION_SECRET=your_notion_integration_secret
+ALLOWED_ORIGINS=https://codejedi-ai.github.io,https://codejedi.ai
+# Optional: Set to "true" to allow all origins
+ALLOW_ALL_ORIGINS=false
+```
+
+4. Run the development server:
+```bash
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
-\`\`\`
+```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📝 Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NOTION_INTEGRATION_SECRET` | Notion API integration secret token | Yes |
+| `ALLOWED_ORIGINS` | Comma-separated list of allowed CORS origins | No |
+| `ALLOW_ALL_ORIGINS` | Set to "true" to allow all origins (development only) | No |
 
-## Learn More
+## 🔧 Available Scripts
 
-To learn more about Next.js, take a look at the following resources:
+- `npm run dev` - Start development server with Turbopack
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🌐 API Routes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+All API routes are located in `app/api/` and support CORS:
 
-## Deploy on Vercel
+- `/api/blog` - Fetch blog posts from Notion
+- `/api/projects` - Fetch projects from Notion
+- `/api/skills` - Fetch skills from Notion
+- `/api/work-experience` - Fetch work experience from Notion
+- `/api/certificates` - Fetch certificates
+- `/api/about-images` - Fetch about section images
+- `/api/images` - Fetch general images
+- `/api/contacts` - Get contact information
+- `/api/contacts/submit` - Submit contact form
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+All routes handle OPTIONS preflight requests and include proper CORS headers.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🎨 Customization
 
+### Updating Content
 
+Content is managed through Notion databases. Update the database IDs in the respective API route files:
 
-each block is in the format of
+- `app/api/blog/route.ts` - Blog posts database
+- `app/api/projects/route.ts` - Projects database
+- `app/api/skills/route.ts` - Skills database
+- `app/api/work-experience/route.ts` - Work experience database
 
-\`\`\`json
-{
-  object: 'list',
-  results: [
-    {
-      object: 'block',
-      id: '18ba9ae1-b608-8015-b467-c1c485c2b7fe',
-      parent: [Object],
-      created_time: '2025-01-30T03:36:00.000Z',
-      last_edited_time: '2025-01-30T03:36:00.000Z',
-      created_by: [Object],
-      last_edited_by: [Object],
-      has_children: false,
-      archived: false,
-      in_trash: false,
-      type: 'bulleted_list_item',
-      bulleted_list_item: [Object]
-    },
-    {
-      object: 'block',
-      id: '18ba9ae1-b608-808b-aa96-dd6e2aec8643',
-      parent: [Object],
-      created_time: '2025-01-30T03:36:00.000Z',
-      last_edited_time: '2025-01-30T03:36:00.000Z',
-      created_by: [Object],
-      last_edited_by: [Object],
-      has_children: false,
-      archived: false,
-      in_trash: false,
-      type: 'bulleted_list_item',
-      bulleted_list_item: [Object]
-    },
-    {
-      object: 'block',
-      id: '18ba9ae1-b608-80ea-a38d-ebdef2bf1139',
-      parent: [Object],
-      created_time: '2025-01-30T03:36:00.000Z',
-      last_edited_time: '2025-01-30T03:36:00.000Z',
-      created_by: [Object],
-      last_edited_by: [Object],
-      has_children: false,
-      archived: false,
-      in_trash: false,
-      type: 'bulleted_list_item',
-      bulleted_list_item: [Object]
-    }
-  ],
-  next_cursor: null,
-  has_more: false,
-  type: 'block',
-  block: {},
-  request_id: '033cec8a-9479-44b5-b2aa-3613c18c6722'
-}
-\`\`\`
+### Styling
 
-Then there is a rich text array with the following text in it
+The project uses Tailwind CSS. Customize colors and styles in:
+- `tailwind.config.ts` - Tailwind configuration
+- `app/globals.css` - Global styles
 
+### CORS Configuration
 
-\`\`\`json
-{
-    type: 'text',
-    text: { content: 'OANDA  Point 3', link: null },
-    annotations: {
-        bold: false,
-        italic: false,
-        strikethrough: false,
-        underline: false,
-        code: false,
-        color: 'default'
-    },
-    plain_text: 'OANDA  Point 3',
-    href: null
-}
-\`\`\`
+CORS is configured in two places:
+- `middleware.ts` - Middleware-level CORS handling
+- `lib/cors.ts` - Utility functions for API routes
 
+To add allowed origins, update the `allowedOrigins` array in both files.
 
-# PAge Type
+## 🚢 Deployment
 
+### Deploy to Vercel
 
-\`\`\`json
- {
-    object: 'page',
-    id: '9f2411e5-5c4c-48df-9119-4e865f82e346',
-    created_time: '2024-06-04T19:51:00.000Z',
-    last_edited_time: '2025-01-30T03:36:00.000Z',
-    created_by: { object: 'user', id: '2bd9406f-ec19-4724-9f9c-11bf4a06c369' },    
-    last_edited_by: { object: 'user', id: '2bd9406f-ec19-4724-9f9c-11bf4a06c369' },
-    cover: null,
-    icon: { type: 'emoji', emoji: '💎' },
-    parent: {
-      type: 'database_id',
-      database_id: 'ce4d8010-744e-4fc7-90d5-f1ca4e481955'
-    },
-    archived: false,
-    in_trash: false,
-    properties: {
-      Tenure: [Object],
-      'Company Name': [Object],
-      'Job Title': [Object]
-    },
-    url: 'https://www.notion.so/Software-Engeneer-9f2411e55c4c48df91194e865f82e346',
-    public_url: null
-  }
-\`\`\`
+1. Push your code to GitHub
+2. Import your repository in [Vercel](https://vercel.com)
+3. Add environment variables in Vercel dashboard
+4. Deploy!
 
-# Properties 
+The site will be automatically deployed on every push to the main branch.
 
-\`\`\`json
-{
-  Tenure: {
-    id: 'IYzK',
-    type: 'date',
-    date: { start: '2024-09-03', end: '2024-12-20', time_zone: null }
-  },
-  'Company Name': { id: 'U%60E~', type: 'rich_text', rich_text: [ [Object] ] },    
-  'Job Title': { id: 'title', type: 'title', title: [ [Object] ] }
-}
+### Environment Variables on Vercel
 
-\`\`\`
+Make sure to add all required environment variables in the Vercel dashboard:
+- `NOTION_INTEGRATION_SECRET`
+- `ALLOWED_ORIGINS` (optional)
+- `ALLOW_ALL_ORIGINS` (optional)
+
+## 📄 License
+
+This project is private and proprietary.
+
+## 👤 Author
+
+**Darcy Liu (CodeJedi)**
+
+- Portfolio: [https://codejedi-ai.github.io/](https://codejedi-ai.github.io/)
+- LinkedIn: [codejediatuw](https://www.linkedin.com/in/codejediatuw/)
+- Email: d273liu@uwaterloo.ca
+
+## 🙏 Acknowledgments
+
+- Built with [Next.js](https://nextjs.org/)
+- Deployed on [Vercel](https://vercel.com)
+- Content managed with [Notion](https://notion.so)
+- Icons by [Lucide](https://lucide.dev)
+
+---
+
+Made with ❤️ and Next.js
