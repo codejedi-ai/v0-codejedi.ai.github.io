@@ -24,7 +24,7 @@ export default function WorkExperience() {
         const data = await response.json()
 
         // Group work experience by year
-        const groupedByYear = data.workExperience.reduce((acc: Record<string, Position[]>, job: any) => {
+        const groupedByYear = data.workExperience.reduce((acc: Record<string, Position[]>, job: { year: string; startDate: string; endDate: string; emoji: string; title: string; company: string; location: string; link: string }) => {
           const year = job.year
 
           if (!acc[year]) {

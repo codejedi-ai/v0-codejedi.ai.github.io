@@ -35,7 +35,7 @@ export async function GET() {
 
     // Transform Notion data to your expected format
     const projects = await Promise.all(
-      data.results.map(async (page: any, index: number) => {
+      data.results.map(async (page: { id: string; properties: Record<string, unknown>; cover?: { type: string; external?: { url: string }; file?: { url: string } } | null; icon?: { type?: string; emoji?: string; file?: { url: string }; external?: { url: string } } | null }, index: number) => {
         console.log(`Processing page ${index + 1}/${data.results.length}: ${page.id}`)
 
         const properties = page.properties
@@ -91,18 +91,18 @@ export async function GET() {
           console.log(`Found ${blocks.results.length} blocks`)
 
           const textContent = blocks.results
-            .map((block: any) => {
+            .map((block: { type: string; paragraph?: { rich_text: Array<{ plain_text: string }> }; heading_1?: { rich_text: Array<{ plain_text: string }> }; heading_2?: { rich_text: Array<{ plain_text: string }> }; heading_3?: { rich_text: Array<{ plain_text: string }> } }) => {
               if (block.type === "paragraph" && block.paragraph?.rich_text) {
-                return block.paragraph.rich_text.map((text: any) => text.plain_text).join("")
+                return block.paragraph.rich_text.map((text: { plain_text: string }) => text.plain_text).join("")
               }
               if (block.type === "heading_1" && block.heading_1?.rich_text) {
-                return "# " + block.heading_1.rich_text.map((text: any) => text.plain_text).join("")
+                return "# " + block.heading_1.rich_text.map((text: { plain_text: string }) => text.plain_text).join("")
               }
               if (block.type === "heading_2" && block.heading_2?.rich_text) {
-                return "## " + block.heading_2.rich_text.map((text: any) => text.plain_text).join("")
+                return "## " + block.heading_2.rich_text.map((text: { plain_text: string }) => text.plain_text).join("")
               }
               if (block.type === "heading_3" && block.heading_3?.rich_text) {
-                return "### " + block.heading_3.rich_text.map((text: any) => text.plain_text).join("")
+                return "### " + block.heading_3.rich_text.map((text: { plain_text: string }) => text.plain_text).join("")
               }
               return ""
             })
@@ -127,9 +127,9 @@ export async function GET() {
 
         // Extract other properties with multiple possible names
         const tags =
-          properties.Tags?.multi_select?.map((tag: any) => tag.name) ||
-          properties.Technologies?.multi_select?.map((tag: any) => tag.name) ||
-          properties.Skills?.multi_select?.map((tag: any) => tag.name) ||
+          (properties.Tags as { multi_select?: Array<{ name: string }> })?.multi_select?.map((tag: { name: string }) => tag.name) ||
+          (properties.Technologies as { multi_select?: Array<{ name: string }> })?.multi_select?.map((tag: { name: string }) => tag.name) ||
+          (properties.Skills as { multi_select?: Array<{ name: string }> })?.multi_select?.map((tag: { name: string }) => tag.name) ||
           []
 
         console.log(`Project tags: [${tags.join(", ")}]`)

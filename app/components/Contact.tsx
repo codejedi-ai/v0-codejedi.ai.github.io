@@ -17,7 +17,7 @@ interface ContactMethod {
   category: string
   placeholder: string
   inputType: string
-  icon: any
+  icon: React.ComponentType<{ className?: string }>
 }
 
 interface ContactFormData {
@@ -429,7 +429,7 @@ export default function Contact() {
           error: result.error || "Failed to send message. Please try again."
         })
       }
-    } catch (error) {
+    } catch {
       setFormState({
         error: "Network error. Please check your connection and try again."
       })
@@ -453,7 +453,7 @@ export default function Contact() {
         <div className="text-center mb-16">
           <h2 className="text-5xl font-bold text-center mb-4 text-white">CONTACT</h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Ready to collaborate or have a question? I'd love to hear from you. Send me a message and I'll get back to you as soon as possible.
+            Ready to collaborate or have a question? I&apos;d love to hear from you. Send me a message and I&apos;ll get back to you as soon as possible.
           </p>
         </div>
 

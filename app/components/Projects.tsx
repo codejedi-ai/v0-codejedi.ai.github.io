@@ -189,6 +189,7 @@ export default function Projects() {
                     {project.icon && project.iconType === "emoji" && (
                       <span className="text-2xl">{project.icon}</span>
                     )}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     {project.icon && project.iconType !== "emoji" && (
                       <img src={project.icon} alt="Project icon" className="w-6 h-6 object-contain" />
                     )}
@@ -286,6 +287,7 @@ export default function Projects() {
                     {selectedProject.icon && selectedProject.iconType === "emoji" && (
                       <span className="text-4xl">{selectedProject.icon}</span>
                     )}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     {selectedProject.icon && selectedProject.iconType !== "emoji" && (
                       <img src={selectedProject.icon} alt="Project icon" className="w-8 h-8 object-contain" />
                     )}

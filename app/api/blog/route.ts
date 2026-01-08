@@ -35,7 +35,7 @@ export async function GET() {
 
     // Transform Notion data to your expected format
     const blogPosts = await Promise.all(
-      data.results.map(async (page: any) => {
+      data.results.map(async (page: { id: string; properties: Record<string, unknown>; cover?: { type: string; file?: { url: string }; external?: { url: string } } | null; icon?: { type?: string; emoji?: string; file?: { url: string }; external?: { url: string } } | null; last_edited_time: string; url: string; created_time: string }) => {
         const properties = page.properties
 
         console.log("Processing blog page properties:", Object.keys(properties))
@@ -74,18 +74,18 @@ export async function GET() {
 
           // Extract text content from blocks
           const textContent = blocks.results
-            .map((block: any) => {
+            .map((block: { type: string; paragraph?: { rich_text: Array<{ plain_text: string }> }; heading_1?: { rich_text: Array<{ plain_text: string }> }; heading_2?: { rich_text: Array<{ plain_text: string }> }; heading_3?: { rich_text: Array<{ plain_text: string }> } }) => {
               if (block.type === "paragraph" && block.paragraph?.rich_text) {
-                return block.paragraph.rich_text.map((text: any) => text.plain_text).join("")
+                return block.paragraph.rich_text.map((text: { plain_text: string }) => text.plain_text).join("")
               }
               if (block.type === "heading_1" && block.heading_1?.rich_text) {
-                return "# " + block.heading_1.rich_text.map((text: any) => text.plain_text).join("")
+                return "# " + block.heading_1.rich_text.map((text: { plain_text: string }) => text.plain_text).join("")
               }
               if (block.type === "heading_2" && block.heading_2?.rich_text) {
-                return "## " + block.heading_2.rich_text.map((text: any) => text.plain_text).join("")
+                return "## " + block.heading_2.rich_text.map((text: { plain_text: string }) => text.plain_text).join("")
               }
               if (block.type === "heading_3" && block.heading_3?.rich_text) {
-                return "### " + block.heading_3.rich_text.map((text: any) => text.plain_text).join("")
+                return "### " + block.heading_3.rich_text.map((text: { plain_text: string }) => text.plain_text).join("")
               }
               return ""
             })
@@ -109,9 +109,9 @@ export async function GET() {
           new Date().toISOString()
 
         const tags =
-          properties.Tags?.multi_select?.map((tag: any) => tag.name) ||
-          properties.Categories?.multi_select?.map((tag: any) => tag.name) ||
-          properties.Topics?.multi_select?.map((tag: any) => tag.name) ||
+          (properties.Tags as { multi_select?: Array<{ name: string }> })?.multi_select?.map((tag: { name: string }) => tag.name) ||
+          (properties.Categories as { multi_select?: Array<{ name: string }> })?.multi_select?.map((tag: { name: string }) => tag.name) ||
+          (properties.Topics as { multi_select?: Array<{ name: string }> })?.multi_select?.map((tag: { name: string }) => tag.name) ||
           []
 
         const category =
@@ -179,7 +179,7 @@ export async function GET() {
     })
 
     // Fallback to empty array if Notion fails
-    const fallbackBlogPosts: any[] = []
+    const fallbackBlogPosts: Array<Record<string, unknown>> = []
 
     console.log("Using fallback blog posts data (empty)")
     return NextResponse.json({ blogPosts: fallbackBlogPosts }, { status: 200 })
