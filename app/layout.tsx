@@ -16,7 +16,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Darcy's Portfolio",
   description: "Created with Next.js and Tailwind CSS",
-    generator: 'v0.dev'
+  generator: 'v0.dev',
+  icons: {
+    icon: '/img/CodeJedi.png',
+    shortcut: '/img/CodeJedi.png',
+    apple: '/img/CodeJedi.png',
+  },
 };
 
 export default function RootLayout({
