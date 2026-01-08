@@ -42,7 +42,16 @@ export async function GET(request: NextRequest) {
     // Transform Notion data to your expected format
     const blogPosts = await Promise.all(
       data.results.map(async (page: { id: string; properties: Record<string, unknown>; cover?: { type: string; file?: { url: string }; external?: { url: string } } | null; icon?: { type?: string; emoji?: string; file?: { url: string }; external?: { url: string } } | null; last_edited_time: string; url: string; created_time: string }) => {
-        const properties = page.properties
+        const properties = page.properties as Record<string, {
+          title?: Array<{ plain_text: string }>
+          rich_text?: Array<{ plain_text: string }>
+          created_time?: string
+          date?: { start: string }
+          multi_select?: Array<{ name: string }>
+          select?: { name: string }
+          checkbox?: boolean
+          files?: Array<{ file?: { url: string }; external?: { url: string } }>
+        }>
 
         console.log("Processing blog page properties:", Object.keys(properties))
 
@@ -51,7 +60,7 @@ export async function GET(request: NextRequest) {
           properties.title?.title?.[0]?.plain_text ||
           properties.Name?.title?.[0]?.plain_text ||
           properties.Title?.title?.[0]?.plain_text ||
-          properties["Post Title"]?.title?.[0]?.plain_text ||
+          (properties["Post Title"] as { title?: Array<{ plain_text: string }> })?.title?.[0]?.plain_text ||
           "Untitled Post"
 
         const slug = title
@@ -109,15 +118,15 @@ export async function GET(request: NextRequest) {
         // Extract other properties with multiple possible names
         const publishedAt =
           properties.Created?.created_time ||
-          properties["Created time"]?.created_time ||
+          (properties["Created time"] as { created_time?: string })?.created_time ||
           properties.Date?.date?.start ||
           properties.Published?.date?.start ||
           new Date().toISOString()
 
         const tags =
-          (properties.Tags as { multi_select?: Array<{ name: string }> })?.multi_select?.map((tag: { name: string }) => tag.name) ||
-          (properties.Categories as { multi_select?: Array<{ name: string }> })?.multi_select?.map((tag: { name: string }) => tag.name) ||
-          (properties.Topics as { multi_select?: Array<{ name: string }> })?.multi_select?.map((tag: { name: string }) => tag.name) ||
+          properties.Tags?.multi_select?.map((tag: { name: string }) => tag.name) ||
+          properties.Categories?.multi_select?.map((tag: { name: string }) => tag.name) ||
+          properties.Topics?.multi_select?.map((tag: { name: string }) => tag.name) ||
           []
 
         const category =
@@ -130,7 +139,7 @@ export async function GET(request: NextRequest) {
           properties.Featured?.checkbox || properties.Highlight?.checkbox || properties.Important?.checkbox || false
 
         const readTime =
-          properties["Read Time"]?.rich_text?.[0]?.plain_text ||
+          (properties["Read Time"] as { rich_text?: Array<{ plain_text: string }> })?.rich_text?.[0]?.plain_text ||
           properties.Duration?.rich_text?.[0]?.plain_text ||
           "5 min read"
 

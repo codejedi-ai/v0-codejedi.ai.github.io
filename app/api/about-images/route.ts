@@ -41,14 +41,17 @@ export async function GET(request: NextRequest) {
 
     // Transform Notion data to your expected format
     const aboutImages = data.results.map((page: { id: string; properties: Record<string, unknown>; cover?: { type: string; external?: { url: string }; file?: { url: string } } | null }) => {
-      const properties = page.properties
+      const properties = page.properties as Record<string, {
+        title?: Array<{ plain_text: string }>
+        rich_text?: Array<{ plain_text: string }>
+      }>
 
       console.log("Processing about image page properties:", Object.keys(properties))
 
       // Extract the id from the title field (named "id" in your database)
       const id = 
-        properties.id?.title?.[0]?.plain_text ||
-        properties["userDefined:id"]?.title?.[0]?.plain_text ||
+        (properties.id as { title?: Array<{ plain_text: string }> })?.title?.[0]?.plain_text ||
+        (properties["userDefined:id"] as { title?: Array<{ plain_text: string }> })?.title?.[0]?.plain_text ||
         properties.Name?.title?.[0]?.plain_text ||
         properties.Title?.title?.[0]?.plain_text ||
         "unknown"
@@ -57,7 +60,7 @@ export async function GET(request: NextRequest) {
       const alt = 
         properties.alt?.rich_text?.[0]?.plain_text ||
         properties.Alt?.rich_text?.[0]?.plain_text ||
-        properties["Alt Text"]?.rich_text?.[0]?.plain_text ||
+        (properties["Alt Text"] as { rich_text?: Array<{ plain_text: string }> })?.rich_text?.[0]?.plain_text ||
         ""
 
       // Extract src URL - try src property first, then fallback to cover image

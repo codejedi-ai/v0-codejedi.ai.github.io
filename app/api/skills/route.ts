@@ -44,7 +44,11 @@ export async function GET(request: NextRequest) {
     // Show all skills that will be processed
     console.log('\n📋 ALL SKILLS IN DATABASE:')
     data.results.forEach((page: { properties: Record<string, unknown> }, index: number) => {
-      const properties = page.properties
+      const properties = page.properties as Record<string, {
+        title?: Array<{ plain_text: string }>
+        select?: { name: string }
+        rich_text?: Array<{ plain_text: string }>
+      }>
       const name = properties.Name?.title?.[0]?.plain_text || "Untitled"
       const category = properties.category?.select?.name || "No Category"
       console.log(`   ${index + 1}. ${name} [${category}]`)
@@ -54,7 +58,11 @@ export async function GET(request: NextRequest) {
     const skillsMap: Record<string, { id: string; title: string; icon: string; skills: string[] }> = {}
 
     data.results.forEach((page: { properties: Record<string, unknown> }) => {
-      const properties = page.properties
+      const properties = page.properties as Record<string, {
+        title?: Array<{ plain_text: string }>
+        select?: { name: string }
+        rich_text?: Array<{ plain_text: string }>
+      }>
       const name = 
         properties.Name?.title?.[0]?.plain_text ||
         properties.name?.title?.[0]?.plain_text ||

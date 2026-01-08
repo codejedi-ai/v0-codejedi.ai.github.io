@@ -41,7 +41,13 @@ export async function GET(request: NextRequest) {
 
     // Transform Notion data to your expected format
     const workExperience = data.results.map((page: { id: string; properties: Record<string, unknown>; icon?: { type?: string; emoji?: string; file?: { url: string }; external?: { url: string } } | null }) => {
-      const properties = page.properties
+      const properties = page.properties as Record<string, {
+        title?: Array<{ plain_text: string }>
+        rich_text?: Array<{ plain_text: string }>
+        url?: string
+        date?: { start: string; end?: string }
+        number?: number
+      }>
 
       console.log("Processing page properties:", Object.keys(properties))
 
@@ -49,31 +55,31 @@ export async function GET(request: NextRequest) {
       const title =
         properties.title?.title?.[0]?.plain_text ||
         properties.Title?.title?.[0]?.plain_text ||
-        properties["Job Title"]?.title?.[0]?.plain_text ||
+        (properties["Job Title"] as { title?: Array<{ plain_text: string }> })?.title?.[0]?.plain_text ||
         properties.Position?.title?.[0]?.plain_text ||
         ""
 
       const company =
         properties.company?.rich_text?.[0]?.plain_text ||
         properties.Company?.rich_text?.[0]?.plain_text ||
-        properties["Company Name"]?.rich_text?.[0]?.plain_text ||
+        (properties["Company Name"] as { rich_text?: Array<{ plain_text: string }> })?.rich_text?.[0]?.plain_text ||
         ""
 
       const location =
         properties.location?.rich_text?.[0]?.plain_text ||
         properties.Location?.rich_text?.[0]?.plain_text ||
-        properties["Work Location"]?.rich_text?.[0]?.plain_text ||
+        (properties["Work Location"] as { rich_text?: Array<{ plain_text: string }> })?.rich_text?.[0]?.plain_text ||
         ""
 
       const link =
-        properties.link?.url || properties.Link?.url || properties["Company URL"]?.url || properties.Website?.url || ""
+        properties.link?.url || properties.Link?.url || (properties["Company URL"] as { url?: string })?.url || properties.Website?.url || ""
 
       // Handle date property with multiple possible names
       const dateRange =
-        properties["Due date"]?.date ||
+        (properties["Due date"] as { date?: { start: string; end?: string } })?.date ||
         properties.date?.date ||
         properties.Date?.date ||
-        properties["Employment Period"]?.date ||
+        (properties["Employment Period"] as { date?: { start: string; end?: string } })?.date ||
         properties.Tenure?.date ||
         null
 

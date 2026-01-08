@@ -44,7 +44,15 @@ export async function GET(request: NextRequest) {
       data.results.map(async (page: { id: string; properties: Record<string, unknown>; cover?: { type: string; external?: { url: string }; file?: { url: string } } | null; icon?: { type?: string; emoji?: string; file?: { url: string }; external?: { url: string } } | null }, index: number) => {
         console.log(`Processing page ${index + 1}/${data.results.length}: ${page.id}`)
 
-        const properties = page.properties
+        const properties = page.properties as Record<string, {
+          title?: Array<{ plain_text: string }>
+          rich_text?: Array<{ plain_text: string }>
+          plain_text?: string
+          multi_select?: Array<{ name: string }>
+          url?: string
+          checkbox?: boolean
+          files?: Array<{ file?: { url: string }; external?: { url: string } }>
+        }>
 
         console.log("Available page properties:", Object.keys(properties))
         console.log("Page cover:", page.cover)
@@ -54,7 +62,7 @@ export async function GET(request: NextRequest) {
           properties.Title?.title?.[0]?.plain_text ||
           properties.title?.title?.[0]?.plain_text ||
           properties.Name?.title?.[0]?.plain_text ||
-          properties["Project Name"]?.title?.[0]?.plain_text ||
+          (properties["Project Name"] as { title?: Array<{ plain_text: string }> })?.title?.[0]?.plain_text ||
           "Untitled Project"
 
         console.log(`Project title: "${title}"`)
@@ -133,9 +141,9 @@ export async function GET(request: NextRequest) {
 
         // Extract other properties with multiple possible names
         const tags =
-          (properties.Tags as { multi_select?: Array<{ name: string }> })?.multi_select?.map((tag: { name: string }) => tag.name) ||
-          (properties.Technologies as { multi_select?: Array<{ name: string }> })?.multi_select?.map((tag: { name: string }) => tag.name) ||
-          (properties.Skills as { multi_select?: Array<{ name: string }> })?.multi_select?.map((tag: { name: string }) => tag.name) ||
+          properties.Tags?.multi_select?.map((tag: { name: string }) => tag.name) ||
+          properties.Technologies?.multi_select?.map((tag: { name: string }) => tag.name) ||
+          properties.Skills?.multi_select?.map((tag: { name: string }) => tag.name) ||
           []
 
         console.log(`Project tags: [${tags.join(", ")}]`)
@@ -143,14 +151,14 @@ export async function GET(request: NextRequest) {
         const link =
           properties.Link?.url ||
           properties.URL?.url ||
-          properties["Live URL"]?.url ||
-          properties["Demo URL"]?.url ||
+          (properties["Live URL"] as { url?: string })?.url ||
+          (properties["Demo URL"] as { url?: string })?.url ||
           "#"
 
         const github =
           properties.GitHub?.url ||
-          properties["GitHub URL"]?.url ||
-          properties["Source Code"]?.url ||
+          (properties["GitHub URL"] as { url?: string })?.url ||
+          (properties["Source Code"] as { url?: string })?.url ||
           properties.Repository?.url ||
           "#"
 

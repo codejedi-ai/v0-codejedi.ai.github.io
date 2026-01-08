@@ -75,7 +75,11 @@ export async function GET(request: NextRequest) {
 
     // Transform Notion data to your expected format
     const images = response.results.map((page: { id: string; properties: Record<string, unknown>; cover?: { type: string; external?: { url: string }; file?: { url: string } } | null; icon?: { type?: string; emoji?: string; file?: { url: string }; external?: { url: string } } | null; created_time: string; last_edited_time: string; url: string }) => {
-      const properties = page.properties
+      const properties = page.properties as Record<string, {
+        title?: Array<{ plain_text: string }>
+        select?: { name: string }
+        files?: Array<{ file?: { url: string }; external?: { url: string } }>
+      }>
 
       console.log("Processing image page properties:", Object.keys(properties))
 
