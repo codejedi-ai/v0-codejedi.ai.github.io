@@ -68,18 +68,6 @@ export function NavBar() {
               </Link>
             </div>
           </div>
-
-          {/* Blog Link */}
-          <div className="flex items-center">
-            <Link
-              href="https://medium.com/@darcy.ldx"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white hover:text-primary-cyan border border-primary-blue/50 px-4 py-1 rounded-full hover:bg-primary-blue/10 transition-all"
-            >
-              Blog
-            </Link>
-          </div>
         </div>
       </div>
     </nav>
