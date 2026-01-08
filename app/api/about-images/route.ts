@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+import { corsResponse, handleOptions } from "@/lib/cors"
 
 const ABOUT_IMAGES_DATABASE_ID = "c8c11443-ac59-4f07-899a-1c0604751414"
 
-export async function GET() {
+export async function OPTIONS(request: NextRequest) {
+  return handleOptions(request)
+}
+
+export async function GET(request: NextRequest) {
   try {
     console.log("Fetching about images from Notion using REST API...")
     console.log("Database ID:", ABOUT_IMAGES_DATABASE_ID)
@@ -81,7 +87,7 @@ export async function GET() {
     })
 
     console.log(`Successfully processed ${aboutImages.length} about images`)
-    return NextResponse.json({ aboutImages }, { status: 200 })
+    return corsResponse({ aboutImages }, 200, request)
   } catch (error) {
     console.error("Error fetching about images from Notion:", error)
     console.error("Error details:", {
@@ -114,6 +120,6 @@ export async function GET() {
     ]
 
     console.log("Using fallback about images data")
-    return NextResponse.json({ aboutImages: fallbackData }, { status: 200 })
+    return corsResponse({ aboutImages: fallbackData }, 200, request)
   }
 }

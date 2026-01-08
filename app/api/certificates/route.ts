@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+import { corsResponse, handleOptions } from "@/lib/cors"
 
 // Removed force-static export for Vercel deployment
 
-export async function GET() {
+export async function OPTIONS(request: NextRequest) {
+  return handleOptions(request)
+}
+
+export async function GET(request: NextRequest) {
   try {
     // Hard-coded certificates data - AWS certificates only
     const certificates = [
@@ -30,9 +36,9 @@ export async function GET() {
     ]
 
     // Return the certificates data as JSON
-    return NextResponse.json({ certificates }, { status: 200 })
+    return corsResponse({ certificates }, 200, request)
   } catch (error) {
     console.error("Error fetching certificates:", error)
-    return NextResponse.json({ error: "Failed to fetch certificates data" }, { status: 500 })
+    return corsResponse({ error: "Failed to fetch certificates data" }, 500, request)
   }
 }

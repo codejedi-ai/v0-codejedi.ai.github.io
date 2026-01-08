@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+import { corsResponse, handleOptions } from "@/lib/cors"
 
 const SIDE_PROJECTS_DATABASE_ID = "8845d571-4240-4f4d-9e67-e54f552c4e2e"
 
-export async function GET() {
+export async function OPTIONS(request: NextRequest) {
+  return handleOptions(request)
+}
+
+export async function GET(request: NextRequest) {
   try {
     console.log("Fetching projects from Notion using REST API...")
     console.log("Database ID:", SIDE_PROJECTS_DATABASE_ID)
@@ -218,7 +224,7 @@ export async function GET() {
       )
     })
 
-    return NextResponse.json({ projects }, { status: 200 })
+    return corsResponse({ projects }, 200, request)
   } catch (error) {
     console.error("Error fetching projects from Notion:", error)
     console.error("Error details:", {
@@ -228,13 +234,14 @@ export async function GET() {
     })
 
     // Return error response instead of fallback data
-    return NextResponse.json(
+    return corsResponse(
       {
         error: "Failed to fetch projects from Notion",
         details: error instanceof Error ? error.message : "Unknown error",
         projects: [], // Return empty array instead of fallback
       },
-      { status: 500 },
+      500,
+      request
     )
   }
 }

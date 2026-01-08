@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+import { corsResponse, handleOptions, getCorsHeaders } from "@/lib/cors"
 
 const BLOGS_DATABASE_ID = "311b3a0811614102b265b91425edf4df"
 
-export async function GET() {
+export async function OPTIONS(request: NextRequest) {
+  return handleOptions(request)
+}
+
+export async function GET(request: NextRequest) {
   try {
     console.log("Fetching blog posts from Notion using REST API...")
     console.log("Database ID:", BLOGS_DATABASE_ID)
@@ -170,7 +176,7 @@ export async function GET() {
     )
 
     console.log(`Successfully processed ${blogPosts.length} blog posts`)
-    return NextResponse.json({ blogPosts }, { status: 200 })
+    return corsResponse({ blogPosts }, 200, request)
   } catch (error) {
     console.error("Error fetching blog posts from Notion:", error)
     console.error("Error details:", {
@@ -182,6 +188,6 @@ export async function GET() {
     const fallbackBlogPosts: Array<Record<string, unknown>> = []
 
     console.log("Using fallback blog posts data (empty)")
-    return NextResponse.json({ blogPosts: fallbackBlogPosts }, { status: 200 })
+    return corsResponse({ blogPosts: fallbackBlogPosts }, 200, request)
   }
 }

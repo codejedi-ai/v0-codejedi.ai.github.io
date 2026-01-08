@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
 import { Client } from "@notionhq/client"
+import { corsResponse, handleOptions } from "@/lib/cors"
 
 // This API route handles POST requests and needs to be dynamic (removed static export)
 
@@ -22,7 +24,11 @@ interface ContactFormData {
   contactMethods: ContactMethod[]
 }
 
-export async function POST(request: Request) {
+export async function OPTIONS(request: NextRequest) {
+  return handleOptions(request)
+}
+
+export async function POST(request: NextRequest) {
   try {
     const formData: ContactFormData = await request.json()
     
@@ -34,9 +40,10 @@ export async function POST(request: Request) {
 
     // Validate required fields
     if (!formData.name || !formData.message || !formData.contactMethods || formData.contactMethods.length === 0) {
-      return NextResponse.json(
+      return corsResponse(
         { error: "Name, message, and at least one contact method are required" },
-        { status: 400 }
+        400,
+        request
       )
     }
 
@@ -165,12 +172,12 @@ export async function POST(request: Request) {
       throw new Error("Failed to create any contact pages")
     }
 
-    return NextResponse.json({ 
+    return corsResponse({ 
       success: true, 
       message: "Contact submitted successfully!",
       pageIds: createdPages,
       contactMethodsCreated: createdPages.length
-    }, { status: 200 })
+    }, 200, request)
 
   } catch (error) {
     console.error("Error submitting contact to Notion:", error)
@@ -179,12 +186,13 @@ export async function POST(request: Request) {
       stack: error instanceof Error ? error.stack : undefined,
     })
 
-    return NextResponse.json(
+    return corsResponse(
       { 
         error: "Failed to submit contact. Please try again later.",
         details: error instanceof Error ? error.message : "Unknown error"
       },
-      { status: 500 }
+      500,
+      request
     )
   }
 }

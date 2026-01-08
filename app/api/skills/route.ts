@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+import { corsResponse, handleOptions } from "@/lib/cors"
 
 const SKILLS_DATABASE_ID = "93762143-ef43-4c4b-be97-cb7e7d2dd2f4"
 
-export async function GET() {
+export async function OPTIONS(request: NextRequest) {
+  return handleOptions(request)
+}
+
+export async function GET(request: NextRequest) {
   try {
     console.log("Fetching skills from Notion using REST API...")
     console.log("Database ID:", SKILLS_DATABASE_ID)
@@ -174,14 +180,14 @@ export async function GET() {
         console.log(`\n🎯 FINAL RESULT: ${skills.length} categories will be displayed on frontend`)
     console.log('📋 Categories:', skills.map(s => s.title).join(', '))
 
-    return NextResponse.json({
+    return corsResponse({
       skills: skills.length > 0 ? skills : fallbackSkills,
       meta: {
         totalSkillsInDatabase: data.results.length,
         categoriesDisplayed: skills.length,
         analysisTimestamp: new Date().toISOString()
       }
-    }, { status: 200 })
+    }, 200, request)
   } catch (error) {
     console.error("Error fetching skills:", error)
     
@@ -237,9 +243,9 @@ export async function GET() {
       },
     ]
 
-    return NextResponse.json({
+    return corsResponse({
       skills: fallbackSkills,
       error: error instanceof Error ? error.message : "Failed to fetch skills data"
-    }, { status: 200 })
+    }, 200, request)
   }
 }

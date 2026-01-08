@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
 import { Client } from "@notionhq/client"
+import { corsResponse, handleOptions } from "@/lib/cors"
 
 // Removed force-static export for Vercel deployment
 
@@ -10,7 +12,11 @@ const notion = new Client({
 
 const IMAGES_DATABASE_ID = "911ef9d8-89c2-41ad-bf82-a2a9cc41e231"
 
-export async function GET() {
+export async function OPTIONS(request: NextRequest) {
+  return handleOptions(request)
+}
+
+export async function GET(request: NextRequest) {
   try {
     console.log("Fetching images from Notion...")
     console.log("Database ID:", IMAGES_DATABASE_ID)
@@ -129,7 +135,7 @@ export async function GET() {
     })
 
     console.log(`Successfully processed ${images.length} images`)
-    return NextResponse.json({ images }, { status: 200 })
+    return corsResponse({ images }, 200, request)
   } catch (error) {
     console.error("Error fetching images from Notion:", error)
     console.error("Error details:", {
@@ -141,6 +147,6 @@ export async function GET() {
     const fallbackData: Array<Record<string, unknown>> = []
 
     console.log("Using fallback images data (empty)")
-    return NextResponse.json({ images: fallbackData }, { status: 200 })
+    return corsResponse({ images: fallbackData }, 200, request)
   }
 }

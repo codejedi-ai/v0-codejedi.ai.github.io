@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+import { corsResponse, handleOptions } from "@/lib/cors"
 
 // Removed force-static export for Vercel deployment
 
-export async function GET() {
+export async function OPTIONS(request: NextRequest) {
+  return handleOptions(request)
+}
+
+export async function GET(request: NextRequest) {
   try {
     // Hard-coded contacts data
     const contacts = [
@@ -63,9 +69,9 @@ export async function GET() {
     ]
 
     // Return the contacts data as JSON
-    return NextResponse.json({ contacts }, { status: 200 })
+    return corsResponse({ contacts }, 200, request)
   } catch (error) {
     console.error("Error fetching contacts:", error)
-    return NextResponse.json({ error: "Failed to fetch contacts data" }, { status: 500 })
+    return corsResponse({ error: "Failed to fetch contacts data" }, 500, request)
   }
 }

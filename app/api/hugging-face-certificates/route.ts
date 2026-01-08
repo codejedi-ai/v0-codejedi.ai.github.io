@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+import { corsResponse, handleOptions } from "@/lib/cors"
 
 // Removed force-static export for Vercel deployment
 
-export async function GET() {
+export async function OPTIONS(request: NextRequest) {
+  return handleOptions(request)
+}
+
+export async function GET(request: NextRequest) {
   try {
     // Hard-coded Hugging Face certificates data for the journal
     const huggingFaceCertificates = [
@@ -49,9 +55,9 @@ export async function GET() {
     ]
 
     // Return the Hugging Face certificates data as JSON
-    return NextResponse.json({ huggingFaceCertificates }, { status: 200 })
+    return corsResponse({ huggingFaceCertificates }, 200, request)
   } catch (error) {
     console.error("Error fetching Hugging Face certificates:", error)
-    return NextResponse.json({ error: "Failed to fetch Hugging Face certificates data" }, { status: 500 })
+    return corsResponse({ error: "Failed to fetch Hugging Face certificates data" }, 500, request)
   }
 }

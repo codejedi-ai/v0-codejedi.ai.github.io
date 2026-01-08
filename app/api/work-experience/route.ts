@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+import { corsResponse, handleOptions } from "@/lib/cors"
 
 const WORK_EXPERIENCE_DATABASE_ID = "ce4d8010-744e-4fc7-90d5-f1ca4e481955"
 
-export async function GET() {
+export async function OPTIONS(request: NextRequest) {
+  return handleOptions(request)
+}
+
+export async function GET(request: NextRequest) {
   try {
     console.log("Fetching work experience from Notion using REST API...")
     console.log("Database ID:", WORK_EXPERIENCE_DATABASE_ID)
@@ -106,7 +112,7 @@ export async function GET() {
     })
 
     console.log(`Successfully processed ${workExperience.length} work experience entries`)
-    return NextResponse.json({ workExperience }, { status: 200 })
+    return corsResponse({ workExperience }, 200, request)
   } catch (error) {
     console.error("Error fetching work experience from Notion:", error)
     console.error("Error details:", {
@@ -179,6 +185,6 @@ export async function GET() {
     ]
 
     console.log("Using fallback work experience data")
-    return NextResponse.json({ workExperience: fallbackData }, { status: 200 })
+    return corsResponse({ workExperience: fallbackData }, 200, request)
   }
 }
