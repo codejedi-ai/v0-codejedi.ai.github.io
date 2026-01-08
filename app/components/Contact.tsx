@@ -21,7 +21,7 @@ export default function Contact() {
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto">
+        <div className=" mx-auto">
           <div className="gradient-card rounded-2xl p-8 border-gradient shadow-glow">
             <div className="flex flex-col items-center justify-center gap-8">
               {/* LinkedIn */}
