@@ -18,8 +18,6 @@ export function middleware(request: NextRequest) {
           "http://127.0.0.1:3001",
           "https://bolt-codejedi.ai.github.io",
           "https://codejedi-ai.github.io",
-          "https://codejedi.ai",
-          "https://www.codejedi.ai",
         ]
     
     // Allow all origins in development, or check against allowed list in production
