@@ -28,7 +28,7 @@ export function NavBar() {
         }`}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 relative">
           {/* Logo as Home Link */}
           <Link href="/#hero" className="flex items-center hover:opacity-80 transition-opacity">
             <Image
@@ -40,10 +40,9 @@ export function NavBar() {
             />
             <span className="ml-2 text-white font-semibold text-lg">CodeJedi</span>
           </Link>
-          <div className="flex items-left space-x-8">
 
-
-            {/* Navigation Links */}
+          {/* Navigation Links - Centered */}
+          <div className="absolute left-1/2 transform -translate-x-1/2">
             <div className="flex items-center space-x-6">
               <Link href="/#about" className="text-white hover:text-primary-cyan transition-colors">
                 About
@@ -68,6 +67,9 @@ export function NavBar() {
               </Link>
             </div>
           </div>
+
+          {/* Spacer to balance the logo */}
+          <div className="w-[180px]"></div>
         </div>
       </div>
     </nav>
