@@ -139,14 +139,20 @@ export async function GET(request: NextRequest) {
           longDescription = description || "No detailed description available"
         }
 
-        // Extract other properties with multiple possible names
+        // Extract tags (project type) - keep the old Tags field
         const tags =
           properties.Tags?.multi_select?.map((tag: { name: string }) => tag.name) ||
-          properties.Technologies?.multi_select?.map((tag: { name: string }) => tag.name) ||
-          properties.Skills?.multi_select?.map((tag: { name: string }) => tag.name) ||
           []
 
-        console.log(`Project tags: [${tags.join(", ")}]`)
+        // Extract tech (technologies used) - new Tech field
+        const tech =
+          properties.Tech?.multi_select?.map((techItem: { name: string }) => techItem.name) ||
+          properties.Technologies?.multi_select?.map((techItem: { name: string }) => techItem.name) ||
+          properties.Skills?.multi_select?.map((techItem: { name: string }) => techItem.name) ||
+          []
+
+        console.log(`Project tags (type): [${tags.join(", ")}]`)
+        console.log(`Project tech: [${tech.join(", ")}]`)
 
         const link =
           properties.Link?.url ||
@@ -212,6 +218,7 @@ export async function GET(request: NextRequest) {
           longDescription,
           image,
           tags,
+          tech,
           link,
           github,
           featured,

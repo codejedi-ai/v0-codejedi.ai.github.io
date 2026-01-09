@@ -182,6 +182,7 @@ export interface Project {
   description: string
   image: string
   tags: string[]
+  tech: string[]
   link: string
   github: string
   featured: boolean
