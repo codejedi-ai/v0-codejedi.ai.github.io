@@ -8,39 +8,39 @@ export async function OPTIONS(request: NextRequest) {
   return handleOptions(request)
 }
 
-export async function GET(request: NextRequest) {
-  try {
-    console.log("Fetching projects from Notion using REST API...")
-    console.log("Database ID:", SIDE_PROJECTS_DATABASE_ID)
-    console.log("Integration Secret exists:", !!process.env.NOTION_INTEGRATION_SECRET)
+// Helper function to fetch and process projects from Notion
+async function fetchProjectsFromNotion(queryBody: Record<string, unknown> = {}) {
+  console.log("Fetching projects from Notion using REST API...")
+  console.log("Database ID:", SIDE_PROJECTS_DATABASE_ID)
+  console.log("Integration Secret exists:", !!process.env.NOTION_INTEGRATION_SECRET)
 
-    if (!process.env.NOTION_INTEGRATION_SECRET) {
-      throw new Error("NOTION_INTEGRATION_SECRET is not configured")
-    }
+  if (!process.env.NOTION_INTEGRATION_SECRET) {
+    throw new Error("NOTION_INTEGRATION_SECRET is not configured")
+  }
 
-    // Query the Notion database using REST API
-    const response = await fetch(`https://api.notion.com/v1/databases/${SIDE_PROJECTS_DATABASE_ID}/query`, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.NOTION_INTEGRATION_SECRET}`,
-        "Notion-Version": "2022-06-28",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({}),
-    })
+  // Query the Notion database using REST API
+  const response = await fetch(`https://api.notion.com/v1/databases/${SIDE_PROJECTS_DATABASE_ID}/query`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${process.env.NOTION_INTEGRATION_SECRET}`,
+      "Notion-Version": "2022-06-28",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(queryBody),
+  })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error("Notion API error:", response.status, errorText)
-      throw new Error(`Notion API returned ${response.status}: ${errorText}`)
-    }
+  if (!response.ok) {
+    const errorText = await response.text()
+    console.error("Notion API error:", response.status, errorText)
+    throw new Error(`Notion API returned ${response.status}: ${errorText}`)
+  }
 
-    const data = await response.json()
+  const data = await response.json()
 
-    console.log(`Notion response received: ${data.results.length} pages found`)
+  console.log(`Notion response received: ${data.results.length} pages found`)
 
-    // Transform Notion data to your expected format
-    const projects = await Promise.all(
+  // Transform Notion data to your expected format
+  const projects = await Promise.all(
       data.results.map(async (page: { id: string; properties: Record<string, unknown>; cover?: { type: string; external?: { url: string }; file?: { url: string } } | null; icon?: { type?: string; emoji?: string; file?: { url: string }; external?: { url: string } } | null }, index: number) => {
         console.log(`Processing page ${index + 1}/${data.results.length}: ${page.id}`)
 
@@ -230,18 +230,61 @@ export async function GET(request: NextRequest) {
       }),
     )
 
-    console.log(`Successfully processed ${projects.length} projects from Notion`)
+  console.log(`Successfully processed ${projects.length} projects from Notion`)
 
-    // Log each project for debugging
-    projects.forEach((project, index) => {
-      console.log(
-        `Project ${index + 1}: "${project.title}" - ${project.tags.length} tags - Featured: ${project.featured}`,
-      )
-    })
+  // Log each project for debugging
+  projects.forEach((project, index) => {
+    console.log(
+      `Project ${index + 1}: "${project.title}" - ${project.tags.length} tags - Featured: ${project.featured}`,
+    )
+  })
 
+  return projects
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const projects = await fetchProjectsFromNotion()
     return corsResponse({ projects }, 200, request)
   } catch (error) {
     console.error("Error fetching projects from Notion:", error)
+    console.error("Error details:", {
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : "Unknown",
+    })
+
+    // Return error response instead of fallback data
+    return corsResponse(
+      {
+        error: "Failed to fetch projects from Notion",
+        details: error instanceof Error ? error.message : "Unknown error",
+        projects: [], // Return empty array instead of fallback
+      },
+      500,
+      request
+    )
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    // Parse request body for query parameters (optional)
+    let queryBody: Record<string, unknown> = {}
+    try {
+      const body = await request.json().catch(() => ({}))
+      if (body && typeof body === "object") {
+        queryBody = body
+      }
+    } catch {
+      // If no body or invalid JSON, use empty query
+      queryBody = {}
+    }
+
+    const projects = await fetchProjectsFromNotion(queryBody)
+    return corsResponse({ projects }, 200, request)
+  } catch (error) {
+    console.error("Error fetching projects from Notion (POST):", error)
     console.error("Error details:", {
       message: error instanceof Error ? error.message : "Unknown error",
       stack: error instanceof Error ? error.stack : undefined,

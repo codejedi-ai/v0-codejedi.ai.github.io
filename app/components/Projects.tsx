@@ -35,19 +35,44 @@ export default function Projects() {
   useEffect(() => {
     async function fetchProjects() {
       try {
-        const response = await fetch("/api/projects")
+        // Make GET request to fetch projects
+        const getResponse = await fetch("/api/projects", {
+          method: "GET",
+        })
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}))
-          throw new Error(errorData.error || `Failed to fetch projects: ${response.status}`)
+        if (!getResponse.ok) {
+          const errorData = await getResponse.json().catch(() => ({}))
+          throw new Error(errorData.error || `Failed to fetch projects (GET): ${getResponse.status}`)
         }
 
-        const data = await response.json()
-        setProjects(data.projects)
-        setFilteredProjects(data.projects)
+        const getData = await getResponse.json()
+        console.log("GET request successful:", getData.projects?.length || 0, "projects")
+
+        // Make POST request to fetch projects (with optional query body)
+        const postResponse = await fetch("/api/projects", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({}), // Empty body for now, can add filters later
+        })
+
+        if (!postResponse.ok) {
+          const errorData = await postResponse.json().catch(() => ({}))
+          throw new Error(errorData.error || `Failed to fetch projects (POST): ${postResponse.status}`)
+        }
+
+        const postData = await postResponse.json()
+        console.log("POST request successful:", postData.projects?.length || 0, "projects")
+        console.log("Schema info from POST:", postData)
+
+        // Use POST data (or fallback to GET data)
+        const projectsData = postData.projects || getData.projects || []
+        setProjects(projectsData)
+        setFilteredProjects(projectsData)
 
         // Initialize loading states for all projects
-        const initialLoadingStates = data.projects.reduce((acc: Record<string, boolean>, project: Project) => {
+        const initialLoadingStates = projectsData.reduce((acc: Record<string, boolean>, project: Project) => {
           acc[project.id] = true
           return acc
         }, {})
@@ -64,8 +89,20 @@ export default function Projects() {
     fetchProjects()
   }, [])
 
+  // Helper function to generate unique tags from projects
+  const getAllTags = (projectsList: Project[]): string[] => {
+    const allTagsList: string[] = []
+    for (let i = 0; i < projectsList.length; i++) {
+      const project = projectsList[i]
+      for (let j = 0; j < project.tags.length; j++) {
+        allTagsList.push(project.tags[j])
+      }
+    }
+    return Array.from(new Set(allTagsList))
+  }
+
   // Get unique tags from all projects
-  const allTags = Array.from(new Set(projects.flatMap((project) => project.tags)))
+  const allTags = getAllTags(projects)
 
   // Filter projects by tag
   const filterProjects = (filter: string) => {
@@ -77,6 +114,41 @@ export default function Projects() {
     } else {
       setFilteredProjects(projects.filter((project) => project.tags.includes(filter)))
     }
+  }
+
+  // Render filter buttons
+  const renderFilterButtons = () => {
+    return (
+      <div className="flex flex-wrap justify-center gap-3 mb-12">
+        <button
+          onClick={() => filterProjects("all")}
+          className={`px-4 py-2 rounded-full transition-all ${
+            activeFilter === "all" ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+          }`}
+        >
+          All
+        </button>
+        <button
+          onClick={() => filterProjects("featured")}
+          className={`px-4 py-2 rounded-full transition-all ${
+            activeFilter === "featured" ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+          }`}
+        >
+          Featured
+        </button>
+        {allTags.map((tag) => (
+          <button
+            key={tag}
+            onClick={() => filterProjects(tag)}
+            className={`px-4 py-2 rounded-full transition-all ${
+              activeFilter === tag ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+            }`}
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
+    )
   }
 
   // Handle image loading
@@ -112,35 +184,7 @@ export default function Projects() {
         </div>
 
         {/* Filter buttons */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          <button
-            onClick={() => filterProjects("all")}
-            className={`px-4 py-2 rounded-full transition-all ${
-              activeFilter === "all" ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
-          >
-            All
-          </button>
-          <button
-            onClick={() => filterProjects("featured")}
-            className={`px-4 py-2 rounded-full transition-all ${
-              activeFilter === "featured" ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
-          >
-            Featured
-          </button>
-          {allTags.map((tag) => (
-            <button
-              key={tag}
-              onClick={() => filterProjects(tag)}
-              className={`px-4 py-2 rounded-full transition-all ${
-                activeFilter === tag ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-              }`}
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
+        {renderFilterButtons()}
 
         {isLoading && (
           <div className="flex justify-center">
