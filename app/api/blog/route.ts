@@ -23,10 +23,10 @@ async function fetchBlogPostsFromNotion(queryBody: Record<string, unknown> = {})
     method: "POST",
     headers: {
       "Authorization": `Bearer ${process.env.NOTION_INTEGRATION_SECRET}`,
-      "Notion-Version": "2022-06-28",
+      "Notion-Version": "2025-09-03",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(queryBody),
+    body: JSON.stringify({}),
   })
 
   if (!response.ok) {
@@ -80,7 +80,7 @@ async function fetchBlogPostsFromNotion(queryBody: Record<string, unknown> = {})
           method: "GET",
           headers: {
             "Authorization": `Bearer ${process.env.NOTION_INTEGRATION_SECRET}`,
-            "Notion-Version": "2022-06-28",
+            "Notion-Version": "2025-09-03",
           },
         })
 
@@ -219,34 +219,3 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    // Parse request body for query parameters (optional)
-    let queryBody: Record<string, unknown> = {}
-    try {
-      const body = await request.json().catch(() => ({}))
-      if (body && typeof body === "object") {
-        queryBody = body
-      }
-    } catch {
-      // If no body or invalid JSON, use empty query
-      queryBody = {}
-    }
-
-    const blogPosts = await fetchBlogPostsFromNotion(queryBody)
-    return corsResponse({ blogPosts }, 200, request)
-  } catch (error) {
-    console.error("Error fetching blog posts from Notion (POST):", error)
-    console.error("Error details:", {
-      message: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : "Unknown",
-    })
-
-    // Fallback to empty array if Notion fails
-    const fallbackBlogPosts: Array<Record<string, unknown>> = []
-
-    console.log("Using fallback blog posts data (empty)")
-    return corsResponse({ blogPosts: fallbackBlogPosts }, 200, request)
-  }
-}
