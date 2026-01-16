@@ -42,7 +42,7 @@ export default function Skills() {
 
   // Function to dynamically get icon component
   const getIconComponent = (iconName: string) => {
-    const Icon = (LucideIcons as Record<string, LucideIcon>)[iconName]
+    const Icon = (LucideIcons as unknown as Record<string, LucideIcon>)[iconName]
     return Icon ? (
       <Icon className="h-8 w-8 text-primary-cyan mr-4" />
     ) : (
