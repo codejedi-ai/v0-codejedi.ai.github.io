@@ -31,18 +31,39 @@ export async function GET() {
 
     const data = await response.json()
 
-    console.log("Notion response received, processing about images...")
+    console.log(`Notion response received: ${data.results.length} pages found`)
 
     // Transform Notion data to your expected format
-    const aboutImages = data.results.map((page: any) => {
+    const aboutImages = data.results.map((page: any, index: number) => {
       const properties = page.properties
 
-      console.log("Processing about image page properties:", Object.keys(properties))
+      console.log(`Processing page ${index + 1}/${data.results.length}: ${page.id}`)
+      console.log("Available page properties:", Object.keys(properties))
+
+      // Try multiple possible property names
+      const imageUrl =
+        properties.Image?.files?.[0]?.file?.url ||
+        properties.Image?.files?.[0]?.external?.url ||
+        properties.image?.files?.[0]?.file?.url ||
+        properties.image?.files?.[0]?.external?.url ||
+        properties.cover?.files?.[0]?.file?.url ||
+        properties.cover?.files?.[0]?.external?.url ||
+        ""
+
+      const altText =
+        properties.Alt?.rich_text?.[0]?.plain_text ||
+        properties.alt?.rich_text?.[0]?.plain_text ||
+        properties.Description?.rich_text?.[0]?.plain_text ||
+        properties.description?.rich_text?.[0]?.plain_text ||
+        "Image"
+
+      console.log(`Image URL: ${imageUrl ? "found" : "NOT FOUND"}`)
+      console.log(`Alt text: ${altText}`)
 
       return {
         id: page.id,
-        src: properties.Image?.files?.[0]?.file?.url || properties.Image?.files?.[0]?.external?.url || "",
-        alt: properties.Alt?.rich_text?.[0]?.plain_text || "Image",
+        src: imageUrl,
+        alt: altText,
       }
     })
 
