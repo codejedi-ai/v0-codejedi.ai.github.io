@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { corsResponse, handleOptions } from "@/lib/cors"
+import type { Certificate } from "@/app/types/types"
 
 const CERTIFICATES_DATABASE_ID = "7ad088a9-fa3e-4261-8eb4-d140952aaa3f"
 
@@ -131,7 +132,7 @@ async function fetchCertificatesFromNotion(queryBody: Record<string, unknown> = 
   console.log(`Successfully processed ${certificates.length} certificates from Notion`)
 
   // Log each certificate for debugging
-  certificates.forEach((certificate, index) => {
+  certificates.forEach((certificate: Certificate, index: number) => {
     console.log(
       `Certificate ${index + 1}: "${certificate.name}" - Date: ${certificate.date}`,
     )
