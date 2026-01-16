@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server"
 
-export const dynamic = "force-static"
-
 // Allow overriding via env; fallback to known ID
 const SIDE_PROJECTS_DATABASE_ID =
   process.env.SIDE_PROJECTS_DATABASE_ID || "8845d571-4240-4f4d-9e67-e54f552c4e2e"

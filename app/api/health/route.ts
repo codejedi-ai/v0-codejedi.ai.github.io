@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server"
 
-export const dynamic = "force-static"
-
 export async function GET() {
   const explicitMode = process.env.BUILD_MODE || process.env.NEXT_BUILD_MODE
   const hasNotionSecret = !!process.env.NOTION_INTEGRATION_SECRET
