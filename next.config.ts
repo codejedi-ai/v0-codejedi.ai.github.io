@@ -6,6 +6,7 @@ const IS_STATIC_EXPORT = true
 
 const nextConfig: NextConfig = {
   ...(IS_STATIC_EXPORT && { output: "export" }),
+  basePath: "/codejedi.ai.github.io",
   trailingSlash: true,
   images: {
     // Disable optimization for static export
