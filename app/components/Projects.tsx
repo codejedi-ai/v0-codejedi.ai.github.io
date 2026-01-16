@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Github, ExternalLink, Code, Award } from "lucide-react"
 import ProjectCard from "./ProjectCard"
+import { API_ENDPOINTS } from "@/lib/api-config"
 
 interface Project {
   id: string
@@ -36,7 +37,8 @@ export default function Projects() {
     async function fetchProjects() {
       try {
         // Make GET request to fetch projects
-        const getResponse = await fetch("https://codejedi-ai.vercel.app/api/projects/", {
+        console.log("Fetching projects from:", API_ENDPOINTS.projects)
+        const getResponse = await fetch(API_ENDPOINTS.projects, {
           method: "GET",
         })
 
@@ -49,7 +51,7 @@ export default function Projects() {
         console.log("GET request successful:", getData.projects?.length || 0, "projects")
 
         // Make POST request to fetch projects (with optional query body)
-        const postResponse = await fetch("https://codejedi-ai.vercel.app/api/projects/", {
+        const postResponse = await fetch(API_ENDPOINTS.projects, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

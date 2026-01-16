@@ -61,9 +61,10 @@ jobs:
         run: pnpm install --frozen-lockfile
         
       - name: Build static frontend with Next.js
-        run: pnpm exec next build
+        run: pnpm run build:static
         env:
           NEXT_PUBLIC_API_URL: https://codejedi-ai.vercel.app
+          BUILD_MODE: static
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

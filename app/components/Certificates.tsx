@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
+import { API_ENDPOINTS } from "@/lib/api-config"
 
 interface Certificate {
   id: string
@@ -24,7 +25,8 @@ export default function Certificates() {
   useEffect(() => {
     async function fetchCertificates() {
       try {
-        const response = await fetch("https://codejedi-ai.vercel.app/api/certificates/")
+        console.log("Fetching certificates from:", API_ENDPOINTS.certificates)
+        const response = await fetch(API_ENDPOINTS.certificates)
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))

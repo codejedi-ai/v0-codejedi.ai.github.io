@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { useState, useEffect, useRef, useCallback } from "react"
 import { ChevronLeft, ChevronRight, Pause } from "lucide-react"
+import { API_ENDPOINTS } from "@/lib/api-config"
 
 interface SlideData {
   id: string
@@ -98,7 +99,8 @@ export default function AboutMe() {
   useEffect(() => {
     async function fetchAboutImages() {
       try {
-        const response = await fetch("https://codejedi-ai.vercel.app/api/about-images/")
+        console.log("Fetching about images from:", API_ENDPOINTS.aboutImages)
+        const response = await fetch(API_ENDPOINTS.aboutImages)
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))

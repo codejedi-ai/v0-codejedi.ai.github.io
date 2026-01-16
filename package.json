@@ -3,10 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build",
-    "dev": "next dev --turbopack",
+    "build": "npm run build:static",
+    "build:static": "cross-env BUILD_MODE=static pnpm exec next build",
+    "build:api": "cross-env BUILD_MODE=api pnpm exec next build",
+    "dev": "cross-env BUILD_MODE=static pnpm exec next dev --turbopack",
+    "dev:static": "cross-env BUILD_MODE=static pnpm exec next dev --turbopack",
+    "dev:api": "cross-env BUILD_MODE=api pnpm exec next dev --turbopack",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "start:api": "cross-env BUILD_MODE=api next start"
   },
   "dependencies": {
     "@notionhq/client": "latest",
@@ -31,6 +36,7 @@
     "@types/node": "22.0.0",
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0",
+    "cross-env": "^10.1.0",
     "eslint": "9.0.0",
     "eslint-config-next": "^16.1.1",
     "postcss": "8.5.0",

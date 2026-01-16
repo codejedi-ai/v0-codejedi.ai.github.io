@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { Clock } from "lucide-react"
 import type { YearGroup, Position } from "../types/types"
+import { API_ENDPOINTS } from "@/lib/api-config"
 
 export default function WorkExperience() {
   const [experiences, setExperiences] = useState<YearGroup[]>([])
@@ -14,7 +15,8 @@ export default function WorkExperience() {
   useEffect(() => {
     async function fetchWorkExperience() {
       try {
-        const response = await fetch("https://codejedi-ai.vercel.app/api/work-experience/")
+        console.log("Fetching work experience from:", API_ENDPOINTS.workExperience)
+        const response = await fetch(API_ENDPOINTS.workExperience)
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))

@@ -1,12 +1,22 @@
 import type { NextConfig } from "next"
 
-// Static export for GitHub Pages frontend
-// For Vercel deployment, remove output: "export"
-const IS_STATIC_EXPORT = true
+/**
+ * Build Mode Configuration
+ * Set via BUILD_MODE environment variable:
+ * - "static" (default): GitHub Pages static export with basePath
+ * - "api": Vercel serverless with API routes
+ */
+const BUILD_MODE = process.env.BUILD_MODE || process.env.NEXT_BUILD_MODE || "static"
+const IS_STATIC_EXPORT = BUILD_MODE === "static"
+const IS_API_MODE = BUILD_MODE === "api"
+
+console.log(`\n🔨 Next.js Build Mode: ${BUILD_MODE.toUpperCase()}\n`)
 
 const nextConfig: NextConfig = {
+  // Static export for GitHub Pages
   ...(IS_STATIC_EXPORT && { output: "export" }),
-  basePath: "/codejedi.ai.github.io",
+  // GitHub Pages subdirectory path (only for static mode)
+  ...(IS_STATIC_EXPORT && { basePath: "/codejedi.ai.github.io" }),
   trailingSlash: true,
   images: {
     // Disable optimization for static export

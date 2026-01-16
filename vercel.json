@@ -1,0 +1,16 @@
+{
+  "buildCommand": "BUILD_MODE=api pnpm run build:api",
+  "devCommand": "BUILD_MODE=api pnpm run dev:api",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://codejedi-ai.vercel.app",
+    "BUILD_MODE": "api",
+    "NOTION_INTEGRATION_SECRET": "@notion_secret",
+    "WORK_EXPERIENCE_DATABASE_ID": "@work_exp_db",
+    "BLOGS_DATABASE_ID": "@blogs_db",
+    "SIDE_PROJECTS_DATABASE_ID": "@projects_db",
+    "IMAGES_DATABASE_ID": "@images_db"
+  },
+  "regions": ["iad1"],
+  "public": false
+}

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Code, type LucideIcon } from "lucide-react"
 import * as LucideIcons from "lucide-react"
+import { API_ENDPOINTS } from "@/lib/api-config"
 
 interface Skill {
   id: string
@@ -19,7 +20,8 @@ export default function Skills() {
   useEffect(() => {
     async function fetchSkills() {
       try {
-        const response = await fetch("https://codejedi-ai.vercel.app/api/skills/")
+        console.log("Fetching skills from:", API_ENDPOINTS.skills)
+        const response = await fetch(API_ENDPOINTS.skills)
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))
