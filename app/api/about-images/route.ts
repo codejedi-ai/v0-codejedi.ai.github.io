@@ -49,7 +49,7 @@ export async function GET() {
 
     console.log("Successfully processed about images:", aboutImages.length)
 
-    return NextResponse.json(aboutImages, { status: 200 })
+    return NextResponse.json({ aboutImages }, { status: 200 })
   } catch (error) {
     console.error("Error fetching about images:", error)
     return NextResponse.json({ error: "Failed to fetch about images" }, { status: 500 })
