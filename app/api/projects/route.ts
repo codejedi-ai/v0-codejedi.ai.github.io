@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server"
 
-const SIDE_PROJECTS_DATABASE_ID = "8845d571-4240-4f4d-9e67-e54f552c4e2e"
+// Allow overriding via env; fallback to known ID
+const SIDE_PROJECTS_DATABASE_ID =
+  process.env.SIDE_PROJECTS_DATABASE_ID || "8845d571-4240-4f4d-9e67-e54f552c4e2e"
 
 export async function GET() {
   try {
     console.log("Fetching projects from Notion using REST API...")
     console.log("Database ID:", SIDE_PROJECTS_DATABASE_ID)
+    if (!process.env.SIDE_PROJECTS_DATABASE_ID) {
+      console.log("SIDE_PROJECTS_DATABASE_ID env not set — using fallback constant")
+    }
     console.log("Integration Secret exists:", !!process.env.NOTION_INTEGRATION_SECRET)
 
     if (!process.env.NOTION_INTEGRATION_SECRET) {

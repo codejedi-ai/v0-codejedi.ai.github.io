@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server"
 
-const WORK_EXPERIENCE_DATABASE_ID = "ce4d8010-744e-4fc7-90d5-f1ca4e481955"
+// Allow overriding via env; fallback to known ID
+const WORK_EXPERIENCE_DATABASE_ID =
+  process.env.WORK_EXPERIENCE_DATABASE_ID || "ce4d8010-744e-4fc7-90d5-f1ca4e481955"
 
 export async function GET() {
   try {
     console.log("Fetching work experience from Notion using REST API...")
     console.log("Database ID:", WORK_EXPERIENCE_DATABASE_ID)
+    if (!process.env.WORK_EXPERIENCE_DATABASE_ID) {
+      console.log("WORK_EXPERIENCE_DATABASE_ID env not set — using fallback constant")
+    }
     console.log("Integration Secret exists:", !!process.env.NOTION_INTEGRATION_SECRET)
 
     if (!process.env.NOTION_INTEGRATION_SECRET) {
