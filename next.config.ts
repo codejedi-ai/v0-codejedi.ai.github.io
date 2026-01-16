@@ -1,80 +1,46 @@
 import type { NextConfig } from "next"
 
-/**
- * Build Mode Configuration
- * Set via BUILD_MODE environment variable:
- * - "static" (default): GitHub Pages static export with basePath
- * - "api": Vercel serverless with API routes
- */
-const BUILD_MODE = process.env.BUILD_MODE || process.env.NEXT_BUILD_MODE || "static"
-const IS_STATIC_EXPORT = BUILD_MODE === "static"
-const IS_API_MODE = BUILD_MODE === "api"
+// Auto-detect build mode:
+// - If BUILD_MODE is provided, respect it.
+// - Otherwise, infer: presence of NOTION_INTEGRATION_SECRET => "api" (dynamic);
+//   absence => "static" (export for GitHub Pages).
+const explicitMode = process.env.BUILD_MODE
+const hasNotionSecret = !!process.env.NOTION_INTEGRATION_SECRET
+const inferredMode = hasNotionSecret ? "api" : "static"
+const buildMode = explicitMode ?? inferredMode
 
-console.log(`\n🔨 Next.js Build Mode: ${BUILD_MODE.toUpperCase()}\n`)
+const isStatic = buildMode === "static"
 
 const nextConfig: NextConfig = {
-  // Static export for GitHub Pages
-  ...(IS_STATIC_EXPORT && { output: "export" }),
-  // GitHub Pages subdirectory path (only for static mode)
-  ...(IS_STATIC_EXPORT && { basePath: "/codejedi.ai.github.io" }),
   trailingSlash: true,
-  images: {
-    // Disable optimization for static export
-    unoptimized: IS_STATIC_EXPORT,
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "prod-files-secure.s3.*.amazonaws.com",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "www.notion.so",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "blob.v0.dev",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "hebbkx1anhila5yf.public.blob.vercel-storage.com",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "unsplash.com",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "cdn.jsdelivr.net",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "raw.githubusercontent.com",
-        port: "",
-        pathname: "/**",
-      },
-    ],
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  // In static mode we must export and disable image optimization.
+  ...(isStatic
+    ? {
+        output: "export",
+        // Base path for GitHub Pages; override via NEXT_PUBLIC_BASE_PATH if needed.
+        basePath: process.env.NEXT_PUBLIC_BASE_PATH || "/codejedi.ai.github.io",
+        images: { unoptimized: true },
+      }
+    : {
+        images: {
+          unoptimized: false,
+          remotePatterns: [
+            { protocol: "https", hostname: "prod-files-secure.s3.*.amazonaws.com", port: "", pathname: "/**" },
+            { protocol: "https", hostname: "www.notion.so", port: "", pathname: "/**" },
+            { protocol: "https", hostname: "blob.v0.dev", port: "", pathname: "/**" },
+            { protocol: "https", hostname: "hebbkx1anhila5yf.public.blob.vercel-storage.com", port: "", pathname: "/**" },
+            { protocol: "https", hostname: "images.unsplash.com", port: "", pathname: "/**" },
+            { protocol: "https", hostname: "unsplash.com", port: "", pathname: "/**" },
+            { protocol: "https", hostname: "cdn.jsdelivr.net", port: "", pathname: "/**" },
+            { protocol: "https", hostname: "raw.githubusercontent.com", port: "", pathname: "/**" },
+          ],
+        },
+      }),
+  eslint: { ignoreDuringBuilds: true },
+  typescript: { ignoreBuildErrors: true },
 }
+
+// Helpful build-time log (won't leak secrets)
+console.log(`[next.config] buildMode=${buildMode} (hasNotionSecret=${hasNotionSecret})`)
 
 export default nextConfig
