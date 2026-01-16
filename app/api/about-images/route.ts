@@ -41,8 +41,7 @@ export async function GET() {
 
       return {
         id: page.id,
-        name: properties.Name?.title?.[0]?.plain_text || "Untitled",
-        image: properties.Image?.files?.[0]?.file?.url || properties.Image?.files?.[0]?.external?.url || "",
+        src: properties.Image?.files?.[0]?.file?.url || properties.Image?.files?.[0]?.external?.url || "",
         alt: properties.Alt?.rich_text?.[0]?.plain_text || "Image",
       }
     })
