@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { Client } from "@notionhq/client"
+import type { CreatePageParameters } from "@notionhq/client/build/src/api-endpoints"
 import { corsResponse, handleOptions } from "@/lib/cors"
 
 // This API route handles POST requests and needs to be dynamic (removed static export)
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Create the page properties for this contact method
-      const properties: Record<string, unknown> = {
+      const properties: CreatePageParameters["properties"] = {
         Name: {
           title: [
             {
