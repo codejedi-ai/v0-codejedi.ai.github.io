@@ -14,7 +14,7 @@ export default function WorkExperience() {
   useEffect(() => {
     async function fetchWorkExperience() {
       try {
-        const response = await fetch("/api/work-experience")
+        const response = await fetch("https://codejedi-ai.vercel.app/api/work-experience/")
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))

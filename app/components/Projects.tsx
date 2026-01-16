@@ -36,7 +36,7 @@ export default function Projects() {
     async function fetchProjects() {
       try {
         // Make GET request to fetch projects
-        const getResponse = await fetch("/api/projects", {
+        const getResponse = await fetch("https://codejedi-ai.vercel.app/api/projects/", {
           method: "GET",
         })
 
@@ -49,7 +49,7 @@ export default function Projects() {
         console.log("GET request successful:", getData.projects?.length || 0, "projects")
 
         // Make POST request to fetch projects (with optional query body)
-        const postResponse = await fetch("/api/projects", {
+        const postResponse = await fetch("https://codejedi-ai.vercel.app/api/projects/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

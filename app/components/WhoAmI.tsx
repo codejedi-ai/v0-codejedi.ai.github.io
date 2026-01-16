@@ -98,7 +98,7 @@ export default function AboutMe() {
   useEffect(() => {
     async function fetchAboutImages() {
       try {
-        const response = await fetch("/api/about-images")
+        const response = await fetch("https://codejedi-ai.vercel.app/api/about-images/")
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))

@@ -19,7 +19,7 @@ export default function Skills() {
   useEffect(() => {
     async function fetchSkills() {
       try {
-        const response = await fetch("/api/skills")
+        const response = await fetch("https://codejedi-ai.vercel.app/api/skills/")
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))
