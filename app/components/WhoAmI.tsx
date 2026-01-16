@@ -123,15 +123,21 @@ export default function AboutMe() {
 
   // Function to advance to the next slide
   const nextSlide = useCallback(() => {
-    if (slidesData.length === 0) return
-    setCurrentSlide((prev) => (prev + 1) % slidesData.length)
-  }, [slidesData.length])
+    setSlidesData((current) => {
+      if (!current || current.length === 0) return current
+      setCurrentSlide((prev) => (prev + 1) % current.length)
+      return current
+    })
+  }, [])
 
   // Function to go to the previous slide
   const prevSlide = useCallback(() => {
-    if (slidesData.length === 0) return
-    setCurrentSlide((prev) => (prev - 1 + slidesData.length) % slidesData.length)
-  }, [slidesData.length])
+    setSlidesData((current) => {
+      if (!current || current.length === 0) return current
+      setCurrentSlide((prev) => (prev - 1 + current.length) % current.length)
+      return current
+    })
+  }, [])
 
   // Function to handle user interaction
   const handleUserInteraction = useCallback((newSlideIndex?: number) => {
@@ -162,7 +168,7 @@ export default function AboutMe() {
     }
 
     // Only set up interval if not paused and we have slides
-    if (!isPaused && slidesData.length > 0) {
+    if (!isPaused && slidesData && slidesData.length > 0) {
       slideIntervalRef.current = setInterval(() => {
         nextSlide()
       }, 3000) // Change slide every 3 seconds
@@ -177,7 +183,7 @@ export default function AboutMe() {
         clearTimeout(pauseTimerRef.current)
       }
     }
-  }, [isPaused, nextSlide, slidesData.length])
+  }, [isPaused, nextSlide])
 
   const quote =
     '"Let each person examine his own work, and then he can take pride in himself alone, and not compare himself with someone else." -- Galatians 6:4'
