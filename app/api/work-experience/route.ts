@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { corsResponse, handleOptions } from "@/lib/cors"
+import type { WorkExperienceItem } from "@/app/types/types"
 
 const WORK_EXPERIENCE_DATABASE_ID = "ce4d8010-744e-4fc7-90d5-f1ca4e481955"
 
@@ -125,7 +126,7 @@ async function fetchWorkExperienceFromNotion(queryBody: Record<string, unknown> 
   console.log(`Successfully processed ${workExperience.length} work experience entries from Notion`)
 
   // Log each work experience for debugging
-  workExperience.forEach((exp, index) => {
+  workExperience.forEach((exp: WorkExperienceItem, index: number) => {
     console.log(
       `Work Experience ${index + 1}: "${exp.title}" at ${exp.company} - ${exp.year}`,
     )
