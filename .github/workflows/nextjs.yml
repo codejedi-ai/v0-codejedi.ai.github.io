@@ -1,5 +1,6 @@
-# Workflow for building and deploying a Next.js site to GitHub Pages
-# Configuration matches Vercel's deployment settings
+# GitHub Pages Frontend Deployment Workflow
+# Builds static Next.js site and deploys to GitHub Pages
+# Frontend calls Vercel backend for API routes
 #
 name: Deploy Next.js site to Pages
 
@@ -31,11 +32,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+        
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
+          cache: "pnpm"
           
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -47,17 +53,17 @@ jobs:
         with:
           path: |
             .next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
             
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
         
-      - name: Build with Next.js
-        run: npx --no-install next build
+      - name: Build static frontend with Next.js
+        run: pnpm exec next build
         env:
-          NOTION_INTEGRATION_SECRET: ${{ secrets.NOTION_INTEGRATION_SECRET }}
+          NEXT_PUBLIC_API_URL: https://codejedi-ai.vercel.app
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

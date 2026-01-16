@@ -2,8 +2,6 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { corsResponse, handleOptions } from "@/lib/cors"
 
-// Removed force-static export for Vercel deployment
-
 export async function OPTIONS(request: NextRequest) {
   return handleOptions(request)
 }

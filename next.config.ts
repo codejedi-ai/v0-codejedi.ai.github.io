@@ -1,11 +1,15 @@
 import type { NextConfig } from "next"
 
+// Static export for GitHub Pages frontend
+// For Vercel deployment, remove output: "export"
+const IS_STATIC_EXPORT = true
+
 const nextConfig: NextConfig = {
-  // Removed static export for Vercel deployment with dynamic API routes
+  ...(IS_STATIC_EXPORT && { output: "export" }),
   trailingSlash: true,
   images: {
-    // Re-enable optimization for Vercel
-    unoptimized: false,
+    // Disable optimization for static export
+    unoptimized: IS_STATIC_EXPORT,
     remotePatterns: [
       {
         protocol: "https",
@@ -60,7 +64,6 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-
 }
 
 export default nextConfig
