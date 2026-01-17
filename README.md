@@ -1,184 +1,361 @@
-# CodeJedi Portfolio
+# Darcy's Portfolio — Vercel (Backend API + Fallback Frontend)
 
-A modern, responsive portfolio website showcasing my work, skills, and experience. Built with Next.js and hosted on Vercel.
+The backend API and fallback frontend for the portfolio. Provides REST endpoints for portfolio content and serves as a dynamic fallback if the static GitHub Pages site has issues.
 
-🌐 **Live Site**: [https://codejedi-ai.github.io/](https://codejedi-ai.github.io/)
+🌐 **Live Backend**: [https://codejedi-ai.vercel.app](https://codejedi-ai.vercel.app)  
+🔗 **Static Frontend**: [https://codejedi-ai.github.io](https://codejedi-ai.github.io)
+
+## 🎯 Overview
+
+This repository contains two parts:
+
+1. **Backend API** (`/app/api/*`) — REST endpoints providing portfolio data (projects, skills, work experience, certificates, images)
+2. **Fallback Frontend** (`/app/components/*`) — Full-featured Next.js site for backup access if GitHub Pages is unavailable
+
+### Architecture
+
+```
+GitHub Pages (Static Frontend)
+    ↓ (API calls)
+Vercel (Backend API + Fallback)
+    ↓
+Static Data / Notion (future)
+```
 
 ## 🚀 Features
 
-- **Modern UI/UX**: Clean, dark-themed design with smooth animations and transitions
-- **Dynamic Content**: Integrated with Notion API for easy content management
-- **Responsive Design**: Fully responsive across all devices and screen sizes
-- **Performance Optimized**: Built with Next.js 16 for optimal performance
-- **CORS Enabled**: API routes configured with CORS for cross-origin requests
-- **Interactive Sections**:
-  - About Me with personal introduction
-  - Skills showcase with categorized technologies
-  - Work Experience timeline
-  - Certificates gallery
-  - Projects portfolio with filtering
-  - Contact form with multiple contact methods
+**Backend API:**
+- RESTful endpoints with CORS support
+- OPTIONS preflight handling for all routes
+- Aligned response shapes (`{ projects: [...] }`, `{ skills: [...] }`, etc.)
+- Health check endpoint (`/api/health`)
+- Static data fallback (no external dependencies)
+
+**Fallback Frontend:**
+- Identical UI to GitHub Pages
+- Fully responsive and interactive
+- All components fetch via API endpoints
+- Error guards for empty/missing payloads
+- Modal project details, carousel images, timeline timeline
 
 ## 🛠️ Tech Stack
 
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+- **Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **Animations**: Framer Motion
 - **Icons**: Lucide React
-- **Content Management**: Notion API
 - **Deployment**: Vercel
-- **QR Code Generation**: qrcode.react
+- **Data**: Static data in `lib/staticData.ts`
 
 ## 📁 Project Structure
 
 ```
+codejedi-ai.vercel.app/
 ├── app/
-│   ├── api/              # API routes for fetching data from Notion
-│   │   ├── blog/
+│   ├── api/                      # REST API endpoints
+│   │   ├── health/               # Health check
 │   │   ├── projects/
 │   │   ├── skills/
 │   │   ├── work-experience/
 │   │   ├── certificates/
+│   │   ├── about-images/
 │   │   └── contacts/
-│   ├── components/       # React components
+│   ├── components/               # React components
 │   │   ├── Header.tsx
-│   │   ├── WhoAmI.tsx
+│   │   ├── Hero.tsx
+│   │   ├── NavBar.tsx
+│   │   ├── WhoAmI.tsx            # About section with carousel
 │   │   ├── Skills.tsx
 │   │   ├── WorkExperience.tsx
 │   │   ├── Certificates.tsx
 │   │   ├── Projects.tsx
-│   │   └── Contact.tsx
-│   ├── admin/            # Admin panel for content management
-│   └── page.tsx          # Main page
+│   │   ├── ProjectCard.tsx
+│   │   ├── Contact.tsx
+│   │   └── Footer.tsx
+│   ├── contexts/                 # React contexts (if any)
+│   ├── types/
+│   │   └── types.ts              # TypeScript interfaces
+│   ├── error.tsx                 # Error boundary (fallback frontend)
+│   ├── layout.tsx                # Root layout
+│   ├── page.tsx                  # Home page
+│   └── globals.css               # Global styles
 ├── lib/
-│   ├── cors.ts           # CORS utility functions
-│   └── utils.ts          # Helper utilities
-├── middleware.ts         # Next.js middleware for CORS
-└── public/               # Static assets
+│   ├── api-config.ts             # API endpoint configuration
+│   ├── constants.ts              # Shared constants
+│   ├── cors.ts                   # CORS utilities
+│   ├── notion-api.ts             # Notion API client (future)
+│   ├── notion-config.ts          # Notion configuration
+│   ├── notion-databases.ts       # Notion database IDs
+│   ├── staticData.ts             # Hardcoded portfolio data
+│   └── utils.ts                  # Helper functions
+├── public/                       # Static assets (images, favicon)
+├── vercel.json                   # Vercel configuration
+├── tailwind.config.ts            # Tailwind CSS configuration
+├── next.config.ts                # Next.js configuration
+├── tsconfig.json                 # TypeScript configuration
+└── README.md                     # This file
+```
+
+## 📡 API Endpoints
+
+All endpoints accept `GET` requests with CORS support and respond with structured JSON:
+
+### GET /api/health
+Health check for uptime monitoring.
+
+**Response:**
+```json
+{
+  "status": "ok"
+}
+```
+
+### GET /api/projects
+Portfolio projects with filtering.
+
+**Response:**
+```json
+{
+  "projects": [
+    {
+      "id": "string",
+      "title": "string",
+      "description": "string",
+      "longDescription": "string",
+      "image": "url",
+      "tags": ["string"],
+      "tech": ["string"],
+      "link": "url",
+      "github": "url",
+      "featured": true,
+      "technical": false,
+      "icon": "emoji or url",
+      "iconType": "emoji"
+    }
+  ]
+}
+```
+
+### GET /api/skills
+Technical skills and competencies.
+
+**Response:**
+```json
+{
+  "skills": [
+    {
+      "id": "string",
+      "title": "string",
+      "icon": "lucide-icon-name",
+      "skills": ["skill1", "skill2"]
+    }
+  ]
+}
+```
+
+### GET /api/work-experience
+Work experience timeline.
+
+**Response:**
+```json
+{
+  "workExperience": [
+    {
+      "id": "string",
+      "title": "string",
+      "company": "string",
+      "location": "string",
+      "startDate": "ISO-date",
+      "endDate": "ISO-date",
+      "year": "2024",
+      "emoji": "💼",
+      "link": "url"
+    }
+  ]
+}
+```
+
+### GET /api/certificates
+Certifications and achievements.
+
+**Response:**
+```json
+{
+  "certificates": [
+    {
+      "id": "string",
+      "name": "string",
+      "image": "url",
+      "alt": "string",
+      "date": "string"
+    }
+  ]
+}
+```
+
+### GET /api/about-images
+Images for the About section carousel.
+
+**Response:**
+```json
+{
+  "aboutImages": [
+    {
+      "id": "string",
+      "src": "url",
+      "alt": "string"
+    }
+  ]
+}
 ```
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ 
-- npm, yarn, pnpm, or bun
-- Notion API integration token
+- Node.js 18+
+- pnpm (or npm/yarn)
 
 ### Installation
 
-1. Clone the repository:
 ```bash
-git clone https://github.com/codejedi-ai/bolt-codejedi.ai.github.io.git
-cd bolt-codejedi.ai.github.io
-```
-
-2. Install dependencies:
-```bash
-npm install
-# or
-yarn install
-# or
+git clone https://github.com/codejedi-ai/codejedi-ai.vercel.app.git
+cd codejedi-ai.vercel.app
 pnpm install
 ```
 
-3. Create a `.env.local` file in the root directory:
-```env
-NOTION_INTEGRATION_SECRET=your_notion_integration_secret
-ALLOWED_ORIGINS=https://codejedi-ai.github.io,https://codejedi.ai
-# Optional: Set to "true" to allow all origins
-ALLOW_ALL_ORIGINS=false
-```
+### Development
 
-4. Run the development server:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+pnpm run dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000).
+
+Backend API available at `http://localhost:3000/api/*`.
+
+### Build
+
+```bash
+pnpm run build
+pnpm run start  # local production test
+```
 
 ## 📝 Environment Variables
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `NOTION_INTEGRATION_SECRET` | Notion API integration secret token | Yes |
-| `ALLOWED_ORIGINS` | Comma-separated list of allowed CORS origins | No |
-| `ALLOW_ALL_ORIGINS` | Set to "true" to allow all origins (development only) | No |
+Create `.env.local`:
+
+```bash
+# Optional: Notion integration (for future dynamic content)
+NOTION_INTEGRATION_SECRET=your_token
+
+# Optional: CORS allowlist (defaults to specific origins)
+ALLOWED_ORIGINS=https://codejedi-ai.github.io,https://example.com
+ALLOW_ALL_ORIGINS=false
+```
 
 ## 🔧 Available Scripts
 
-- `npm run dev` - Start development server with Turbopack
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-
-## 🌐 API Routes
-
-All API routes are located in `app/api/` and support CORS:
-
-- `/api/blog` - Fetch blog posts from Notion
-- `/api/projects` - Fetch projects from Notion
-- `/api/skills` - Fetch skills from Notion
-- `/api/work-experience` - Fetch work experience from Notion
-- `/api/certificates` - Fetch certificates
-- `/api/about-images` - Fetch about section images
-- `/api/images` - Fetch general images
-- `/api/contacts` - Get contact information
-- `/api/contacts/submit` - Submit contact form
-
-All routes handle OPTIONS preflight requests and include proper CORS headers.
-
-## 🎨 Customization
-
-### Updating Content
-
-Content is managed through Notion databases. Update the database IDs in the respective API route files:
-
-- `app/api/blog/route.ts` - Blog posts database
-- `app/api/projects/route.ts` - Projects database
-- `app/api/skills/route.ts` - Skills database
-- `app/api/work-experience/route.ts` - Work experience database
-
-### Styling
-
-The project uses Tailwind CSS. Customize colors and styles in:
-- `tailwind.config.ts` - Tailwind configuration
-- `app/globals.css` - Global styles
-
-### CORS Configuration
-
-CORS is configured in two places:
-- `middleware.ts` - Middleware-level CORS handling
-- `lib/cors.ts` - Utility functions for API routes
-
-To add allowed origins, update the `allowedOrigins` array in both files.
+```bash
+pnpm run dev      # Start dev server
+pnpm run build    # Build for production
+pnpm run start    # Start production server locally
+pnpm run lint     # Run ESLint
+```
 
 ## 🚢 Deployment
 
-### Deploy to Vercel
+### Deploy to Vercel (Automatic)
 
-1. Push your code to GitHub
-2. Import your repository in [Vercel](https://vercel.com)
-3. Add environment variables in Vercel dashboard
-4. Deploy!
+Push to GitHub; Vercel auto-deploys:
 
-The site will be automatically deployed on every push to the main branch.
+```bash
+git add .
+git commit -m "Update portfolio backend"
+git push origin main
+```
 
-### Environment Variables on Vercel
+### Manual Deployment
 
-Make sure to add all required environment variables in the Vercel dashboard:
-- `NOTION_INTEGRATION_SECRET`
-- `ALLOWED_ORIGINS` (optional)
-- `ALLOW_ALL_ORIGINS` (optional)
+```bash
+npm i -g vercel
+vercel login
+vercel deploy
+```
+
+## 🔐 CORS Configuration
+
+By default, CORS is configured for:
+- `https://codejedi-ai.github.io` (GitHub Pages frontend)
+- `localhost:3000` (development)
+
+Update in `lib/cors.ts` to add more origins:
+
+```typescript
+const allowedOrigins = [
+  "https://codejedi-ai.github.io",
+  "https://example.com",
+  // Add more origins here
+];
+```
+
+Or set `ALLOW_ALL_ORIGINS=true` in `.env.local` (development only).
+
+## 📊 Data Management
+
+### Static Data
+
+All portfolio data is stored in `lib/staticData.ts`:
+
+```typescript
+export const staticProjects = { ... }
+export const staticSkills = { ... }
+export const staticWorkExperience = { ... }
+export const staticCertificates = { ... }
+export const staticAboutImages = { ... }
+```
+
+To update content, edit these exports directly.
+
+### Future: Notion Integration
+
+Notion API utilities are in place (`lib/notion-*.ts`) for future migration to dynamic content management.
+
+## 🤝 Sync with GitHub Pages
+
+Keep `codejedi-ai.vercel.app` and `codejedi-ai.github.io` in sync:
+
+1. **API Response Shapes**: Maintain consistent response formats (both repos expect same JSON structure)
+2. **Shared Constants**: Update `lib/constants.ts` in **both** repos (e.g., `CERTIFICATES_BG_URL`)
+3. **UI Components**: Keep component logic aligned between repos
+
+## ⚠️ Error Handling
+
+Frontend components guard against:
+- Empty or missing API payloads
+- Network failures
+- Invalid response structures
+
+Backend API returns appropriate HTTP status codes:
+- `200` — Success
+- `400` — Bad request
+- `500` — Server error
 
 ## 📄 License
 
-This project is private and proprietary.
+Proprietary — Darcy Liu
+
+## 👤 Author
+
+**Darcy Liu (CodeJedi)**
+
+- Live Backend: https://codejedi-ai.vercel.app
+- Static Frontend: https://codejedi-ai.github.io
+- GitHub: https://github.com/codejedi-ai
+
+---
+
+Built with ❤️ using Next.js & Vercel
 
 ## 👤 Author
 
