@@ -50,15 +50,25 @@ async function fetchProjectsFromNotion(queryBody: Record<string, unknown> = {}) 
 
   // Helper to retrieve a URL from Notion properties with case/spacing variants
   const getUrlProperty = (
-    props: Record<string, { url?: string } | undefined>,
+    props: Record<string, { url?: string; rich_text?: Array<{ plain_text: string }>; plain_text?: string; title?: Array<{ plain_text: string }> } | undefined>,
     candidates: string[],
   ): string | undefined => {
+    // Helper to extract a URL-like string from a property value regardless of type
+    const extract = (val: { url?: string; rich_text?: Array<{ plain_text: string }>; plain_text?: string; title?: Array<{ plain_text: string }> } | undefined): string | undefined => {
+      if (!val) return undefined
+      const fromUrl = val.url
+      const fromRichText = val.rich_text?.[0]?.plain_text
+      const fromPlain = val.plain_text
+      const fromTitle = val.title?.[0]?.plain_text
+      return fromUrl || fromRichText || fromPlain || fromTitle
+    }
+
     // Try direct matches first (as-is and lowercased)
     for (const name of candidates) {
-      const direct = props[name]?.url
-      if (direct) return direct
-      const lower = props[name.toLowerCase()]?.url
-      if (lower) return lower
+      const directVal = extract(props[name])
+      if (directVal) return directVal
+      const lowerVal = extract(props[name.toLowerCase()])
+      if (lowerVal) return lowerVal
     }
     // Fallback: normalize keys by removing spaces/underscores/hyphens and compare case-insensitively
     const norm = (s: string) => s.toLowerCase().replace(/[\s_-]+/g, "")
@@ -66,8 +76,8 @@ async function fetchProjectsFromNotion(queryBody: Record<string, unknown> = {}) 
     for (const [key, value] of Object.entries(props)) {
       const keyNorm = norm(key)
       if (candidateNorms.includes(keyNorm)) {
-        const url = value?.url
-        if (url) return url
+        const candidateVal = extract(value)
+        if (candidateVal) return candidateVal
       }
     }
     return undefined
