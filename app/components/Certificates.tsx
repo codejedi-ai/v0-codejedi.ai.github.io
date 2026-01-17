@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
+import { CERTIFICATES_BG_URL } from "@/lib/constants"
 
 interface Certificate {
   id: string
@@ -18,8 +19,7 @@ export default function Certificates() {
 
   const quote =
     '"The greatest scientific discovery was the discovery of ignorance."-- Yuval Noah Harari, Homo Deus: A History of Tomorrow'
-  const backgroundImage =
-    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/spacexRocket-lXq09XQLJNEDmBHyBJiKM864evBAA4.webp"
+  const backgroundImage = CERTIFICATES_BG_URL
 
   useEffect(() => {
     async function fetchCertificates() {
