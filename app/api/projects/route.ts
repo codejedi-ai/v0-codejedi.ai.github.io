@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { corsResponse, handleOptions } from "@/lib/cors"
-import { unstable_cache } from "next/cache"
+import { Client } from "@notionhq/client"
+import { readCache, writeCache } from "@/lib/file-cache"
 
 const SIDE_PROJECTS_DATABASE_ID = "8845d571-4240-4f4d-9e67-e54f552c4e2e"
 
@@ -9,34 +10,15 @@ export async function OPTIONS(request: NextRequest) {
   return handleOptions(request)
 }
 
-// Helper function to fetch and process projects from Notion
-async function fetchProjectsFromNotion(queryBody: Record<string, unknown> = {}) {
-  console.log("Fetching projects from Notion using REST API...")
+// Helper function to fetch and process projects from Notion using SDK (no filters)
+async function fetchProjectsFromNotion() {
+  console.log("Fetching projects from Notion using SDK (no filters)...")
   console.log("Database ID:", SIDE_PROJECTS_DATABASE_ID)
-  console.log("Integration Secret exists:", !!process.env.NOTION_INTEGRATION_SECRET)
+  const apiKey = process.env.NOTION_INTEGRATION_SECRET || process.env.NOTION_API_KEY
+  if (!apiKey) throw new Error("NOTION_API_KEY/NOTION_INTEGRATION_SECRET is not configured")
 
-  if (!process.env.NOTION_INTEGRATION_SECRET) {
-    throw new Error("NOTION_INTEGRATION_SECRET is not configured")
-  }
-
-  // Query the Notion database using REST API
-  const response = await fetch(`https://api.notion.com/v1/databases/${SIDE_PROJECTS_DATABASE_ID}/query`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${process.env.NOTION_INTEGRATION_SECRET}`,
-      "Notion-Version": "2022-06-28",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(queryBody),
-  })
-
-  if (!response.ok) {
-    const errorText = await response.text()
-    console.error("Notion API error:", response.status, errorText)
-    throw new Error(`Notion API returned ${response.status}: ${errorText}`)
-  }
-
-  const data = await response.json()
+  const notion = new Client({ auth: apiKey })
+  const data = await (notion as any).databases.query({ database_id: SIDE_PROJECTS_DATABASE_ID })
 
   console.log(`Notion response received: ${data.results.length} pages found`)
 
@@ -85,7 +67,7 @@ async function fetchProjectsFromNotion(queryBody: Record<string, unknown> = {}) 
   }
 
   // Transform Notion data to your expected format
-  const projects = await Promise.all(
+    const projects = await Promise.all(
       data.results.map(async (page: { id: string; properties: Record<string, unknown>; cover?: { type: string; external?: { url: string }; file?: { url: string } } | null; icon?: { type?: string; emoji?: string; file?: { url: string }; external?: { url: string } } | null }, index: number) => {
         console.log(`Processing page ${index + 1}/${data.results.length}: ${page.id}`)
 
@@ -225,7 +207,7 @@ async function fetchProjectsFromNotion(queryBody: Record<string, unknown> = {}) 
   console.log(`Successfully processed ${projects.length} projects from Notion`)
 
   // Log each project for debugging
-  projects.forEach((project, index) => {
+  projects.forEach((project: any, index: number) => {
     console.log(
       `Project ${index + 1}: "${project.title}" - ${project.tags.length} tags - Featured: ${project.featured}`,
     )
@@ -236,12 +218,18 @@ async function fetchProjectsFromNotion(queryBody: Record<string, unknown> = {}) 
 
 export async function GET(request: NextRequest) {
   try {
-    const cached = unstable_cache(
-      () => fetchProjectsFromNotion({}),
-      ["projects", "all"],
-      { revalidate: 300, tags: ["projects"] }
-    )
-    const projects = await cached()
+    // Local file cache first
+    const ttlMs = 5 * 60 * 1000 // 5 minutes
+    const cacheKey = "projects"
+    const cachedProjects = await readCache<any[]>(cacheKey, ttlMs).catch(() => null)
+    if (cachedProjects && Array.isArray(cachedProjects)) {
+      const res = corsResponse({ projects: cachedProjects }, 200, request)
+      res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
+      return res
+    }
+
+    const projects = await fetchProjectsFromNotion()
+    await writeCache(cacheKey, projects)
     const res = corsResponse({ projects }, 200, request)
     res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
     return res
