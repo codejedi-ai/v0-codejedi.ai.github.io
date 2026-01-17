@@ -266,47 +266,4 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    // Parse request body for query parameters (optional)
-    let queryBody: Record<string, unknown> = {}
-    try {
-      const body = await request.json().catch(() => ({}))
-      if (body && typeof body === "object") {
-        queryBody = body
-      }
-    } catch {
-      // If no body or invalid JSON, use empty query
-      queryBody = {}
-    }
-
-    const key = JSON.stringify(queryBody || {})
-    const cached = unstable_cache(
-      () => fetchProjectsFromNotion(queryBody),
-      ["projects", key],
-      { revalidate: 300, tags: ["projects"] }
-    )
-    const projects = await cached()
-    const res = corsResponse({ projects }, 200, request)
-    res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
-    return res
-  } catch (error) {
-    console.error("Error fetching projects from Notion (POST):", error)
-    console.error("Error details:", {
-      message: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : "Unknown",
-    })
-
-    // Return error response instead of fallback data
-    return corsResponse(
-      {
-        error: "Failed to fetch projects from Notion",
-        details: error instanceof Error ? error.message : "Unknown error",
-        projects: [], // Return empty array instead of fallback
-      },
-      500,
-      request
-    )
-  }
-}
+// POST removed: the public API is GET-only for retrieval

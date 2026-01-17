@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { corsResponse, handleOptions } from "@/lib/cors"
+import { unstable_cache } from "next/cache"
 
 const ABOUT_IMAGES_DATABASE_ID = "c8c11443-ac59-4f07-899a-1c0604751414"
 
@@ -109,63 +110,17 @@ async function fetchAboutImagesFromNotion(queryBody: Record<string, unknown> = {
 
 export async function GET(request: NextRequest) {
   try {
-    const aboutImages = await fetchAboutImagesFromNotion()
-    return corsResponse({ aboutImages }, 200, request)
+    const cached = unstable_cache(
+      () => fetchAboutImagesFromNotion({}),
+      ["about-images"],
+      { revalidate: 300, tags: ["about-images"] }
+    )
+    const aboutImages = await cached()
+    const res = corsResponse({ aboutImages }, 200, request)
+    res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
+    return res
   } catch (error) {
     console.error("Error fetching about images from Notion:", error)
-    console.error("Error details:", {
-      message: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : "Unknown",
-    })
-
-    // Fallback to hardcoded data if Notion fails
-    const fallbackData = [
-      {
-        id: "about1",
-        src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/about1.jpg-TbfdbEe1niYCAR6Fqv7JYcqm2zeKO9.jpeg",
-        alt: "Kayaking with a Star Wars Rebel Alliance cap",
-      },
-      {
-        id: "about2", 
-        src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/about2-X48rWZdpV4Q7RxVbbD5F7xRy5JhQdO.jpeg",
-        alt: "Sailing at the beach with life vest",
-      },
-      {
-        id: "about3",
-        src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/about3-9AFwiFVEdtKGJqM9LmWvBQWHcfyyC2.jpeg", 
-        alt: "Building a sand castle on the beach",
-      },
-      {
-        id: "about4",
-        src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/about4-Vpsom9WTaJ93mBOvtKEjXoCSR1QzC5.jpeg",
-        alt: "Kayaking in a blue Hydro-Force inflatable kayak",
-      },
-    ]
-
-    console.log("Using fallback about images data")
-    return corsResponse({ aboutImages: fallbackData }, 200, request)
-  }
-}
-
-export async function POST(request: NextRequest) {
-  try {
-    // Parse request body for query parameters (optional)
-    let queryBody: Record<string, unknown> = {}
-    try {
-      const body = await request.json().catch(() => ({}))
-      if (body && typeof body === "object") {
-        queryBody = body
-      }
-    } catch {
-      // If no body or invalid JSON, use empty query
-      queryBody = {}
-    }
-
-    const aboutImages = await fetchAboutImagesFromNotion(queryBody)
-    return corsResponse({ aboutImages }, 200, request)
-  } catch (error) {
-    console.error("Error fetching about images from Notion (POST):", error)
     console.error("Error details:", {
       message: error instanceof Error ? error.message : "Unknown error",
       stack: error instanceof Error ? error.stack : undefined,

@@ -44,26 +44,8 @@ export default function Projects() {
         const getData = await getResponse.json()
         console.log("GET request successful:", getData.projects?.length || 0, "projects")
 
-        // Make POST request to fetch projects (with optional query body)
-        const postResponse = await fetch("/api/projects", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({}), // Empty body for now, can add filters later
-        })
-
-        if (!postResponse.ok) {
-          const errorData = await postResponse.json().catch(() => ({}))
-          throw new Error(errorData.error || `Failed to fetch projects (POST): ${postResponse.status}`)
-        }
-
-        const postData = await postResponse.json()
-        console.log("POST request successful:", postData.projects?.length || 0, "projects")
-        console.log("Schema info from POST:", postData)
-
-        // Use POST data (or fallback to GET data)
-        const projectsData = postData.projects || getData.projects || []
+        // Use GET data only (public API is GET-only)
+        const projectsData = getData.projects || []
         setProjects(projectsData)
         setFilteredProjects(projectsData)
 
