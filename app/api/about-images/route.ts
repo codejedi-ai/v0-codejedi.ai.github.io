@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
 
+export const revalidate = false
+
 const ABOUT_IMAGES_DATABASE_ID = "c8c11443-ac59-4f07-899a-1c0604751414"
 
 export async function GET() {

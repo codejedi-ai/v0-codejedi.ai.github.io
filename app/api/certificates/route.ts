@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
 
+export const revalidate = false
+
 export async function GET() {
   try {
     // Hard-coded certificates data - AWS certificates only

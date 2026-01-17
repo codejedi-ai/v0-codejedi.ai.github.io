@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
 
+export const revalidate = false
+
 // Allow overriding via env; fallback to known ID
 const SKILLS_DATABASE_ID =
   process.env.SKILLS_DATABASE_ID || "93762143-ef43-4c4b-be97-cb7e7d2dd2f4"
