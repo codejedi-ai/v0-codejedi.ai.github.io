@@ -121,15 +121,29 @@ export default class ProjectCard extends Component<ProjectCardProps> {
               <span>Code</span>
             </span>
           )}
-          <Link
-            href={project.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors"
-          >
-            <span>Learn More</span>
-            <ExternalLink className="h-4 w-4" />
-          </Link>
+          {(() => {
+            const url = (project.link && project.link.trim()) ? project.link.trim() : ""
+            const valid = !!url && url !== "/" && url !== "#"
+            return valid ? (
+              <Link
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                <span>Learn More</span>
+                <ExternalLink className="h-4 w-4" />
+              </Link>
+            ) : (
+              <span
+                aria-disabled="true"
+                className="flex items-center gap-1 text-gray-500 cursor-not-allowed opacity-50"
+              >
+                <span>Learn More</span>
+                <ExternalLink className="h-4 w-4" />
+              </span>
+            )
+          })()}
         </div>
       </div>
     )
