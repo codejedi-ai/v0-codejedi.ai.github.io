@@ -10,7 +10,7 @@ export async function OPTIONS(request: NextRequest) {
   return handleOptions(request)
 }
 
-// Helper function to fetch and process projects from Notion using SDK (no filters)
+// Helper function to fetch and process projects from Notion using SDK (prefer Data Sources, no filters)
 async function fetchProjectsFromNotion() {
   console.log("Fetching projects from Notion using SDK (no filters)...")
   console.log("Database ID:", SIDE_PROJECTS_DATABASE_ID)
@@ -18,7 +18,41 @@ async function fetchProjectsFromNotion() {
   if (!apiKey) throw new Error("NOTION_API_KEY/NOTION_INTEGRATION_SECRET is not configured")
 
   const notion = new Client({ auth: apiKey })
-  const data = await (notion as any).databases.query({ database_id: SIDE_PROJECTS_DATABASE_ID })
+  // First, retrieve the database to discover a linked data source (if present)
+  let dataSourceId: string | undefined = process.env.PROJECTS_DATA_SOURCE_ID
+  try {
+    const db = await (notion as any).databases.retrieve({ database_id: SIDE_PROJECTS_DATABASE_ID })
+    // Heuristics to locate a data source id on the database object
+    dataSourceId =
+      dataSourceId ||
+      db?.data_source_id ||
+      db?.data_source?.id ||
+      db?.parent?.data_source_id ||
+      db?.parent?.data_source?.id
+    console.log("Data Source discovery:", {
+      found: !!dataSourceId,
+      viaEnv: !!process.env.PROJECTS_DATA_SOURCE_ID,
+    })
+  } catch (e) {
+    console.warn("Unable to retrieve database for data source discovery; falling back to databases.query", e)
+  }
+
+  // Pagination helper for either dataSources.query or databases.query
+  const pages: any[] = []
+  let start_cursor: string | undefined = undefined
+  while (true) {
+    let resp: { results: any[]; has_more?: boolean; next_cursor?: string | null }
+    if (dataSourceId) {
+      resp = await (notion as any).dataSources.query({ data_source_id: dataSourceId, start_cursor })
+    } else {
+      resp = await (notion as any).databases.query({ database_id: SIDE_PROJECTS_DATABASE_ID, start_cursor })
+    }
+    pages.push(...(resp.results || []))
+    if (!resp.has_more || !resp.next_cursor) break
+    start_cursor = resp.next_cursor as string
+  }
+
+  const data = { results: pages }
 
   console.log(`Notion response received: ${data.results.length} pages found`)
 
