@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { corsResponse, handleOptions } from "@/lib/cors"
-import { unstable_cache } from "next/cache"
+import { Client } from "@notionhq/client"
+import { readCache, writeCache } from "@/lib/file-cache"
 
 const ABOUT_IMAGES_DATABASE_ID = "c8c11443-ac59-4f07-899a-1c0604751414"
 
@@ -9,34 +10,48 @@ export async function OPTIONS(request: NextRequest) {
   return handleOptions(request)
 }
 
-// Helper function to fetch and process about images from Notion
-async function fetchAboutImagesFromNotion(queryBody: Record<string, unknown> = {}) {
-  console.log("Fetching about images from Notion using REST API...")
+// Helper function to fetch and process about images from Notion via Data Sources (fallback to databases.query)
+async function fetchAboutImagesFromNotion() {
+  console.log("Fetching about images from Notion using SDK (prefer Data Sources)...")
   console.log("Database ID:", ABOUT_IMAGES_DATABASE_ID)
-  console.log("Integration Secret exists:", !!process.env.NOTION_INTEGRATION_SECRET)
 
-  if (!process.env.NOTION_INTEGRATION_SECRET) {
-    throw new Error("NOTION_INTEGRATION_SECRET is not configured")
+  const apiKey = process.env.NOTION_INTEGRATION_SECRET || process.env.NOTION_API_KEY
+  if (!apiKey) throw new Error("NOTION_API_KEY/NOTION_INTEGRATION_SECRET is not configured")
+
+  const notion = new Client({ auth: apiKey })
+
+  // Discover data source id
+  let dataSourceId: string | undefined = process.env.ABOUT_IMAGES_DATA_SOURCE_ID
+  try {
+    const db = await (notion as any).databases.retrieve({ database_id: ABOUT_IMAGES_DATABASE_ID })
+    dataSourceId =
+      dataSourceId ||
+      (Array.isArray(db?.data_sources) && db.data_sources[0]?.id) ||
+      db?.data_source_id ||
+      db?.data_source?.id ||
+      db?.parent?.data_source_id ||
+      db?.parent?.data_source?.id
+    console.log("About images data source discovery:", { found: !!dataSourceId })
+  } catch (e) {
+    console.warn("Unable to retrieve about-images DB for data source discovery; falling back to databases.query", e)
   }
 
-  // Query the Notion database using REST API
-  const response = await fetch(`https://api.notion.com/v1/databases/${ABOUT_IMAGES_DATABASE_ID}/query`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${process.env.NOTION_INTEGRATION_SECRET}`,
-      "Notion-Version": "2022-06-28",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(queryBody),
-  })
-
-  if (!response.ok) {
-    const errorText = await response.text()
-    console.error("Notion API error:", response.status, errorText)
-    throw new Error(`Notion API returned ${response.status}: ${errorText}`)
+  // Page through results (no filters)
+  const results: any[] = []
+  let start_cursor: string | undefined
+  while (true) {
+    let resp: { results: any[]; has_more?: boolean; next_cursor?: string | null }
+    if (dataSourceId) {
+      resp = await (notion as any).dataSources.query({ data_source_id: dataSourceId, start_cursor })
+    } else {
+      resp = await (notion as any).databases.query({ database_id: ABOUT_IMAGES_DATABASE_ID, start_cursor })
+    }
+    results.push(...(resp.results || []))
+    if (!resp.has_more || !resp.next_cursor) break
+    start_cursor = resp.next_cursor as string
   }
 
-  const data = await response.json()
+  const data = { results }
 
   console.log(`Notion response received: ${data.results.length} pages found`)
   console.log("Processing about images...")
@@ -110,12 +125,18 @@ async function fetchAboutImagesFromNotion(queryBody: Record<string, unknown> = {
 
 export async function GET(request: NextRequest) {
   try {
-    const cached = unstable_cache(
-      () => fetchAboutImagesFromNotion({}),
-      ["about-images"],
-      { revalidate: 300, tags: ["about-images"] }
-    )
-    const aboutImages = await cached()
+    // Local file cache first
+    const cacheKey = "about-images"
+    const ttlMs = 5 * 60 * 1000
+    const cached = await readCache<any[]>(cacheKey, ttlMs)
+    if (cached && Array.isArray(cached)) {
+      const res = corsResponse({ aboutImages: cached }, 200, request)
+      res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
+      return res
+    }
+
+    const aboutImages = await fetchAboutImagesFromNotion()
+    await writeCache(cacheKey, aboutImages)
     const res = corsResponse({ aboutImages }, 200, request)
     res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
     return res

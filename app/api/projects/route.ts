@@ -25,6 +25,9 @@ async function fetchProjectsFromNotion() {
     // Heuristics to locate a data source id on the database object
     dataSourceId =
       dataSourceId ||
+      // New API shape: array of data_sources
+      (Array.isArray(db?.data_sources) && db.data_sources[0]?.id) ||
+      // Other possible shapes
       db?.data_source_id ||
       db?.data_source?.id ||
       db?.parent?.data_source_id ||
