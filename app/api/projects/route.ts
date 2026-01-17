@@ -39,6 +39,15 @@ async function fetchProjectsFromNotion(queryBody: Record<string, unknown> = {}) 
 
   console.log(`Notion response received: ${data.results.length} pages found`)
 
+  // Helper to normalize URLs: ensure absolute with protocol
+  const normalizeUrl = (url: string | undefined | null): string => {
+    if (!url) return "#"
+    const trimmed = String(url).trim()
+    if (!trimmed || trimmed === "#" || trimmed === "/") return "#"
+    const hasScheme = /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(trimmed)
+    return hasScheme ? trimmed : `https://${trimmed}`
+  }
+
   // Transform Notion data to your expected format
   const projects = await Promise.all(
       data.results.map(async (page: { id: string; properties: Record<string, unknown>; cover?: { type: string; external?: { url: string }; file?: { url: string } } | null; icon?: { type?: string; emoji?: string; file?: { url: string }; external?: { url: string } } | null }, index: number) => {
@@ -154,19 +163,22 @@ async function fetchProjectsFromNotion(queryBody: Record<string, unknown> = {}) 
         console.log(`Project tags (type): [${tags.join(", ")}]`)
         console.log(`Project tech: [${tech.join(", ")}]`)
 
-        const link =
+        const rawLink =
           properties.Link?.url ||
           properties.URL?.url ||
           (properties["Live URL"] as { url?: string })?.url ||
           (properties["Demo URL"] as { url?: string })?.url ||
           "#"
 
-        const github =
+        const rawGithub =
           properties.GitHub?.url ||
           (properties["GitHub URL"] as { url?: string })?.url ||
           (properties["Source Code"] as { url?: string })?.url ||
           properties.Repository?.url ||
           "#"
+
+        const link = normalizeUrl(rawLink)
+        const github = normalizeUrl(rawGithub)
 
         const featured =
           properties.Featured?.checkbox || properties.Highlight?.checkbox || properties.Important?.checkbox || false

@@ -26,12 +26,18 @@ interface ProjectCardProps {
   imageLoading: boolean
   onImageLoad: (projectId: string) => void
   onImageError: (projectId: string) => void
-  onLearnMore: (project: Project) => void
 }
 
 export default class ProjectCard extends Component<ProjectCardProps> {
   render() {
-    const { project, imageLoading, onImageLoad, onImageError, onLearnMore } = this.props
+    const { project, imageLoading, onImageLoad, onImageError } = this.props
+
+    const codeUrl = (() => {
+      const url = (project.github && project.github.trim()) ? project.github.trim() : ""
+      if (!url || url === "/" || url === "#") return ""
+      return url
+    })()
+    const hasCode = !!codeUrl
 
     return (
       <div className="bg-gray-800/50 rounded-lg overflow-hidden border border-gray-700 hover:border-blue-500 transition-all duration-300 flex flex-col h-full group">
@@ -96,22 +102,34 @@ export default class ProjectCard extends Component<ProjectCardProps> {
           </div>
         </div>
         <div className="p-6 pt-0 flex justify-between">
+          {hasCode ? (
+            <Link
+              href={codeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors"
+            >
+              <Github className="h-4 w-4" />
+              <span>Code</span>
+            </Link>
+          ) : (
+            <span
+              aria-disabled="true"
+              className="flex items-center gap-1 text-gray-500 cursor-not-allowed opacity-50"
+            >
+              <Github className="h-4 w-4" />
+              <span>Code</span>
+            </span>
+          )}
           <Link
-            href={project.github}
+            href={project.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors"
-          >
-            <Github className="h-4 w-4" />
-            <span>Code</span>
-          </Link>
-          <button
-            onClick={() => onLearnMore(project)}
             className="flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors"
           >
             <span>Learn More</span>
             <ExternalLink className="h-4 w-4" />
-          </button>
+          </Link>
         </div>
       </div>
     )
