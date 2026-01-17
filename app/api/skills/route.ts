@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { corsResponse, handleOptions } from "@/lib/cors"
+import { unstable_cache } from "next/cache"
+import { Client } from "@notionhq/client"
 
 const SKILLS_DATABASE_ID = "93762143-ef43-4c4b-be97-cb7e7d2dd2f4"
 
@@ -9,33 +11,15 @@ export async function OPTIONS(request: NextRequest) {
 }
 
 // Helper function to fetch and process skills from Notion
-async function fetchSkillsFromNotion(queryBody: Record<string, unknown> = {}) {
-  console.log("Fetching skills from Notion using REST API...")
+async function fetchSkillsFromNotion() {
+  console.log("Fetching skills from Notion using SDK...")
   console.log("Database ID:", SKILLS_DATABASE_ID)
-  console.log("Integration Secret exists:", !!process.env.NOTION_INTEGRATION_SECRET)
 
-  if (!process.env.NOTION_INTEGRATION_SECRET) {
-    throw new Error("NOTION_INTEGRATION_SECRET is not configured")
-  }
+  const apiKey = process.env.NOTION_INTEGRATION_SECRET || process.env.NOTION_API_KEY
+  if (!apiKey) throw new Error("NOTION_API_KEY/NOTION_INTEGRATION_SECRET is not configured")
 
-  // Fetch skills from Notion database using REST API
-  const response = await fetch(`https://api.notion.com/v1/databases/${SKILLS_DATABASE_ID}/query`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${process.env.NOTION_INTEGRATION_SECRET}`,
-      "Notion-Version": "2022-06-28",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(queryBody),
-  })
-
-  if (!response.ok) {
-    const errorText = await response.text()
-    console.error("Notion API error:", response.status, errorText)
-    throw new Error(`Notion API returned ${response.status}: ${errorText}`)
-  }
-
-  const data = await response.json()
+  const notion = new Client({ auth: apiKey })
+  const data = await notion.databases.query({ database_id: SKILLS_DATABASE_ID })
 
   // Analysis logging
   console.log('\n🔍 SKILLS DATABASE ANALYSIS:')
@@ -200,8 +184,15 @@ async function fetchSkillsFromNotion(queryBody: Record<string, unknown> = {}) {
 
 export async function GET(request: NextRequest) {
   try {
-    const result = await fetchSkillsFromNotion()
-    return corsResponse(result, 200, request)
+    const cached = unstable_cache(
+      () => fetchSkillsFromNotion(),
+      ["skills"],
+      { revalidate: 300, tags: ["skills"] }
+    )
+    const result = await cached()
+    const res = corsResponse(result, 200, request)
+    res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
+    return res
   } catch (error) {
     console.error("Error fetching skills:", error)
     
@@ -264,80 +255,4 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    // Parse request body for query parameters (optional)
-    let queryBody: Record<string, unknown> = {}
-    try {
-      const body = await request.json().catch(() => ({}))
-      if (body && typeof body === "object") {
-        queryBody = body
-      }
-    } catch {
-      // If no body or invalid JSON, use empty query
-      queryBody = {}
-    }
-
-    const result = await fetchSkillsFromNotion(queryBody)
-    return corsResponse(result, 200, request)
-  } catch (error) {
-    console.error("Error fetching skills from Notion (POST):", error)
-    
-    // Return fallback data on error
-    const fallbackSkills = [
-      {
-        id: "programming",
-        title: "Programming Languages",
-        icon: "Code",
-        skills: ["C, C++, C#, Java, R and Python", "JavaScript, TypeScript, HTML, CSS", "SQL, NoSQL"],
-      },
-      {
-        id: "developer-tools",
-        title: "Developer Tools",
-        icon: "Terminal",
-        skills: [
-          "Pycharm, Eclipse, Jupyter Notebook",
-          "XCode, Visual Studio, VSCode, Code Blocks",
-          "Robot Framework, Git, GitHub",
-        ],
-      },
-      {
-        id: "libraries",
-        title: "Libraries & Frameworks",
-        icon: "Library",
-        skills: [
-          "OpenCV, TensorFlow, PyTorch, Scikit-learn",
-          "Seaborn, Selenium, Pandas, NumPy, Matplotlib",
-          "OpenAIGym, Nengo, React, Next.js",
-        ],
-      },
-      {
-        id: "devops",
-        title: "DevOps",
-        icon: "Server",
-        skills: [
-          "CI/CD, GitHub Actions, CodePipeline",
-          "Jenkins, Ansible, Docker, Kubernetes",
-          "Infrastructure as Code, Terraform",
-        ],
-      },
-      {
-        id: "database",
-        title: "Database",
-        icon: "Database",
-        skills: ["PostgreSQL, MySQL, Aurora", "MongoDB, DynamoDB"],
-      },
-      {
-        id: "cloud",
-        title: "Cloud",
-        icon: "Cloud",
-        skills: ["AWS (EC2, S3, Lambda, etc.)", "GCP, Azure"],
-      },
-    ]
-
-    return corsResponse({
-      skills: fallbackSkills,
-      error: error instanceof Error ? error.message : "Failed to fetch skills data"
-    }, 200, request)
-  }
-}
+// POST removed: GET-only API using Notion SDK

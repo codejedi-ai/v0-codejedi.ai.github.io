@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { corsResponse, handleOptions } from "@/lib/cors"
+import { unstable_cache } from "next/cache"
+import { Client } from "@notionhq/client"
 
 const CERTIFICATES_DATABASE_ID = "7ad088a9-fa3e-4261-8eb4-d140952aaa3f"
 
@@ -9,33 +11,13 @@ export async function OPTIONS(request: NextRequest) {
 }
 
 // Helper function to fetch and process certificates from Notion
-async function fetchCertificatesFromNotion(queryBody: Record<string, unknown> = {}) {
-  console.log("Fetching certificates from Notion using REST API...")
+async function fetchCertificatesFromNotion() {
+  console.log("Fetching certificates from Notion using SDK...")
   console.log("Database ID:", CERTIFICATES_DATABASE_ID)
-  console.log("Integration Secret exists:", !!process.env.NOTION_INTEGRATION_SECRET)
-
-  if (!process.env.NOTION_INTEGRATION_SECRET) {
-    throw new Error("NOTION_INTEGRATION_SECRET is not configured")
-  }
-
-  // Query the Notion database using REST API
-  const response = await fetch(`https://api.notion.com/v1/databases/${CERTIFICATES_DATABASE_ID}/query`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${process.env.NOTION_INTEGRATION_SECRET}`,
-      "Notion-Version": "2022-06-28",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(queryBody),
-  })
-
-  if (!response.ok) {
-    const errorText = await response.text()
-    console.error("Notion API error:", response.status, errorText)
-    throw new Error(`Notion API returned ${response.status}: ${errorText}`)
-  }
-
-  const data = await response.json()
+  const apiKey = process.env.NOTION_INTEGRATION_SECRET || process.env.NOTION_API_KEY
+  if (!apiKey) throw new Error("NOTION_API_KEY/NOTION_INTEGRATION_SECRET is not configured")
+  const notion = new Client({ auth: apiKey })
+  const data = await notion.databases.query({ database_id: CERTIFICATES_DATABASE_ID })
 
   console.log(`Notion response received: ${data.results.length} pages found`)
 
@@ -142,8 +124,15 @@ async function fetchCertificatesFromNotion(queryBody: Record<string, unknown> = 
 
 export async function GET(request: NextRequest) {
   try {
-    const certificates = await fetchCertificatesFromNotion()
-    return corsResponse({ certificates }, 200, request)
+    const cached = unstable_cache(
+      () => fetchCertificatesFromNotion(),
+      ["certificates"],
+      { revalidate: 300, tags: ["certificates"] }
+    )
+    const certificates = await cached()
+    const res = corsResponse({ certificates }, 200, request)
+    res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
+    return res
   } catch (error) {
     console.error("Error fetching certificates from Notion:", error)
     console.error("Error details:", {
@@ -189,63 +178,4 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    // Parse request body for query parameters (optional)
-    let queryBody: Record<string, unknown> = {}
-    try {
-      const body = await request.json().catch(() => ({}))
-      if (body && typeof body === "object") {
-        queryBody = body
-      }
-    } catch {
-      // If no body or invalid JSON, use empty query
-      queryBody = {}
-    }
-
-    const certificates = await fetchCertificatesFromNotion(queryBody)
-    return corsResponse({ certificates }, 200, request)
-  } catch (error) {
-    console.error("Error fetching certificates from Notion (POST):", error)
-    console.error("Error details:", {
-      message: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : "Unknown",
-    })
-
-    // Return fallback data on error
-    const fallbackCertificates = [
-      {
-        id: "aws-practitioner",
-        name: "AWS Certified Practitioner",
-        image: "/images/aws-practitioner.png",
-        alt: "AWS Cloud Practitioner Certificate",
-        date: "2 January 2021",
-      },
-      {
-        id: "aws-developer",
-        name: "AWS Certified Developer",
-        image: "/images/aws-developer.png",
-        alt: "AWS Developer Associate Certificate",
-        date: "29 August 2021",
-      },
-      {
-        id: "aws-devops-prof",
-        name: "AWS Certified DevOps Engineer - Professional",
-        image: "/images/aws-devops-prof.png",
-        alt: "AWS DevOps Engineer Professional Certificate",
-        date: "23 August 2024",
-      },
-    ]
-
-    return corsResponse(
-      {
-        error: "Failed to fetch certificates from Notion",
-        details: error instanceof Error ? error.message : "Unknown error",
-        certificates: fallbackCertificates, // Return fallback data
-      },
-      200,
-      request
-    )
-  }
-}
+// POST removed: GET-only API using Notion SDK

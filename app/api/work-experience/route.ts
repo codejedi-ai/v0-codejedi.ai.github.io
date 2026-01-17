@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { corsResponse, handleOptions } from "@/lib/cors"
+import { unstable_cache } from "next/cache"
+import { Client } from "@notionhq/client"
 
 const WORK_EXPERIENCE_DATABASE_ID = "ce4d8010-744e-4fc7-90d5-f1ca4e481955"
 
@@ -9,33 +11,13 @@ export async function OPTIONS(request: NextRequest) {
 }
 
 // Helper function to fetch and process work experience from Notion
-async function fetchWorkExperienceFromNotion(queryBody: Record<string, unknown> = {}) {
-  console.log("Fetching work experience from Notion using REST API...")
+async function fetchWorkExperienceFromNotion() {
+  console.log("Fetching work experience from Notion using SDK...")
   console.log("Database ID:", WORK_EXPERIENCE_DATABASE_ID)
-  console.log("Integration Secret exists:", !!process.env.NOTION_INTEGRATION_SECRET)
-
-  if (!process.env.NOTION_INTEGRATION_SECRET) {
-    throw new Error("NOTION_INTEGRATION_SECRET is not configured")
-  }
-
-  // Query the Notion database using REST API
-  const response = await fetch(`https://api.notion.com/v1/databases/${WORK_EXPERIENCE_DATABASE_ID}/query`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${process.env.NOTION_INTEGRATION_SECRET}`,
-      "Notion-Version": "2022-06-28",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(queryBody),
-  })
-
-  if (!response.ok) {
-    const errorText = await response.text()
-    console.error("Notion API error:", response.status, errorText)
-    throw new Error(`Notion API returned ${response.status}: ${errorText}`)
-  }
-
-  const data = await response.json()
+  const apiKey = process.env.NOTION_INTEGRATION_SECRET || process.env.NOTION_API_KEY
+  if (!apiKey) throw new Error("NOTION_API_KEY/NOTION_INTEGRATION_SECRET is not configured")
+  const notion = new Client({ auth: apiKey })
+  const data = await notion.databases.query({ database_id: WORK_EXPERIENCE_DATABASE_ID })
 
   console.log(`Notion response received: ${data.results.length} pages found`)
 
@@ -136,8 +118,15 @@ async function fetchWorkExperienceFromNotion(queryBody: Record<string, unknown> 
 
 export async function GET(request: NextRequest) {
   try {
-    const workExperience = await fetchWorkExperienceFromNotion()
-    return corsResponse({ workExperience }, 200, request)
+    const cached = unstable_cache(
+      () => fetchWorkExperienceFromNotion(),
+      ["work-experience"],
+      { revalidate: 300, tags: ["work-experience"] }
+    )
+    const workExperience = await cached()
+    const res = corsResponse({ workExperience }, 200, request)
+    res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
+    return res
   } catch (error) {
     console.error("Error fetching work experience from Notion:", error)
     console.error("Error details:", {
@@ -215,95 +204,4 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    // Parse request body for query parameters (optional)
-    let queryBody: Record<string, unknown> = {}
-    try {
-      const body = await request.json().catch(() => ({}))
-      if (body && typeof body === "object") {
-        queryBody = body
-      }
-    } catch {
-      // If no body or invalid JSON, use empty query
-      queryBody = {}
-    }
-
-    const workExperience = await fetchWorkExperienceFromNotion(queryBody)
-    return corsResponse({ workExperience }, 200, request)
-  } catch (error) {
-    console.error("Error fetching work experience from Notion (POST):", error)
-    console.error("Error details:", {
-      message: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : "Unknown",
-    })
-
-    // Fallback to hardcoded data if Notion fails
-    const fallbackData = [
-      {
-        id: "opentext-2024",
-        title: "Software Developer Intern - DevOps (Hybrid)",
-        company: "Open Text Corporation",
-        location: "Ottawa, ON, Canada",
-        startDate: "2024-09-03",
-        endDate: "2024-12-20",
-        tenure: 108,
-        link: "https://www.opentext.com/",
-        emoji: "💎",
-        year: "2024",
-      },
-      {
-        id: "sunlife-2024",
-        title: "Cloud Engineer Intern (Remote)",
-        company: "Sun Life Financial",
-        location: "Toronto, ON, Canada",
-        startDate: "2024-05-06",
-        endDate: "2024-08-30",
-        tenure: 116,
-        link: "https://www.sunlife.ca",
-        emoji: "💎",
-        year: "2024",
-      },
-      {
-        id: "oanda-2023",
-        title: "Site Reliability Engineer Intern (Remote)",
-        company: "OANDA (Canada) Corporation.",
-        location: "Toronto, ON, Canada",
-        startDate: "2023-01-09",
-        endDate: "2023-04-21",
-        tenure: 102,
-        link: "https://oanda.com",
-        emoji: "💎",
-        year: "2023",
-      },
-      {
-        id: "carta-2022",
-        title: "Site Reliability Engineer Intern (Hybrid)",
-        company: "Carta Maple Technologies Inc.",
-        location: "Waterloo, ON, Canada",
-        startDate: "2022-05-02",
-        endDate: "2022-08-26",
-        tenure: 116,
-        link: "https://carta.com",
-        emoji: "💎",
-        year: "2022",
-      },
-      {
-        id: "virtamove-2021",
-        title: "Software Development Co-op Student (Remote)",
-        company: "VirtaMove Corp.",
-        location: "Ottawa, ON, Canada",
-        startDate: "2021-05-06",
-        endDate: "2021-08-27",
-        tenure: 113,
-        link: "https://www.virtamove.com",
-        emoji: "💎",
-        year: "2021",
-      },
-    ]
-
-    console.log("Using fallback work experience data")
-    return corsResponse({ workExperience: fallbackData }, 200, request)
-  }
-}
+// POST removed: GET-only API using Notion SDK
