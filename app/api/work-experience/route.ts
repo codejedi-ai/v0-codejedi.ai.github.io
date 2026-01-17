@@ -121,71 +121,14 @@ export async function GET() {
       stack: error instanceof Error ? error.stack : undefined,
     })
 
-    // Fallback to hardcoded data if Notion fails
-    const fallbackData = [
+    // Return error response
+    return NextResponse.json(
       {
-        id: "opentext-2024",
-        title: "Software Developer Intern - DevOps (Hybrid)",
-        company: "Open Text Corporation",
-        location: "Ottawa, ON, Canada",
-        startDate: "2024-09-03",
-        endDate: "2024-12-20",
-        tenure: 108,
-        link: "https://www.opentext.com/",
-        emoji: "💎",
-        year: "2024",
+        error: "Failed to fetch work experience from Notion",
+        details: error instanceof Error ? error.message : "Unknown error",
+        workExperience: [],
       },
-      {
-        id: "sunlife-2024",
-        title: "Cloud Engineer Intern (Remote)",
-        company: "Sun Life Financial",
-        location: "Toronto, ON, Canada",
-        startDate: "2024-05-06",
-        endDate: "2024-08-30",
-        tenure: 116,
-        link: "https://www.sunlife.ca",
-        emoji: "💎",
-        year: "2024",
-      },
-      {
-        id: "oanda-2023",
-        title: "Site Reliability Engineer Intern (Remote)",
-        company: "OANDA (Canada) Corporation.",
-        location: "Toronto, ON, Canada",
-        startDate: "2023-01-09",
-        endDate: "2023-04-21",
-        tenure: 102,
-        link: "https://oanda.com",
-        emoji: "💎",
-        year: "2023",
-      },
-      {
-        id: "carta-2022",
-        title: "Site Reliability Engineer Intern (Hybrid)",
-        company: "Carta Maple Technologies Inc.",
-        location: "Waterloo, ON, Canada",
-        startDate: "2022-05-02",
-        endDate: "2022-08-26",
-        tenure: 116,
-        link: "https://carta.com",
-        emoji: "💎",
-        year: "2022",
-      },
-      {
-        id: "virtamove-2021",
-        title: "Software Development Co-op Student (Remote)",
-        company: "VirtaMove Corp.",
-        location: "Ottawa, ON, Canada",
-        startDate: "2021-05-06",
-        endDate: "2021-08-27",
-        tenure: 113,
-        link: "https://www.virtamove.com",
-        emoji: "💎",
-        year: "2021",
-      },
-    ]
-
-    console.log("Using fallback work experience data")
-    return NextResponse.json({ workExperience: fallbackData }, { status: 200 })
+      { status: 500 }
+    )
   }
 }

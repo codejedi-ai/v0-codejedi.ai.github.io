@@ -125,64 +125,12 @@ export async function GET() {
       }
     })
 
-    // Fallback to hardcoded data if Notion fails
-    const fallbackSkills = [
-      {
-        id: "programming",
-        title: "Programming Languages",
-        icon: "Code",
-        skills: ["C, C++, C#, Java, R and Python", "JavaScript, TypeScript, HTML, CSS", "SQL, NoSQL"],
-      },
-      {
-        id: "developer-tools",
-        title: "Developer Tools",
-        icon: "Terminal",
-        skills: [
-          "Pycharm, Eclipse, Jupyter Notebook",
-          "XCode, Visual Studio, VSCode, Code Blocks",
-          "Robot Framework, Git, GitHub",
-        ],
-      },
-      {
-        id: "libraries",
-        title: "Libraries & Frameworks",
-        icon: "Library",
-        skills: [
-          "OpenCV, TensorFlow, PyTorch, Scikit-learn",
-          "Seaborn, Selenium, Pandas, NumPy, Matplotlib",
-          "OpenAIGym, Nengo, React, Next.js",
-        ],
-      },
-      {
-        id: "devops",
-        title: "DevOps",
-        icon: "Server",
-        skills: [
-          "CI/CD, GitHub Actions, CodePipeline",
-          "Jenkins, Ansible, Docker, Kubernetes",
-          "Infrastructure as Code, Terraform",
-        ],
-      },
-      {
-        id: "database",
-        title: "Database",
-        icon: "Database",
-        skills: ["PostgreSQL, MySQL, Aurora", "MongoDB, DynamoDB"],
-      },
-      {
-        id: "cloud",
-        title: "Cloud",
-        icon: "Cloud",
-        skills: ["AWS (EC2, S3, Lambda, etc.)", "GCP, Azure"],
-      },
-    ]
-
     // Return the skills data as JSON
-        console.log(`\n🎯 FINAL RESULT: ${skills.length} categories will be displayed on frontend`)
+    console.log(`\n🎯 FINAL RESULT: ${skills.length} categories will be displayed on frontend`)
     console.log('📋 Categories:', skills.map(s => s.title).join(', '))
 
     return NextResponse.json({
-      skills: skills.length > 0 ? skills : fallbackSkills,
+      skills: skills,
       meta: {
         totalSkillsInDatabase: data.results.length,
         categoriesDisplayed: skills.length,
@@ -192,61 +140,10 @@ export async function GET() {
   } catch (error) {
     console.error("Error fetching skills:", error)
     
-    // Return fallback data on error
-    const fallbackSkills = [
-      {
-        id: "programming",
-        title: "Programming Languages",
-        icon: "Code",
-        skills: ["C, C++, C#, Java, R and Python", "JavaScript, TypeScript, HTML, CSS", "SQL, NoSQL"],
-      },
-      {
-        id: "developer-tools",
-        title: "Developer Tools",
-        icon: "Terminal",
-        skills: [
-          "Pycharm, Eclipse, Jupyter Notebook",
-          "XCode, Visual Studio, VSCode, Code Blocks",
-          "Robot Framework, Git, GitHub",
-        ],
-      },
-      {
-        id: "libraries",
-        title: "Libraries & Frameworks",
-        icon: "Library",
-        skills: [
-          "OpenCV, TensorFlow, PyTorch, Scikit-learn",
-          "Seaborn, Selenium, Pandas, NumPy, Matplotlib",
-          "OpenAIGym, Nengo, React, Next.js",
-        ],
-      },
-      {
-        id: "devops",
-        title: "DevOps",
-        icon: "Server",
-        skills: [
-          "CI/CD, GitHub Actions, CodePipeline",
-          "Jenkins, Ansible, Docker, Kubernetes",
-          "Infrastructure as Code, Terraform",
-        ],
-      },
-      {
-        id: "database",
-        title: "Database",
-        icon: "Database",
-        skills: ["PostgreSQL, MySQL, Aurora", "MongoDB, DynamoDB"],
-      },
-      {
-        id: "cloud",
-        title: "Cloud",
-        icon: "Cloud",
-        skills: ["AWS (EC2, S3, Lambda, etc.)", "GCP, Azure"],
-      },
-    ]
-
     return NextResponse.json({
-      skills: fallbackSkills,
-      error: error instanceof Error ? error.message : "Failed to fetch skills data"
-    }, { status: 200 })
+      error: "Failed to fetch skills from Notion",
+      details: error instanceof Error ? error.message : "Unknown error",
+      skills: []
+    }, { status: 500 })
   }
 }

@@ -1,18 +1,12 @@
 import { NextResponse } from "next/server"
+import { SIDE_PROJECTS_DATABASE_ID } from "@/lib/notion-databases"
 
 export const revalidate = false
-
-// Allow overriding via env; fallback to known ID
-const SIDE_PROJECTS_DATABASE_ID =
-  process.env.SIDE_PROJECTS_DATABASE_ID || "8845d571-4240-4f4d-9e67-e54f552c4e2e"
 
 export async function GET() {
   try {
     console.log("Fetching projects from Notion using REST API...")
     console.log("Database ID:", SIDE_PROJECTS_DATABASE_ID)
-    if (!process.env.SIDE_PROJECTS_DATABASE_ID) {
-      console.log("SIDE_PROJECTS_DATABASE_ID env not set — using fallback constant")
-    }
     console.log("Integration Secret exists:", !!process.env.NOTION_INTEGRATION_SECRET)
 
     if (!process.env.NOTION_INTEGRATION_SECRET) {
@@ -141,19 +135,35 @@ export async function GET() {
 
         console.log(`Project tags: [${tags.join(", ")}]`)
 
+        // Extract project link from URL properties
+        // Primary: 'url' property (ID: }suo) - Main project link in the database
+        // Fallback chain for alternate property names
         const link =
-          properties.Link?.url ||
+          properties.url?.url ||
           properties.URL?.url ||
+          properties.Link?.url ||
           properties["Live URL"]?.url ||
           properties["Demo URL"]?.url ||
-          "#"
+          `https://www.notion.so/${page.id.replace(/-/g, "")}`
+
+        console.log(`📎 Project link for "${title}":`, link)
 
         const github =
+          properties.github?.url ||
           properties.GitHub?.url ||
           properties["GitHub URL"]?.url ||
           properties["Source Code"]?.url ||
           properties.Repository?.url ||
-          "#"
+          ""
+
+        console.log(`🔗 Project github for "${title}":`, github || "(empty)")
+        console.log(`   Available URL properties:`, {
+          github: !!properties.github?.url,
+          GitHub: !!properties.GitHub?.url,
+          "GitHub URL": !!properties["GitHub URL"]?.url,
+          "Source Code": !!properties["Source Code"]?.url,
+          Repository: !!properties.Repository?.url,
+        })
 
         const featured =
           properties.Featured?.checkbox || properties.Highlight?.checkbox || properties.Important?.checkbox || false
@@ -163,6 +173,12 @@ export async function GET() {
 
         // Extract cover image from page cover property (PRIORITY)
         let image = "/placeholder.svg"
+
+        // Validate image URL - must be absolute or start with /
+        const isValidImageUrl = (url: string): boolean => {
+          if (!url) return false
+          return url.startsWith("http://") || url.startsWith("https://") || url.startsWith("/")
+        }
 
         // First priority: Page cover image
         if (page.cover) {
@@ -184,12 +200,20 @@ export async function GET() {
             properties.Preview?.files?.[0]?.file?.url ||
             properties.Cover?.files?.[0]?.file?.url
 
-          if (imageProperty) {
+          if (imageProperty && isValidImageUrl(imageProperty)) {
             image = imageProperty
             console.log(`📎 Image property fallback found: ${image}`)
+          } else if (imageProperty) {
+            console.warn(`⚠️ Invalid image URL for project "${title}": ${imageProperty}, using placeholder`)
           } else {
             console.log(`⚠️ No image found for project "${title}", using placeholder`)
           }
+        }
+
+        // Validate final image URL
+        if (!isValidImageUrl(image)) {
+          console.warn(`⚠️ Final image URL is invalid for project "${title}": ${image}, reverting to placeholder`)
+          image = "/placeholder.svg"
         }
 
         // Get page emoji/icon
@@ -224,6 +248,11 @@ export async function GET() {
         `Project ${index + 1}: "${project.title}" - ${project.tags.length} tags - Featured: ${project.featured}`,
       )
     })
+
+    // Log complete JSON response
+    console.log("\n✅ COMPLETE PROJECTS JSON RESPONSE:\n")
+    console.log(JSON.stringify({ projects }, null, 2))
+    console.log("\n")
 
     return NextResponse.json({ projects }, { status: 200 })
   } catch (error) {
