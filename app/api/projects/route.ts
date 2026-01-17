@@ -48,6 +48,31 @@ async function fetchProjectsFromNotion(queryBody: Record<string, unknown> = {}) 
     return hasScheme ? trimmed : `https://${trimmed}`
   }
 
+  // Helper to retrieve a URL from Notion properties with case/spacing variants
+  const getUrlProperty = (
+    props: Record<string, { url?: string } | undefined>,
+    candidates: string[],
+  ): string | undefined => {
+    // Try direct matches first (as-is and lowercased)
+    for (const name of candidates) {
+      const direct = props[name]?.url
+      if (direct) return direct
+      const lower = props[name.toLowerCase()]?.url
+      if (lower) return lower
+    }
+    // Fallback: normalize keys by removing spaces/underscores/hyphens and compare case-insensitively
+    const norm = (s: string) => s.toLowerCase().replace(/[\s_-]+/g, "")
+    const candidateNorms = candidates.map(norm)
+    for (const [key, value] of Object.entries(props)) {
+      const keyNorm = norm(key)
+      if (candidateNorms.includes(keyNorm)) {
+        const url = value?.url
+        if (url) return url
+      }
+    }
+    return undefined
+  }
+
   // Transform Notion data to your expected format
   const projects = await Promise.all(
       data.results.map(async (page: { id: string; properties: Record<string, unknown>; cover?: { type: string; external?: { url: string }; file?: { url: string } } | null; icon?: { type?: string; emoji?: string; file?: { url: string }; external?: { url: string } } | null }, index: number) => {
@@ -164,18 +189,21 @@ async function fetchProjectsFromNotion(queryBody: Record<string, unknown> = {}) 
         console.log(`Project tech: [${tech.join(", ")}]`)
 
         const rawLink =
-          properties.Link?.url ||
-          properties.URL?.url ||
-          (properties["Live URL"] as { url?: string })?.url ||
-          (properties["Demo URL"] as { url?: string })?.url ||
-          "#"
+          getUrlProperty(properties as unknown as Record<string, { url?: string }>, [
+            "Link",
+            "URL",
+            "Live URL",
+            "Demo URL",
+          ]) || "#"
 
         const rawGithub =
-          properties.GitHub?.url ||
-          (properties["GitHub URL"] as { url?: string })?.url ||
-          (properties["Source Code"] as { url?: string })?.url ||
-          properties.Repository?.url ||
-          "#"
+          getUrlProperty(properties as unknown as Record<string, { url?: string }>, [
+            "GitHub",
+            "github",
+            "GitHub URL",
+            "Source Code",
+            "Repository",
+          ]) || "#"
 
         const link = normalizeUrl(rawLink)
         const github = normalizeUrl(rawGithub)
