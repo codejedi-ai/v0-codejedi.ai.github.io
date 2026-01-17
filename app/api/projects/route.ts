@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { corsResponse, handleOptions } from "@/lib/cors"
+import { unstable_cache } from "next/cache"
 
 const SIDE_PROJECTS_DATABASE_ID = "8845d571-4240-4f4d-9e67-e54f552c4e2e"
 
@@ -121,67 +122,8 @@ async function fetchProjectsFromNotion(queryBody: Record<string, unknown> = {}) 
 
         console.log(`Project description: "${description}"`)
 
-        // Get detailed description from page content
-        let longDescription = description
-        try {
-          console.log(`Fetching blocks for page: ${page.id}`)
-
-          // Fetch blocks using REST API with timeout
-          const blocksResponse = await Promise.race([
-            fetch(`https://api.notion.com/v1/blocks/${page.id}/children`, {
-              method: "GET",
-              headers: {
-                "Authorization": `Bearer ${process.env.NOTION_INTEGRATION_SECRET}`,
-                "Notion-Version": "2022-06-28",
-              },
-            }),
-            new Promise<never>((_, reject) =>
-              setTimeout(() => reject(new Error("Block fetch timeout")), 5000)
-            ),
-          ]) as Response
-
-          if (!blocksResponse.ok) {
-            throw new Error(`Failed to fetch blocks: ${blocksResponse.status}`)
-          }
-
-          const blocks = await blocksResponse.json()
-
-          console.log(`Found ${blocks.results.length} blocks`)
-
-          const textContent = blocks.results
-            .map((block: { type: string; paragraph?: { rich_text: Array<{ plain_text: string }> }; heading_1?: { rich_text: Array<{ plain_text: string }> }; heading_2?: { rich_text: Array<{ plain_text: string }> }; heading_3?: { rich_text: Array<{ plain_text: string }> } }) => {
-              if (block.type === "paragraph" && block.paragraph?.rich_text) {
-                return block.paragraph.rich_text.map((text: { plain_text: string }) => text.plain_text).join("")
-              }
-              if (block.type === "heading_1" && block.heading_1?.rich_text) {
-                return "# " + block.heading_1.rich_text.map((text: { plain_text: string }) => text.plain_text).join("")
-              }
-              if (block.type === "heading_2" && block.heading_2?.rich_text) {
-                return "## " + block.heading_2.rich_text.map((text: { plain_text: string }) => text.plain_text).join("")
-              }
-              if (block.type === "heading_3" && block.heading_3?.rich_text) {
-                return "### " + block.heading_3.rich_text.map((text: { plain_text: string }) => text.plain_text).join("")
-              }
-              return ""
-            })
-            .filter(Boolean)
-            .join("\n\n")
-
-          if (textContent) {
-            longDescription = textContent
-            console.log(`Long description extracted: ${textContent.substring(0, 100)}...`)
-          } else {
-            console.log("No text content found in blocks, using description as longDescription")
-            longDescription = description || "No detailed description available"
-          }
-        } catch (blockError) {
-          console.warn(
-            `Could not fetch blocks for project ${page.id}:`,
-            blockError instanceof Error ? blockError.message : "Unknown error",
-          )
-          // Use description as fallback if block fetching fails
-          longDescription = description || "No detailed description available"
-        }
+        // Long description no longer fetched from blocks for performance; use description
+        const longDescription = description || ""
 
         // Extract tags (project type) - keep the old Tags field
         const tags =
@@ -294,8 +236,15 @@ async function fetchProjectsFromNotion(queryBody: Record<string, unknown> = {}) 
 
 export async function GET(request: NextRequest) {
   try {
-    const projects = await fetchProjectsFromNotion()
-    return corsResponse({ projects }, 200, request)
+    const cached = unstable_cache(
+      () => fetchProjectsFromNotion({}),
+      ["projects", "all"],
+      { revalidate: 300, tags: ["projects"] }
+    )
+    const projects = await cached()
+    const res = corsResponse({ projects }, 200, request)
+    res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
+    return res
   } catch (error) {
     console.error("Error fetching projects from Notion:", error)
     console.error("Error details:", {
@@ -331,8 +280,16 @@ export async function POST(request: NextRequest) {
       queryBody = {}
     }
 
-    const projects = await fetchProjectsFromNotion(queryBody)
-    return corsResponse({ projects }, 200, request)
+    const key = JSON.stringify(queryBody || {})
+    const cached = unstable_cache(
+      () => fetchProjectsFromNotion(queryBody),
+      ["projects", key],
+      { revalidate: 300, tags: ["projects"] }
+    )
+    const projects = await cached()
+    const res = corsResponse({ projects }, 200, request)
+    res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
+    return res
   } catch (error) {
     console.error("Error fetching projects from Notion (POST):", error)
     console.error("Error details:", {
