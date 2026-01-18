@@ -316,10 +316,7 @@ export default function AboutMe() {
 
           {/* Info */}
           <div>
-            <h3 className="text-2xl font-semibold mb-4">
-              Honour's Bachelor of Computer Science with AI Specialization (2020-2025), University of Waterloo, Canada<br />
-              <span className="text-lg">Currently: MEng Systems Design Engineering Health Technologies, University of Waterloo</span>
-            </h3>
+            <h2 className="text-3xl font-bold mb-6 text-white">Who Am I</h2>
 
             <p className="text-white mb-6">
               Embarking on the sacred path to AI mastery, my passion and curiosity guide me through uncharted
@@ -327,9 +324,23 @@ export default function AboutMe() {
               art of AI, akin to a wise seeker in the realm of knowledge.
             </p>
 
-            <p className="text-white">
+            <p className="text-white mb-8">
               I value continuous learning and mastery. I am motivated by opportunities to expand my skills, explore cutting-edge ideas, and apply knowledge in impactful ways.
             </p>
+
+            <div className="border-t border-gray-600 pt-6 mt-6">
+              <h4 className="text-lg font-semibold text-blue-400 mb-3">Education</h4>
+              <p className="text-gray-300 mb-2">
+                <span className="font-semibold">MEng Systems Design Engineering - Health Technologies</span>
+                <br />
+                University of Waterloo, Canada (Current)
+              </p>
+              <p className="text-gray-300">
+                <span className="font-semibold">Bachelor of Computer Science - AI Specialization (Honours)</span>
+                <br />
+                University of Waterloo, Canada (2020–2025)
+              </p>
+            </div>
           </div>
         </div>
       </div>
