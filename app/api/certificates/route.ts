@@ -157,7 +157,7 @@ async function fetchCertificatesFromNotion() {
 export async function GET(request: NextRequest) {
   try {
     const cacheKey = "certificates"
-    const ttlMs = 5 * 60 * 1000
+    const ttlMs = 0 // Cache disabled - always fetch fresh to avoid Notion S3 URL expiry
     const cached = await readCache<any[]>(cacheKey, ttlMs)
     if (cached && Array.isArray(cached)) {
       const res = corsResponse({ certificates: cached }, 200, request)
@@ -178,7 +178,17 @@ export async function GET(request: NextRequest) {
       name: error instanceof Error ? error.name : "Unknown",
     })
 
-    // Return fallback data on error
+    // Try to serve stale cache as fallback instead of flooding errors
+    const cacheKey = "certificates"
+    const staleCache = await readCache<any[]>(cacheKey, Infinity).catch(() => null)
+    if (staleCache && Array.isArray(staleCache)) {
+      console.log("✅ Serving stale cache due to error")
+      const res = corsResponse({ certificates: staleCache }, 200, request)
+      res.headers.set("Cache-Control", "s-maxage=60, stale-while-revalidate=86400")
+      return res
+    }
+
+    // Return fallback data if no cache available
     const fallbackCertificates = [
       {
         id: "aws-practitioner",

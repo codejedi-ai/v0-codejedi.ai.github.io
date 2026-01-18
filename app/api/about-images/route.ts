@@ -125,9 +125,9 @@ async function fetchAboutImagesFromNotion() {
 
 export async function GET(request: NextRequest) {
   try {
-    // Local file cache first
+    // Cache disabled - always fetch fresh to avoid Notion S3 URL expiry
     const cacheKey = "about-images"
-    const ttlMs = 5 * 60 * 1000
+    const ttlMs = 0
     const cached = await readCache<any[]>(cacheKey, ttlMs)
     if (cached && Array.isArray(cached)) {
       const res = corsResponse({ aboutImages: cached }, 200, request)
@@ -148,7 +148,17 @@ export async function GET(request: NextRequest) {
       name: error instanceof Error ? error.name : "Unknown",
     })
 
-    // Fallback to hardcoded data if Notion fails
+    // Try to serve stale cache as fallback instead of flooding errors
+    const cacheKey = "about-images"
+    const staleCache = await readCache<any[]>(cacheKey, Infinity).catch(() => null)
+    if (staleCache && Array.isArray(staleCache)) {
+      console.log("✅ Serving stale cache due to error")
+      const res = corsResponse({ aboutImages: staleCache }, 200, request)
+      res.headers.set("Cache-Control", "s-maxage=60, stale-while-revalidate=86400")
+      return res
+    }
+
+    // Fallback to hardcoded data if Notion fails and no cache
     const fallbackData = [
       {
         id: "about1",

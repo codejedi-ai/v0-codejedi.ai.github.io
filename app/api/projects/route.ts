@@ -255,8 +255,8 @@ async function fetchProjectsFromNotion() {
 
 export async function GET(request: NextRequest) {
   try {
-    // Local file cache first
-    const ttlMs = 5 * 60 * 1000 // 5 minutes
+    // Cache disabled - always fetch fresh to avoid Notion S3 URL expiry
+    const ttlMs = 0
     const cacheKey = "projects"
     const cachedProjects = await readCache<any[]>(cacheKey, ttlMs).catch(() => null)
     if (cachedProjects && Array.isArray(cachedProjects)) {
@@ -278,7 +278,17 @@ export async function GET(request: NextRequest) {
       name: error instanceof Error ? error.name : "Unknown",
     })
 
-    // Return error response instead of fallback data
+    // Try to serve stale cache as fallback instead of flooding errors
+    const cacheKey = "projects"
+    const staleCache = await readCache<any[]>(cacheKey, Infinity).catch(() => null)
+    if (staleCache && Array.isArray(staleCache)) {
+      console.log("✅ Serving stale cache due to error")
+      const res = corsResponse({ projects: staleCache }, 200, request)
+      res.headers.set("Cache-Control", "s-maxage=60, stale-while-revalidate=86400")
+      return res
+    }
+
+    // Return error response only if no cache available
     return corsResponse(
       {
         error: "Failed to fetch projects from Notion",

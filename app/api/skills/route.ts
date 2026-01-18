@@ -217,7 +217,7 @@ async function fetchSkillsFromNotion() {
 export async function GET(request: NextRequest) {
   try {
     const cacheKey = "skills"
-    const ttlMs = 5 * 60 * 1000
+    const ttlMs = 0 // Cache disabled - always fetch fresh to avoid Notion S3 URL expiry
     const cached = await readCache<{ skills: any[]; meta?: any }>(cacheKey, ttlMs)
     if (cached) {
       const res = corsResponse(cached, 200, request)
@@ -233,7 +233,17 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error fetching skills:", error)
     
-    // Return fallback data on error
+    // Try to serve stale cache as fallback instead of flooding errors
+    const cacheKey = "skills"
+    const staleCache = await readCache<{ skills: any[]; meta?: any }>(cacheKey, Infinity).catch(() => null)
+    if (staleCache) {
+      console.log("✅ Serving stale cache due to error")
+      const res = corsResponse(staleCache, 200, request)
+      res.headers.set("Cache-Control", "s-maxage=60, stale-while-revalidate=86400")
+      return res
+    }
+
+    // Return fallback data if no cache available
     const fallbackSkills = [
       {
         id: "programming",
