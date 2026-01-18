@@ -9,7 +9,7 @@ export default function WorkExperience() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const quote_work_experience = "Knowledge = Experience x Sensitivity -- Yuval Noah Harari"
+  const quote_work_experience = "\"If you bring forth what is within you, what you bring forth will save you. If you do not bring forth what is within you, what you do not bring forth will destroy you.\"— Gospel of Thomas, Saying 70"
 
   useEffect(() => {
     async function fetchWorkExperience() {
