@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Darcy's Portfolio",
-  description: "Created with Next.js and Tailwind CSS",
+  title: "Darcy's Portfolio - Backend API & Fallback Frontend (Vercel)",
+  description: "Backend API and fallback frontend for portfolio content",
   generator: 'v0.dev',
   icons: {
     icon: '/img/CodeJedi.png',
