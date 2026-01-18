@@ -191,7 +191,7 @@ export default function AboutMe() {
           </div>
           <div className="w-32 h-32 relative">
             <Image
-              src="/img/CodeJedi.png"
+              src="/CodeJedi.png"
               alt="CodeJedi"
               fill
               className="rounded-full object-cover border-4 border-blue-400 shadow-lg"

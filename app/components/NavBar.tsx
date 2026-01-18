@@ -32,7 +32,7 @@ export function NavBar() {
           {/* Logo as Home Link */}
           <Link href="/#hero" className="flex items-center hover:opacity-80 transition-opacity">
             <Image
-              src="/img/CodeJedi.png"
+              src="/CodeJedi.png"
               alt="CodeJedi Logo"
               width={40}
               height={40}

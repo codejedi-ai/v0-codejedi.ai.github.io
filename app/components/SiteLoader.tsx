@@ -83,7 +83,7 @@ export default function SiteLoader() {
         <div className="mb-8">
           <div className="w-24 h-24 mx-auto relative mb-4">
             <Image
-              src="/img/CodeJedi.png"
+              src="/CodeJedi.png"
               alt="CodeJedi"
               fill
               className="rounded-full object-cover border-4 border-primary-cyan shadow-glow animate-pulse"
