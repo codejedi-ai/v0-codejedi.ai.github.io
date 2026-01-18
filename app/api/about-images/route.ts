@@ -125,16 +125,7 @@ async function fetchAboutImagesFromNotion() {
 
 export async function GET(request: NextRequest) {
   try {
-    // Cache enabled with 30min TTL to avoid serving expired Notion S3 URLs
     const cacheKey = "about-images"
-    const ttlMs = 30 * 60 * 1000
-    const cached = await readCache<any[]>(cacheKey, ttlMs)
-    if (cached && Array.isArray(cached)) {
-      const res = corsResponse({ aboutImages: cached }, 200, request)
-      res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
-      return res
-    }
-
     const aboutImages = await fetchAboutImagesFromNotion()
     await writeCache(cacheKey, aboutImages)
     const res = corsResponse({ aboutImages }, 200, request)

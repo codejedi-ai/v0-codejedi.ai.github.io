@@ -255,16 +255,7 @@ async function fetchProjectsFromNotion() {
 
 export async function GET(request: NextRequest) {
   try {
-    // Cache enabled with 30min TTL to avoid serving expired Notion S3 URLs
-    const ttlMs = 30 * 60 * 1000
     const cacheKey = "projects"
-    const cachedProjects = await readCache<any[]>(cacheKey, ttlMs).catch(() => null)
-    if (cachedProjects && Array.isArray(cachedProjects)) {
-      const res = corsResponse({ projects: cachedProjects }, 200, request)
-      res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
-      return res
-    }
-
     const projects = await fetchProjectsFromNotion()
     await writeCache(cacheKey, projects)
     const res = corsResponse({ projects }, 200, request)

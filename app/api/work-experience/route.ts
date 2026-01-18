@@ -151,14 +151,6 @@ async function fetchWorkExperienceFromNotion() {
 export async function GET(request: NextRequest) {
   try {
     const cacheKey = "work-experience"
-    const ttlMs = 30 * 60 * 1000 // Cache enabled with 30min TTL
-    const cached = await readCache<any[]>(cacheKey, ttlMs)
-    if (cached && Array.isArray(cached)) {
-      const res = corsResponse({ workExperience: cached }, 200, request)
-      res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
-      return res
-    }
-
     const workExperience = await fetchWorkExperienceFromNotion()
     await writeCache(cacheKey, workExperience)
     const res = corsResponse({ workExperience }, 200, request)

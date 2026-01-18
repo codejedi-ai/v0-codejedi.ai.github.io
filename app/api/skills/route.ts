@@ -217,14 +217,6 @@ async function fetchSkillsFromNotion() {
 export async function GET(request: NextRequest) {
   try {
     const cacheKey = "skills"
-    const ttlMs = 30 * 60 * 1000 // Cache enabled with 30min TTL
-    const cached = await readCache<{ skills: any[]; meta?: any }>(cacheKey, ttlMs)
-    if (cached) {
-      const res = corsResponse(cached, 200, request)
-      res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
-      return res
-    }
-
     const result = await fetchSkillsFromNotion()
     await writeCache(cacheKey, result)
     const res = corsResponse(result, 200, request)
