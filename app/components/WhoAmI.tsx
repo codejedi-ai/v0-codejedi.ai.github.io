@@ -317,8 +317,8 @@ export default function AboutMe() {
           {/* Info */}
           <div>
             <h3 className="text-2xl font-semibold mb-4">
-              Majoring in Honours Bachelor of Computer Science with AI Specialization (2020-2025), University of
-              Waterloo, Canada
+              Honour's Bachelor of Computer Science with AI Specialization (2020-2025), University of Waterloo, Canada<br />
+              <span className="text-lg">Currently: MEng Systems Design Engineering Health Technologies, University of Waterloo</span>
             </h3>
 
             <p className="text-white mb-6">
@@ -328,9 +328,7 @@ export default function AboutMe() {
             </p>
 
             <p className="text-white">
-              As a dedicated computer science student with a focus on artificial intelligence, I blend technical
-              expertise with creative problem-solving. My journey in technology is driven by a passion for innovation
-              and a commitment to creating solutions that make a meaningful impact.
+              I value continuous learning and mastery. I am motivated by opportunities to expand my skills, explore cutting-edge ideas, and apply knowledge in impactful ways.
             </p>
           </div>
         </div>
