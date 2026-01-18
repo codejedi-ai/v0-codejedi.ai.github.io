@@ -255,8 +255,8 @@ async function fetchProjectsFromNotion() {
 
 export async function GET(request: NextRequest) {
   try {
-    // Cache disabled - always fetch fresh to avoid Notion S3 URL expiry
-    const ttlMs = 0
+    // Cache enabled with 30min TTL to avoid serving expired Notion S3 URLs
+    const ttlMs = 30 * 60 * 1000
     const cacheKey = "projects"
     const cachedProjects = await readCache<any[]>(cacheKey, ttlMs).catch(() => null)
     if (cachedProjects && Array.isArray(cachedProjects)) {
@@ -283,6 +283,16 @@ export async function GET(request: NextRequest) {
     const staleCache = await readCache<any[]>(cacheKey, Infinity).catch(() => null)
     if (staleCache && Array.isArray(staleCache)) {
       console.log("✅ Serving stale cache due to error")
+      // Kick off a background refresh to renew the cache after an error
+      void (async () => {
+        try {
+          const projects = await fetchProjectsFromNotion()
+          await writeCache(cacheKey, projects)
+          console.log("♻️ Cache renewed after error (projects)")
+        } catch (e) {
+          console.warn("⚠️ Cache refresh failed (projects)", e)
+        }
+      })()
       const res = corsResponse({ projects: staleCache }, 200, request)
       res.headers.set("Cache-Control", "s-maxage=60, stale-while-revalidate=86400")
       return res

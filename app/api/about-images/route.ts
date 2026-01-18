@@ -125,9 +125,9 @@ async function fetchAboutImagesFromNotion() {
 
 export async function GET(request: NextRequest) {
   try {
-    // Cache disabled - always fetch fresh to avoid Notion S3 URL expiry
+    // Cache enabled with 30min TTL to avoid serving expired Notion S3 URLs
     const cacheKey = "about-images"
-    const ttlMs = 0
+    const ttlMs = 30 * 60 * 1000
     const cached = await readCache<any[]>(cacheKey, ttlMs)
     if (cached && Array.isArray(cached)) {
       const res = corsResponse({ aboutImages: cached }, 200, request)
@@ -153,6 +153,16 @@ export async function GET(request: NextRequest) {
     const staleCache = await readCache<any[]>(cacheKey, Infinity).catch(() => null)
     if (staleCache && Array.isArray(staleCache)) {
       console.log("✅ Serving stale cache due to error")
+      // Kick off a background refresh to renew the cache after an error
+      void (async () => {
+        try {
+          const aboutImages = await fetchAboutImagesFromNotion()
+          await writeCache(cacheKey, aboutImages)
+          console.log("♻️ Cache renewed after error (about-images)")
+        } catch (e) {
+          console.warn("⚠️ Cache refresh failed (about-images)", e)
+        }
+      })()
       const res = corsResponse({ aboutImages: staleCache }, 200, request)
       res.headers.set("Cache-Control", "s-maxage=60, stale-while-revalidate=86400")
       return res

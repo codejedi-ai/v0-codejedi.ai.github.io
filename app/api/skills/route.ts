@@ -217,7 +217,7 @@ async function fetchSkillsFromNotion() {
 export async function GET(request: NextRequest) {
   try {
     const cacheKey = "skills"
-    const ttlMs = 0 // Cache disabled - always fetch fresh to avoid Notion S3 URL expiry
+    const ttlMs = 30 * 60 * 1000 // Cache enabled with 30min TTL
     const cached = await readCache<{ skills: any[]; meta?: any }>(cacheKey, ttlMs)
     if (cached) {
       const res = corsResponse(cached, 200, request)
@@ -238,6 +238,16 @@ export async function GET(request: NextRequest) {
     const staleCache = await readCache<{ skills: any[]; meta?: any }>(cacheKey, Infinity).catch(() => null)
     if (staleCache) {
       console.log("✅ Serving stale cache due to error")
+      // Kick off a background refresh to renew the cache after an error
+      void (async () => {
+        try {
+          const result = await fetchSkillsFromNotion()
+          await writeCache(cacheKey, result)
+          console.log("♻️ Cache renewed after error (skills)")
+        } catch (e) {
+          console.warn("⚠️ Cache refresh failed (skills)", e)
+        }
+      })()
       const res = corsResponse(staleCache, 200, request)
       res.headers.set("Cache-Control", "s-maxage=60, stale-while-revalidate=86400")
       return res

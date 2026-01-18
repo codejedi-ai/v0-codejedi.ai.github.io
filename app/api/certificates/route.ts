@@ -157,7 +157,7 @@ async function fetchCertificatesFromNotion() {
 export async function GET(request: NextRequest) {
   try {
     const cacheKey = "certificates"
-    const ttlMs = 0 // Cache disabled - always fetch fresh to avoid Notion S3 URL expiry
+    const ttlMs = 30 * 60 * 1000 // Cache enabled with 30min TTL
     const cached = await readCache<any[]>(cacheKey, ttlMs)
     if (cached && Array.isArray(cached)) {
       const res = corsResponse({ certificates: cached }, 200, request)
@@ -183,6 +183,16 @@ export async function GET(request: NextRequest) {
     const staleCache = await readCache<any[]>(cacheKey, Infinity).catch(() => null)
     if (staleCache && Array.isArray(staleCache)) {
       console.log("✅ Serving stale cache due to error")
+      // Kick off a background refresh to renew the cache after an error
+      void (async () => {
+        try {
+          const certificates = await fetchCertificatesFromNotion()
+          await writeCache(cacheKey, certificates)
+          console.log("♻️ Cache renewed after error (certificates)")
+        } catch (e) {
+          console.warn("⚠️ Cache refresh failed (certificates)", e)
+        }
+      })()
       const res = corsResponse({ certificates: staleCache }, 200, request)
       res.headers.set("Cache-Control", "s-maxage=60, stale-while-revalidate=86400")
       return res
