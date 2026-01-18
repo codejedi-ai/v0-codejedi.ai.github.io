@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { corsResponse, handleOptions } from "@/lib/cors"
-import { unstable_cache } from "next/cache"
 import { Client } from "@notionhq/client"
+import { readCache, writeCache } from "@/lib/file-cache"
 
 const WORK_EXPERIENCE_DATABASE_ID = "ce4d8010-744e-4fc7-90d5-f1ca4e481955"
 
@@ -17,7 +17,39 @@ async function fetchWorkExperienceFromNotion() {
   const apiKey = process.env.NOTION_INTEGRATION_SECRET || process.env.NOTION_API_KEY
   if (!apiKey) throw new Error("NOTION_API_KEY/NOTION_INTEGRATION_SECRET is not configured")
   const notion = new Client({ auth: apiKey })
-  const data = await notion.databases.query({ database_id: WORK_EXPERIENCE_DATABASE_ID })
+
+  // Discover data source id
+  let dataSourceId: string | undefined = process.env.WORK_EXPERIENCE_DATA_SOURCE_ID
+  try {
+    const db = await (notion as any).databases.retrieve({ database_id: WORK_EXPERIENCE_DATABASE_ID })
+    dataSourceId =
+      dataSourceId ||
+      (Array.isArray(db?.data_sources) && db.data_sources[0]?.id) ||
+      db?.data_source_id ||
+      db?.data_source?.id ||
+      db?.parent?.data_source_id ||
+      db?.parent?.data_source?.id
+    console.log("Work experience data source discovery:", { found: !!dataSourceId })
+  } catch (e) {
+    console.warn("Unable to retrieve work experience DB for data source discovery; falling back to databases.query", e)
+  }
+
+  // Page through results (no filters)
+  const pages: any[] = []
+  let start_cursor: string | undefined
+  while (true) {
+    let resp: { results: any[]; has_more?: boolean; next_cursor?: string | null }
+    if (dataSourceId) {
+      resp = await (notion as any).dataSources.query({ data_source_id: dataSourceId, start_cursor })
+    } else {
+      resp = await (notion as any).databases.query({ database_id: WORK_EXPERIENCE_DATABASE_ID, start_cursor })
+    }
+    pages.push(...(resp.results || []))
+    if (!resp.has_more || !resp.next_cursor) break
+    start_cursor = resp.next_cursor as string
+  }
+
+  const data = { results: pages }
 
   console.log(`Notion response received: ${data.results.length} pages found`)
 
@@ -118,12 +150,17 @@ async function fetchWorkExperienceFromNotion() {
 
 export async function GET(request: NextRequest) {
   try {
-    const cached = unstable_cache(
-      () => fetchWorkExperienceFromNotion(),
-      ["work-experience"],
-      { revalidate: 300, tags: ["work-experience"] }
-    )
-    const workExperience = await cached()
+    const cacheKey = "work-experience"
+    const ttlMs = 5 * 60 * 1000
+    const cached = await readCache<any[]>(cacheKey, ttlMs)
+    if (cached && Array.isArray(cached)) {
+      const res = corsResponse({ workExperience: cached }, 200, request)
+      res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
+      return res
+    }
+
+    const workExperience = await fetchWorkExperienceFromNotion()
+    await writeCache(cacheKey, workExperience)
     const res = corsResponse({ workExperience }, 200, request)
     res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
     return res

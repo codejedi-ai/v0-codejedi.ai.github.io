@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { corsResponse, handleOptions } from "@/lib/cors"
-import { unstable_cache } from "next/cache"
 import { Client } from "@notionhq/client"
+import { readCache, writeCache } from "@/lib/file-cache"
 
 const CERTIFICATES_DATABASE_ID = "7ad088a9-fa3e-4261-8eb4-d140952aaa3f"
 
@@ -17,7 +17,39 @@ async function fetchCertificatesFromNotion() {
   const apiKey = process.env.NOTION_INTEGRATION_SECRET || process.env.NOTION_API_KEY
   if (!apiKey) throw new Error("NOTION_API_KEY/NOTION_INTEGRATION_SECRET is not configured")
   const notion = new Client({ auth: apiKey })
-  const data = await notion.databases.query({ database_id: CERTIFICATES_DATABASE_ID })
+
+  // Discover data source id
+  let dataSourceId: string | undefined = process.env.CERTIFICATES_DATA_SOURCE_ID
+  try {
+    const db = await (notion as any).databases.retrieve({ database_id: CERTIFICATES_DATABASE_ID })
+    dataSourceId =
+      dataSourceId ||
+      (Array.isArray(db?.data_sources) && db.data_sources[0]?.id) ||
+      db?.data_source_id ||
+      db?.data_source?.id ||
+      db?.parent?.data_source_id ||
+      db?.parent?.data_source?.id
+    console.log("Certificates data source discovery:", { found: !!dataSourceId })
+  } catch (e) {
+    console.warn("Unable to retrieve certificates DB for data source discovery; falling back to databases.query", e)
+  }
+
+  // Page through results (no filters)
+  const pages: any[] = []
+  let start_cursor: string | undefined
+  while (true) {
+    let resp: { results: any[]; has_more?: boolean; next_cursor?: string | null }
+    if (dataSourceId) {
+      resp = await (notion as any).dataSources.query({ data_source_id: dataSourceId, start_cursor })
+    } else {
+      resp = await (notion as any).databases.query({ database_id: CERTIFICATES_DATABASE_ID, start_cursor })
+    }
+    pages.push(...(resp.results || []))
+    if (!resp.has_more || !resp.next_cursor) break
+    start_cursor = resp.next_cursor as string
+  }
+
+  const data = { results: pages }
 
   console.log(`Notion response received: ${data.results.length} pages found`)
 
@@ -124,12 +156,17 @@ async function fetchCertificatesFromNotion() {
 
 export async function GET(request: NextRequest) {
   try {
-    const cached = unstable_cache(
-      () => fetchCertificatesFromNotion(),
-      ["certificates"],
-      { revalidate: 300, tags: ["certificates"] }
-    )
-    const certificates = await cached()
+    const cacheKey = "certificates"
+    const ttlMs = 5 * 60 * 1000
+    const cached = await readCache<any[]>(cacheKey, ttlMs)
+    if (cached && Array.isArray(cached)) {
+      const res = corsResponse({ certificates: cached }, 200, request)
+      res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
+      return res
+    }
+
+    const certificates = await fetchCertificatesFromNotion()
+    await writeCache(cacheKey, certificates)
     const res = corsResponse({ certificates }, 200, request)
     res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
     return res

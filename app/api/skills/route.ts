@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { corsResponse, handleOptions } from "@/lib/cors"
-import { unstable_cache } from "next/cache"
 import { Client } from "@notionhq/client"
+import { readCache, writeCache } from "@/lib/file-cache"
 
 const SKILLS_DATABASE_ID = "93762143-ef43-4c4b-be97-cb7e7d2dd2f4"
 
@@ -19,7 +19,39 @@ async function fetchSkillsFromNotion() {
   if (!apiKey) throw new Error("NOTION_API_KEY/NOTION_INTEGRATION_SECRET is not configured")
 
   const notion = new Client({ auth: apiKey })
-  const data = await notion.databases.query({ database_id: SKILLS_DATABASE_ID })
+
+  // Discover data source id
+  let dataSourceId: string | undefined = process.env.SKILLS_DATA_SOURCE_ID
+  try {
+    const db = await (notion as any).databases.retrieve({ database_id: SKILLS_DATABASE_ID })
+    dataSourceId =
+      dataSourceId ||
+      (Array.isArray(db?.data_sources) && db.data_sources[0]?.id) ||
+      db?.data_source_id ||
+      db?.data_source?.id ||
+      db?.parent?.data_source_id ||
+      db?.parent?.data_source?.id
+    console.log("Skills data source discovery:", { found: !!dataSourceId })
+  } catch (e) {
+    console.warn("Unable to retrieve skills DB for data source discovery; falling back to databases.query", e)
+  }
+
+  // Page through results (no filters)
+  const pages: any[] = []
+  let start_cursor: string | undefined
+  while (true) {
+    let resp: { results: any[]; has_more?: boolean; next_cursor?: string | null }
+    if (dataSourceId) {
+      resp = await (notion as any).dataSources.query({ data_source_id: dataSourceId, start_cursor })
+    } else {
+      resp = await (notion as any).databases.query({ database_id: SKILLS_DATABASE_ID, start_cursor })
+    }
+    pages.push(...(resp.results || []))
+    if (!resp.has_more || !resp.next_cursor) break
+    start_cursor = resp.next_cursor as string
+  }
+
+  const data = { results: pages }
 
   // Analysis logging
   console.log('\n🔍 SKILLS DATABASE ANALYSIS:')
@@ -184,12 +216,17 @@ async function fetchSkillsFromNotion() {
 
 export async function GET(request: NextRequest) {
   try {
-    const cached = unstable_cache(
-      () => fetchSkillsFromNotion(),
-      ["skills"],
-      { revalidate: 300, tags: ["skills"] }
-    )
-    const result = await cached()
+    const cacheKey = "skills"
+    const ttlMs = 5 * 60 * 1000
+    const cached = await readCache<{ skills: any[]; meta?: any }>(cacheKey, ttlMs)
+    if (cached) {
+      const res = corsResponse(cached, 200, request)
+      res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
+      return res
+    }
+
+    const result = await fetchSkillsFromNotion()
+    await writeCache(cacheKey, result)
     const res = corsResponse(result, 200, request)
     res.headers.set("Cache-Control", "s-maxage=300, stale-while-revalidate=86400")
     return res
