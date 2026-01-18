@@ -1,6 +1,7 @@
 import fs from "fs/promises"
 import path from "path"
 import os from "os"
+import { BACKEND_CONFIG } from "./backend-config";
 
 async function ensureDir(dir: string) {
   try {
@@ -24,6 +25,11 @@ async function getCacheDir(): Promise<string> {
 }
 
 export async function readCache<T = unknown>(key: string, ttlMs: number): Promise<T | null> {
+  // Check if caching is disabled
+  if (!BACKEND_CONFIG.cache.enabled) {
+    return null;
+  }
+
   try {
     const dir = await getCacheDir()
     const file = path.join(dir, `${key}.json`)
@@ -39,6 +45,11 @@ export async function readCache<T = unknown>(key: string, ttlMs: number): Promis
 }
 
 export async function writeCache(key: string, data: unknown): Promise<void> {
+  // Don't write to cache if caching is disabled
+  if (!BACKEND_CONFIG.cache.enabled) {
+    return;
+  }
+
   try {
     const dir = await getCacheDir()
     const file = path.join(dir, `${key}.json`)
