@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Code, type LucideIcon } from "lucide-react"
 import * as LucideIcons from "lucide-react"
+import { API_ENDPOINTS } from "@/lib/api-config"
 
 interface Skill {
   id: string
@@ -19,7 +20,8 @@ export default function Skills() {
   useEffect(() => {
     async function fetchSkills() {
       try {
-        const response = await fetch("/api/skills")
+        console.log("Fetching skills from:", API_ENDPOINTS.skills)
+        const response = await fetch(API_ENDPOINTS.skills)
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))
@@ -27,7 +29,8 @@ export default function Skills() {
         }
 
         const data = await response.json()
-        setSkills(data.skills)
+        const skillsData = Array.isArray(data.skills) ? data.skills : []
+        setSkills(skillsData)
       } catch (err) {
         console.error("Error fetching skills:", err)
         const errorMessage = err instanceof Error ? err.message : "Failed to load skills. Please try again later."
@@ -42,7 +45,7 @@ export default function Skills() {
 
   // Function to dynamically get icon component
   const getIconComponent = (iconName: string) => {
-    const Icon = (LucideIcons as Record<string, LucideIcon>)[iconName]
+    const Icon = (LucideIcons as unknown as Record<string, LucideIcon>)[iconName]
     return Icon ? (
       <Icon className="h-8 w-8 text-primary-cyan mr-4" />
     ) : (
@@ -67,7 +70,7 @@ export default function Skills() {
           </div>
         )}
 
-        {!isLoading && !error && (
+        {!isLoading && !error && skills.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {skills.map((skill) => (
               <div
@@ -89,6 +92,10 @@ export default function Skills() {
               </div>
             ))}
           </div>
+        )}
+
+        {!isLoading && !error && skills.length === 0 && (
+          <div className="text-center text-gray-400">No skills available.</div>
         )}
       </div>
     </section>

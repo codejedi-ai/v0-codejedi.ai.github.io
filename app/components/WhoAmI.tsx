@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { useState, useEffect, useRef, useCallback } from "react"
 import { ChevronLeft, ChevronRight, Pause } from "lucide-react"
+import { API_ENDPOINTS } from "@/lib/api-config"
 
 interface SlideData {
   id: string
@@ -98,7 +99,8 @@ export default function AboutMe() {
   useEffect(() => {
     async function fetchAboutImages() {
       try {
-        const response = await fetch("/api/about-images")
+        console.log("Fetching about images from:", API_ENDPOINTS.aboutImages)
+        const response = await fetch(API_ENDPOINTS.aboutImages)
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))
@@ -106,7 +108,8 @@ export default function AboutMe() {
         }
 
         const data = await response.json()
-        setSlidesData(data.aboutImages)
+        const images = Array.isArray(data.aboutImages) ? data.aboutImages : []
+        setSlidesData(images)
       } catch (err) {
         console.error("Error fetching about images:", err)
         const errorMessage = err instanceof Error ? err.message : "Failed to load images. Please try again later."
@@ -121,15 +124,21 @@ export default function AboutMe() {
 
   // Function to advance to the next slide
   const nextSlide = useCallback(() => {
-    if (slidesData.length === 0) return
-    setCurrentSlide((prev) => (prev + 1) % slidesData.length)
-  }, [slidesData.length])
+    setSlidesData((current) => {
+      if (!current || current.length === 0) return current
+      setCurrentSlide((prev) => (prev + 1) % current.length)
+      return current
+    })
+  }, [])
 
   // Function to go to the previous slide
   const prevSlide = useCallback(() => {
-    if (slidesData.length === 0) return
-    setCurrentSlide((prev) => (prev - 1 + slidesData.length) % slidesData.length)
-  }, [slidesData.length])
+    setSlidesData((current) => {
+      if (!current || current.length === 0) return current
+      setCurrentSlide((prev) => (prev - 1 + current.length) % current.length)
+      return current
+    })
+  }, [])
 
   // Function to handle user interaction
   const handleUserInteraction = useCallback((newSlideIndex?: number) => {
@@ -160,7 +169,7 @@ export default function AboutMe() {
     }
 
     // Only set up interval if not paused and we have slides
-    if (!isPaused && slidesData.length > 0) {
+    if (!isPaused && slidesData && slidesData.length > 0) {
       slideIntervalRef.current = setInterval(() => {
         nextSlide()
       }, 3000) // Change slide every 3 seconds
@@ -175,7 +184,7 @@ export default function AboutMe() {
         clearTimeout(pauseTimerRef.current)
       }
     }
-  }, [isPaused, nextSlide, slidesData.length])
+  }, [isPaused, nextSlide])
 
   const quote =
     '"Let each person examine his own work, and then he can take pride in himself alone, and not compare himself with someone else." -- Galatians 6:4'
@@ -234,6 +243,26 @@ export default function AboutMe() {
                         className="object-cover rounded-lg"
                         priority={index === 0}
                         sizes="(max-width: 768px) 100vw, 50vw"
+                        onError={async () => {
+                          try {
+                            const resp = await fetch(API_ENDPOINTS.aboutImages)
+                            if (!resp.ok) return
+                            const data = await resp.json().catch(() => ({}))
+                            const images: SlideData[] = Array.isArray(data.aboutImages) ? data.aboutImages : []
+                            // Replace the failing slide by id if found in fresh data
+                            setSlidesData((prev) => {
+                              const idx = prev.findIndex((s) => s.id === slide.id)
+                              if (idx === -1) return prev
+                              const fresh = images.find((s) => s.id === slide.id)
+                              if (!fresh) return
+                              const next = [...prev]
+                              next[idx] = fresh
+                              return next
+                            })
+                          } catch (e) {
+                            console.warn("About image refresh failed", e)
+                          }
+                        }}
                       />
                     </div>
                   ))}

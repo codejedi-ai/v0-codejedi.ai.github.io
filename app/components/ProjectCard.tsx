@@ -39,8 +39,18 @@ export default class ProjectCard extends Component<ProjectCardProps> {
     })()
     const hasCode = !!codeUrl
 
+    const linkUrl = (() => {
+      const url = (project.link && project.link.trim()) ? project.link.trim() : ""
+      if (!url || url === "/" || url === "#") return ""
+      return url
+    })()
+    const hasLink = !!linkUrl
+
     return (
-      <div className="bg-gray-800/50 rounded-lg overflow-hidden border border-gray-700 hover:border-blue-500 transition-all duration-300 flex flex-col h-full group">
+      <div
+        className="bg-gray-800/50 rounded-lg overflow-hidden border border-gray-700 hover:border-blue-500 transition-all duration-300 flex flex-col h-full group"
+        role="article"
+      >
         <div className="relative h-48 overflow-hidden">
           {imageLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-gray-800 z-10">
@@ -101,17 +111,18 @@ export default class ProjectCard extends Component<ProjectCardProps> {
             )}
           </div>
         </div>
-        <div className="p-6 pt-0 flex justify-between">
+        <div className="p-6 pt-0 flex justify-start gap-4">
           {hasCode ? (
-            <Link
-              href={codeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                window.open(codeUrl, "_blank", "noopener,noreferrer")
+              }}
               className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors"
             >
               <Github className="h-4 w-4" />
               <span>Code</span>
-            </Link>
+            </button>
           ) : (
             <span
               aria-disabled="true"
@@ -121,29 +132,25 @@ export default class ProjectCard extends Component<ProjectCardProps> {
               <span>Code</span>
             </span>
           )}
-          {(() => {
-            const url = (project.link && project.link.trim()) ? project.link.trim() : ""
-            const valid = !!url && url !== "/" && url !== "#"
-            return valid ? (
-              <Link
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors"
-              >
-                <span>Learn More</span>
-                <ExternalLink className="h-4 w-4" />
-              </Link>
-            ) : (
-              <span
-                aria-disabled="true"
-                className="flex items-center gap-1 text-gray-500 cursor-not-allowed opacity-50"
-              >
-                <span>Learn More</span>
-                <ExternalLink className="h-4 w-4" />
-              </span>
-            )
-          })()}
+          {hasLink ? (
+            <Link
+              href={linkUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors"
+            >
+              <ExternalLink className="h-4 w-4" />
+              <span>Learn more</span>
+            </Link>
+          ) : (
+            <span
+              aria-disabled="true"
+              className="flex items-center gap-1 text-gray-500 cursor-not-allowed opacity-50"
+            >
+              <ExternalLink className="h-4 w-4" />
+              <span>Learn more</span>
+            </span>
+          )}
         </div>
       </div>
     )

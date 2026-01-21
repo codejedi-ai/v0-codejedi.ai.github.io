@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
+import { API_ENDPOINTS } from "@/lib/api-config"
 import { CERTIFICATES_BG_URL } from "@/lib/constants"
 
 interface Certificate {
@@ -24,7 +25,8 @@ export default function Certificates() {
   useEffect(() => {
     async function fetchCertificates() {
       try {
-        const response = await fetch("/api/certificates")
+        console.log("Fetching certificates from:", API_ENDPOINTS.certificates)
+        const response = await fetch(API_ENDPOINTS.certificates)
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))
@@ -32,7 +34,8 @@ export default function Certificates() {
         }
 
         const data = await response.json()
-        setCertificates(data.certificates)
+        const certificatesData = Array.isArray(data.certificates) ? data.certificates : []
+        setCertificates(certificatesData)
       } catch (err) {
         console.error("Error fetching certificates:", err)
         const errorMessage = err instanceof Error ? err.message : "Failed to load certificates. Please try again later."
@@ -76,19 +79,32 @@ export default function Certificates() {
           </div>
         )}
 
-        {!isLoading && !error && (
+        {!isLoading && !error && certificates.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl mx-auto">
             {certificates.map((cert) => (
               <div key={cert.id} className="flex flex-col items-center">
                 {/* Certificate badge */}
                 <div className="mb-6 transform hover:scale-110 transition-transform duration-300">
                   <div className="relative w-40 h-40">
-                    <Image 
-                      src={cert.image || "/placeholder.svg"} 
-                      alt={cert.alt} 
-                      fill 
-                      className="object-contain" 
+                    <Image
+                      src={cert.image || "/placeholder.svg"}
+                      alt={cert.alt}
+                      fill
+                      className="object-contain"
                       sizes="160px"
+                      onError={async () => {
+                        try {
+                          const resp = await fetch(API_ENDPOINTS.certificates)
+                          if (!resp.ok) return
+                          const data = await resp.json().catch(() => ({}))
+                          const list: Certificate[] = Array.isArray(data.certificates) ? data.certificates : []
+                          const fresh = list.find((c) => c.id === cert.id)
+                          if (!fresh) return
+                          setCertificates((prev) => prev.map((c) => (c.id === cert.id ? { ...c, image: fresh.image } : c)))
+                        } catch (e) {
+                          console.warn("Certificate image refresh failed", e)
+                        }
+                      }}
                     />
                   </div>
                 </div>
@@ -101,6 +117,10 @@ export default function Certificates() {
               </div>
             ))}
           </div>
+        )}
+
+        {!isLoading && !error && certificates.length === 0 && (
+          <div className="text-center text-gray-200">No certificates available.</div>
         )}
       </div>
     </section>

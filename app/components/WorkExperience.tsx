@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { Clock } from "lucide-react"
 import type { YearGroup, Position } from "../types/types"
+import { API_ENDPOINTS } from "@/lib/api-config"
 
 export default function WorkExperience() {
   const [experiences, setExperiences] = useState<YearGroup[]>([])
@@ -14,7 +15,8 @@ export default function WorkExperience() {
   useEffect(() => {
     async function fetchWorkExperience() {
       try {
-        const response = await fetch("/api/work-experience")
+        console.log("Fetching work experience from:", API_ENDPOINTS.workExperience)
+        const response = await fetch(API_ENDPOINTS.workExperience)
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))
@@ -22,9 +24,11 @@ export default function WorkExperience() {
         }
 
         const data = await response.json()
+        const workItems = Array.isArray(data.workExperience) ? data.workExperience : []
 
         // Group work experience by year
-        const groupedByYear = data.workExperience.reduce((acc: Record<string, Position[]>, job: { year: string; startDate: string; endDate: string; emoji: string; title: string; company: string; location: string; link: string }) => {
+        const groupedByYear = workItems.reduce((acc: Record<string, Position[]>, job: { year?: string; startDate?: string; endDate?: string; emoji?: string; title?: string; company?: string; location?: string; link?: string }) => {
+          if (!job?.year || !job.startDate || !job.endDate) return acc
           const year = job.year
 
           if (!acc[year]) {
@@ -40,12 +44,12 @@ export default function WorkExperience() {
           const formattedDate = `${startMonth} ~ ${endMonth}, ${startDate.getFullYear()}`
 
           acc[year].push({
-            emoji: job.emoji,
-            title: job.title,
-            company: job.company,
-            location: job.location,
+            emoji: job.emoji || "💼",
+            title: job.title || "",
+            company: job.company || "",
+            location: job.location || "",
             date: formattedDate,
-            link: job.link,
+            link: job.link || "#",
             isLeft: Number.parseInt(year) % 2 === 1, // Alternate left/right based on odd/even year
           })
 
